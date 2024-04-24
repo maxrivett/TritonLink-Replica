@@ -11,20 +11,24 @@ try {
     DataSource ds = (DataSource) getServletContext().getAttribute("DBCPool");
     conn = ds.getConnection();
     conn.setAutoCommit(false);
-
-    if ("update".equals(action)) {
+    
+    if (action == null) {
+        <!-- throw error if action is null -->
+        throw new IllegalArgumentException("No action specified.");
+    } else if (action.equals("update")) {
         pstmt = conn.prepareStatement(
-            "UPDATE Class SET course_ID = ?, quarter = ?, year = ?, title = ? WHERE class_ID = ?");
-        pstmt.setString(1, request.getParameter("course_ID"));
-        pstmt.setString(2, request.getParameter("quarter"));
-        pstmt.setInt(3, Integer.parseInt(request.getParameter("year")));
-        pstmt.setString(4, request.getParameter("title"));
-        pstmt.setInt(5, Integer.parseInt(request.getParameter("class_ID")));
+            "UPDATE Class SET title = ? WHERE course_ID = ? AND quarter = ? AND year = ?");
+        pstmt.setString(1, request.getParameter("title"));
+        pstmt.setString(2, request.getParameter("course_ID"));
+        pstmt.setString(3, request.getParameter("quarter"));
+        pstmt.setInt(4, Integer.parseInt(request.getParameter("year")));
         pstmt.executeUpdate();
         conn.commit();
     } else if ("delete".equals(action)) {
-        pstmt = conn.prepareStatement("DELETE FROM Class WHERE class_ID = ?");
-        pstmt.setInt(1, Integer.parseInt(request.getParameter("class_ID")));
+        pstmt = conn.prepareStatement("DELETE FROM Class WHERE course_ID = ? AND quarter = ? AND year = ?");
+        pstmt.setString(1, request.getParameter("course_ID"));
+        pstmt.setString(2, request.getParameter("quarter"));
+        pstmt.setInt(3, Integer.parseInt(request.getParameter("year")));
         pstmt.executeUpdate();
         conn.commit();
     }
@@ -53,7 +57,6 @@ try {
 <h1>Class Management</h1>
 <table border="1">
     <tr>
-        <th>Class ID</th>
         <th>Course ID</th>
         <th>Quarter</th>
         <th>Year</th>
@@ -66,15 +69,14 @@ try {
     %>
     <tr>
         <form action="class_entry_form.jsp" method="post">
-            <td><%= rs.getInt("class_ID") %></td>
-            <td><input type="text" name="course_ID" value="<%= rs.getString("course_ID") %>"></td>
-            <td><input type="text" name="quarter" value="<%= rs.getString("quarter") %>"></td>
-            <td><input type="text" name="year" value="<%= rs.getInt("year") %>"></td>
+            <td><%= rs.getString("course_ID") %><input type="hidden" name="course_ID" value="<%= rs.getString("course_ID") %>"></td>
+            <td><%= rs.getString("quarter") %><input type="hidden" name="quarter" value="<%= rs.getString("quarter") %>"></td>
+            <td><%= rs.getInt("year") %><input type="hidden" name="year" value="<%= rs.getInt("year") %>"></td>
             <td><input type="text" name="title" value="<%= rs.getString("title") %>"></td>
-            <td><input type="hidden" name="class_ID" value="<%= rs.getInt("class_ID") %>"><input type="submit" name="action" value="update"></td>
+            <td><input type="submit" name="action" value="update"></td>
         </form>
         <form action="class_entry_form.jsp" method="post">
-            <td><input type="hidden" name="class_ID" value="<%= rs.getInt("class_ID") %>"><input type="submit" name="action" value="delete"></td>
+            <td><input type="submit" name="action" value="delete"></td>
         </form>
     </tr>
     <%
