@@ -104,7 +104,7 @@
                         <th>Reason</th>
                     </tr>
                     <tr>
-                        <form action="deg_req_info_submission.jsp" method="get">
+                        <form action="probation_info_submission.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
                             <th><input value="" name="STUDENTID" size="10"></th>
                             <th><input value="" name="PROBSTARTTIME" size="10"></th>
