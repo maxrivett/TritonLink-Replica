@@ -93,7 +93,21 @@
 
                         pstmt2.setInt(1,
                             Integer.parseInt(request.getParameter("STUDENTID")));
-                        int rowCount = pstmt2.executeUpdate();
+                        pstmt2.executeUpdate();
+
+                        PreparedStatement pstmt3 = conn.prepareStatement(
+                        "DELETE FROM aid_awarded WHERE STUDENTID = ?");
+
+                        pstmt3.setInt(1,
+                            Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstmt3.executeUpdate();
+
+                        PreparedStatement pstmt4 = conn.prepareStatement(
+                        "DELETE FROM payment WHERE STUDENTID = ?");
+
+                        pstmt4.setInt(1,
+                            Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstmt4.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);

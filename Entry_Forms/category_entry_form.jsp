@@ -113,7 +113,7 @@
                         "DELETE FROM category WHERE DEPARTMENT = ?, CATNAME = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("DEPARTMENT")));
-                        pstmt.setInt(1, Integer.parseInt(request.getParameter("CATNAME")));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("CATNAME")));
 
 
                         int rowCount = pstmt.executeUpdate();
@@ -135,8 +135,8 @@
                     // Create the statement
                     Statement statement = conn.createStatement();
 
-                    // Use the statement to SELECT the thesis_committee attributes
-                    // FROM the thesis_committee table
+                    // Use the statement to SELECT the category attributes
+                    // FROM the category table
                     ResultSet rs = statement.executeQuery
                         ("SELECT * FROM category");
                 %>
