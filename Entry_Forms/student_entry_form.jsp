@@ -88,6 +88,13 @@
                             Integer.parseInt(request.getParameter("STUDENTID")));
                         int rowCount = pstmt.executeUpdate();
 
+                        PreparedStatement pstmt2 = conn.prepareStatement(
+                        "DELETE FROM thesis_committee WHERE STUDENTID = ?");
+
+                        pstmt2.setInt(1,
+                            Integer.parseInt(request.getParameter("STUDENTID")));
+                        int rowCount = pstmt2.executeUpdate();
+
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
