@@ -35,7 +35,7 @@
 
                         pstmt.setString(1, request.getParameter("STUDENTID"));
                         pstmt.setString(2, request.getParameter("PROBSTARTTIME"));
-                        pstmt.setInt(3, request.getParameter("PROBENDTIME"));
+                        pstmt.setString(3, request.getParameter("PROBENDTIME"));
                         pstmt.setString(4, request.getParameter("REASON"));
 
                         pstmt.executeUpdate();
@@ -77,8 +77,8 @@
                         "DELETE FROM probation_info WHERE STUDENTID = ?, PROBSTARTTIME = ?, PROBENDTIME = ?");
 
                         pstmt.setString(1, request.getParameter("STUDENTID"));
-                        pstmt.setString(1, request.getParameter("PROBSTARTTIME"));
-                        pstmt.setString(1, request.getParameter("PROBENDTIME"));
+                        pstmt.setString(2, request.getParameter("PROBSTARTTIME"));
+                        pstmt.setString(3, request.getParameter("PROBENDTIME"));
 
                         int rowCount = pstmt.executeUpdate();
 
