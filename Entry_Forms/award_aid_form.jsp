@@ -49,7 +49,7 @@
                         conn.setAutoCommit(false);
 
                         // Create the prepared statement and use it to
-                        // DELETE the class taken FROM the classes_taken table.
+                        // DELETE the aid_awarded FROM the aid_awarded table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
                         "DELETE FROM aid_awarded WHERE STUDENTID = ?, " +
@@ -100,7 +100,7 @@
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
                             name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getInt('AIDNAME') %>"
+                        <input type="hidden" value="<%= rs.getString('AIDNAME') %>"
                             name="AIDNAME">
                         <input type="hidden" value="<%= rs.getInt('YEAR') %>"
                             name="YEAR">

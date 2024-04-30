@@ -44,6 +44,18 @@
 
                         pstmt.executeUpdate();
 
+                        PreparedStatement pstmt2 = conn.prepareStatement(
+                        ("INSERT INTO undergrad VALUES (?, ?, ?, ?, ?)"));
+
+                        pstmt2.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstmt2.setString(2, request.getParameter("MAJOR"));
+                        pstmt2.setString(3, request.getParameter("MINOR"));
+                        pstmt2.setString(4, request.getParameter("COLLEGE"));
+                        pstmt2.setBoolean(5, Boolean.parseBoolean(request.getParameter("BS/MS")));
+                        
+
+                        pstmt2.executeUpdate();
+
                         conn.commit();
                         conn.setAutoCommit(true);
                     }
@@ -69,6 +81,18 @@
 
                         int rowCount = pstatement.executeUpdate();
 
+                        PreparedStatement pstatement2 = conn.prepareStatement(
+                        "UPDATE undergrad SET MAJOR = ?, MINOR = ?, COLLEGE = ?, " +
+                        "BS/MS = ? WHERE STUDENTID = ?");
+
+                        pstatement2.setInt(5, Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstatement2.setString(1, request.getParameter("MAJOR"));
+                        pstatement2.setString(2, request.getParameter("MINOR"));
+                        pstatement2.setString(3, request.getParameter("COLLEGE"));
+                        pstatement2.setBoolean(4, Boolean.parseBoolean(request.getParameter("BS/MS")));
+
+                        pstatement2.executeUpdate();
+
                         conn.setAutocommit(false);
                         conn.setAutoCommit(true);
                     }
@@ -89,7 +113,7 @@
                         int rowCount = pstmt.executeUpdate();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM thesis_committee WHERE STUDENTID = ?");
+                        "DELETE FROM undergrad WHERE STUDENTID = ?");
 
                         pstmt2.setInt(1,
                             Integer.parseInt(request.getParameter("STUDENTID")));
@@ -109,6 +133,8 @@
                             Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt4.executeUpdate();
 
+                        
+
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
@@ -118,10 +144,10 @@
                     // Create the statement
                     Statement statement = conn.createStatement();
 
-                    // Use the statement to SELECT the student attributes
-                    // FROM the Student table
+                    // Use the statement to SELECT the undergrad attributes
+                    // FROM the undergrad table
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM Student");
+                        ("SELECT * FROM undergrad");
                 %>
                 <table>
                     <tr>
@@ -133,9 +159,13 @@
                         <th>SSN</th>
                         <th>Residency</th>
                         <th>Account_Balance</th>
+                        <th>Major</th>
+                        <th>Minor</th>
+                        <th>College</th>
+                        <th>BS/MS?</th>
                     </tr>
                     <tr>
-                        <form action="student_entry_form.jsp" method="get">
+                        <form action="undergrad_entry_form.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
                             <th><input value="" name="STUDENTID" size="10"></th>
                             <th><input value="" name="FIRSTNAME" size="10"></th>
@@ -145,27 +175,41 @@
                             <th><input value="" name="SSN" size="10"></th>
                             <th><input value="" name="RESIDENCY" size="10"></th>
                             <th><input value="" name="ACCOUNTBALANCE" size="10"></th>
+                            <th><input value="" name="MAJOR" size="10"></th>
+                            <th><input value="" name="MINOR" size="10"></th>
+                            <th><input value="" name="COLLEGE" size="10"></th>
+                            <th><input value="" name="BS/MS" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
                 <%
                     // Iterate over the ResultSet
                     while ( rs.next() ) {
+                        PreparedStatement pstmt = conn.prepareStatement(
+                        "SELECT * FROM Student WHERE STUDENTID = ?");
+
+                        pstmt.setString(1, rs.getString('STUDENTID'));
+
+                        ResultSet rs2 = pstmt.executeQuery();
                 %>
                 <tr>
-                    <form action="student_entry_form.jsp" method="get">
+                    <form action="undergrad_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getBoolean('FIRSTNAME') %>" name="FIRSTNAME"></th>
-                        <th><input value="<%= rs.getBoolean('MIDDLENAME') %>" name="MIDDLENAME"></th>
-                        <th><input value="<%= rs.getBoolean('LASTNAME') %>" name="LASTNAME"></th>
-                        <th><input value="<%= rs.getString('ENROLLED') %>" name="ENROLLED"></th>
-                        <th><input value="<%= rs.getInt('SSN') %>" name="SSN"></th>
-                        <th><input value="<%= rs.getInt('RESIDENCY') %>" name="RESIDENCY"></th>
-                        <th><input value="<%= rs.getBoolean('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
+                        <th><input value="<%= rs2.getInt('STUDENTID') %>" name="STUDENTID"></th>
+                        <th><input value="<%= rs2.getString('FIRSTNAME') %>" name="FIRSTNAME"></th>
+                        <th><input value="<%= rs2.getString('MIDDLENAME') %>" name="MIDDLENAME"></th>
+                        <th><input value="<%= rs2.getString('LASTNAME') %>" name="LASTNAME"></th>
+                        <th><input value="<%= rs2.getBoolean('ENROLLED') %>" name="ENROLLED"></th>
+                        <th><input value="<%= rs2.getInt('SSN') %>" name="SSN"></th>
+                        <th><input value="<%= rs2.getString('RESIDENCY') %>" name="RESIDENCY"></th>
+                        <th><input value="<%= rs2.getFloat('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
+                        <th><input value="<%= rs.getString('MAJOR') %>" name="MAJOR"></th>
+                        <th><input value="<%= rs.getString('MINOR') %>" name="MINOR"></th>
+                        <th><input value="<%= rs.getString('COLLEGE') %>" name="COLLEGE"></th>
+                        <th><input value="<%= rs.getBoolean('BS/MS') %>" name="BS/MS"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
-                    <form action="student_entry_form.jsp" method="get">
+                    <form action="undergrad_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
                             name="STUDENTID">
