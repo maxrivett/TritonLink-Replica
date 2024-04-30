@@ -81,10 +81,10 @@
                         "DELETE FROM review_session_info WHERE DATE = ?, STARTTIME = ?, ENDTIME = ?, BUILDING = ?, ROOM = ?");
 
                         pstmt.setString(1, request.getParameter("DATE"));
-                        pstmt.setString(1, request.getParameter("STARTTIME"));
-                        pstmt.setString(1, request.getParameter("ENDTIME"));
-                        pstmt.setString(1, request.getParameter("BUILDING"));
-                        pstmt.setInt(1, request.getParameter("ROOM"));
+                        pstmt.setString(2, request.getParameter("STARTTIME"));
+                        pstmt.setString(3, request.getParameter("ENDTIME"));
+                        pstmt.setString(4, request.getParameter("BUILDING"));
+                        pstmt.setInt(5, request.getParameter("ROOM"));
 
                         int rowCount = pstmt.executeUpdate();
 
