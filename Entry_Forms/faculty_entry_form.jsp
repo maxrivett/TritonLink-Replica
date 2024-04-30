@@ -28,6 +28,32 @@ try {
         pstmt = conn.prepareStatement("DELETE FROM Faculty WHERE faculty_name = ?");
         pstmt.setString(1, request.getParameter("faculty_name"));
         pstmt.executeUpdate();
+
+        pstmt2 = conn.prepareStatement("DELETE FROM advisor WHERE faculty_name = ?");
+        pstmt2.setString(1, request.getParameter("faculty_name"));
+        pstmt2.executeUpdate();
+
+        Statement studentQuery = conn.prepareStatement("SELECT STUDENTID FROM thesis_committee WHERE faculty_name = ?");
+        studentQuery.setString(1, request.getParameter("faculty_name"));
+        ResultSet studentSet = studentQuery.executeQuery();
+        Integer phd_student_id = studentSet.getInt("STUDENTID");
+
+        Statement profCountQuery = conn.prepareStatement("SELECT count(*) as profCount FROM thesis_committee WHERE STUDENTID = ?");
+        profCountQuery.setInt(1, request.getParameter("STUDENTID"));
+        ResultSet profCountSet = profCountQuery.executeQuery();
+        Integer profCount = profCountSet.getInt("profCount");
+
+        if (profCount > 4) {
+            pstmt3 = conn.prepareStatement("DELETE FROM thesis_committee WHERE faculty_name = ?");
+            pstmt3.setString(1, request.getParameter("faculty_name"));
+            pstmt3.executeUpdate();
+        }
+        else {
+            pstmt3 = conn.prepareStatement("DELETE FROM thesis_committee WHERE STUDENTID = ?");
+            pstmt3.setInt(1, phd_student_id);
+            pstmt3.executeUpdate();
+        }
+
         conn.commit();
     }
 

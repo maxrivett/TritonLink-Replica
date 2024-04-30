@@ -158,6 +158,13 @@
                             Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt7.executeUpdate();
 
+                        PreparedStatement pstmt8 = conn.prepareStatement(
+                        "DELETE FROM advisor WHERE STUDENTID = ?");
+
+                        pstmt8.setInt(1,
+                            Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstmt8.executeUpdate();
+
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
@@ -202,19 +209,32 @@
                 <%
                     // Iterate over the ResultSet
                     while ( rs.next() ) {
+                        PreparedStatement pstmt = conn.prepareStatement(
+                        "SELECT * FROM Student WHERE STUDENTID = ?");
+
+                        pstmt.setString(1, rs.getString('STUDENTID'));
+
+                        ResultSet rs2 = pstmt.executeQuery();
+
+                        PreparedStatement pstmt2 = conn.prepareStatement(
+                        "SELECT * FROM graduate WHERE STUDENTID = ?");
+
+                        pstmt2.setString(1, rs.getString('STUDENTID'));
+
+                        ResultSet rs3 = pstmt2.executeQuery();
                 %>
                 <tr>
                     <form action="phd_candidate_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getString('FIRSTNAME') %>" name="FIRSTNAME"></th>
-                        <th><input value="<%= rs.getString('MIDDLENAME') %>" name="MIDDLENAME"></th>
-                        <th><input value="<%= rs.getString('LASTNAME') %>" name="LASTNAME"></th>
-                        <th><input value="<%= rs.getBoolean('ENROLLED') %>" name="ENROLLED"></th>
-                        <th><input value="<%= rs.getInt('SSN') %>" name="SSN"></th>
-                        <th><input value="<%= rs.getInt('RESIDENCY') %>" name="RESIDENCY"></th>
-                        <th><input value="<%= rs.getFloat('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
-                        <th><input value="<%= rs.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
+                        <th><input value="<%= rs2.getInt('STUDENTID') %>" name="STUDENTID"></th>
+                        <th><input value="<%= rs2.getString('FIRSTNAME') %>" name="FIRSTNAME"></th>
+                        <th><input value="<%= rs2.getString('MIDDLENAME') %>" name="MIDDLENAME"></th>
+                        <th><input value="<%= rs2.getString('LASTNAME') %>" name="LASTNAME"></th>
+                        <th><input value="<%= rs2.getBoolean('ENROLLED') %>" name="ENROLLED"></th>
+                        <th><input value="<%= rs2.getInt('SSN') %>" name="SSN"></th>
+                        <th><input value="<%= rs2.getString('RESIDENCY') %>" name="RESIDENCY"></th>
+                        <th><input value="<%= rs2.getFloat('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
+                        <th><input value="<%= rs3.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="phd_candidate_entry_form.jsp" method="get">

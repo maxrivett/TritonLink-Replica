@@ -110,40 +110,34 @@
                         int rowCount = pstmt.executeUpdate();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM thesis_committee WHERE STUDENTID = ?");
+                        "DELETE FROM graduate WHERE STUDENTID = ?");
 
                         pstmt2.setInt(1,
                             Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt2.executeUpdate();
 
                         PreparedStatement pstmt3 = conn.prepareStatement(
-                        "DELETE FROM aid_awarded WHERE STUDENTID = ?");
+                        "DELETE FROM phd WHERE STUDENTID = ?");
 
                         pstmt3.setInt(1,
                             Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt3.executeUpdate();
 
                         PreparedStatement pstmt4 = conn.prepareStatement(
-                        "DELETE FROM payment WHERE STUDENTID = ?");
+                        "DELETE FROM aid_awarded WHERE STUDENTID = ?");
 
                         pstmt4.setInt(1,
                             Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt4.executeUpdate();
 
                         PreparedStatement pstmt5 = conn.prepareStatement(
-                        "DELETE FROM graduate WHERE STUDENTID = ?");
+                        "DELETE FROM payment WHERE STUDENTID = ?");
 
                         pstmt5.setInt(1,
                             Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt5.executeUpdate();
 
-                        PreparedStatement pstmt6 = conn.prepareStatement(
-                        "DELETE FROM phd WHERE STUDENTID = ?");
-
-                        pstmt6.setInt(1,
-                            Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt6.executeUpdate();
-
+                        
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
@@ -156,7 +150,7 @@
                     // Use the statement to SELECT the undergrad attributes
                     // FROM the undergrad table
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM phd WHERE gradtype = 'Precandidate'");
+                        ("SELECT * FROM phd WHERE phdtype = 'Precandidate'");
                 %>
                 <table>
                     <tr>
@@ -188,19 +182,32 @@
                 <%
                     // Iterate over the ResultSet
                     while ( rs.next() ) {
+                        PreparedStatement pstmt = conn.prepareStatement(
+                        "SELECT * FROM Student WHERE STUDENTID = ?");
+
+                        pstmt.setString(1, rs.getString('STUDENTID'));
+
+                        ResultSet rs2 = pstmt.executeQuery();
+
+                        PreparedStatement pstmt2 = conn.prepareStatement(
+                        "SELECT * FROM graduate WHERE STUDENTID = ?");
+
+                        pstmt2.setString(1, rs.getString('STUDENTID'));
+
+                        ResultSet rs3 = pstmt2.executeQuery();
                 %>
                 <tr>
                     <form action="precandidate_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getString('FIRSTNAME') %>" name="FIRSTNAME"></th>
-                        <th><input value="<%= rs.getString('MIDDLENAME') %>" name="MIDDLENAME"></th>
-                        <th><input value="<%= rs.getString('LASTNAME') %>" name="LASTNAME"></th>
-                        <th><input value="<%= rs.getBoolean('ENROLLED') %>" name="ENROLLED"></th>
-                        <th><input value="<%= rs.getInt('SSN') %>" name="SSN"></th>
-                        <th><input value="<%= rs.getInt('RESIDENCY') %>" name="RESIDENCY"></th>
-                        <th><input value="<%= rs.getFloat('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
-                        <th><input value="<%= rs.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
+                        <th><input value="<%= rs2.getInt('STUDENTID') %>" name="STUDENTID"></th>
+                        <th><input value="<%= rs2.getString('FIRSTNAME') %>" name="FIRSTNAME"></th>
+                        <th><input value="<%= rs2.getString('MIDDLENAME') %>" name="MIDDLENAME"></th>
+                        <th><input value="<%= rs2.getString('LASTNAME') %>" name="LASTNAME"></th>
+                        <th><input value="<%= rs2.getBoolean('ENROLLED') %>" name="ENROLLED"></th>
+                        <th><input value="<%= rs2.getInt('SSN') %>" name="SSN"></th>
+                        <th><input value="<%= rs2.getString('RESIDENCY') %>" name="RESIDENCY"></th>
+                        <th><input value="<%= rs2.getFloat('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
+                        <th><input value="<%= rs3.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="precandidate_entry_form.jsp" method="get">

@@ -29,35 +29,16 @@
                         conn.setAutoCommit(false);
                         
                         // Create the prepared statement and use it to 
-                        // INSERT the payment attrs INTO the payment table
-
+                        // INSERT the advisor attrs INTO the advisors table
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO payment VALUES (?, ?, ?)"));
+                        ("INSERT INTO advisors VALUES (?, ?)"));
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("PAYNUM")));
-                        pstmt.setFloat(3, Float.parseFloat(request.getParameter("PAYAMT")));
+                        pstmt.setString(2, request.getParameter("faculty_name"));
+
+                        pstmt.executeUpdate();
 
                         conn.commit();
-                        conn.setAutoCommit(true);
-                    }
-
-                    // Check if an update is requested
-                    if (action != null && action.equals("update")) {
-                        conn.setAutoCommit(false);
-
-                        // Create prepared statement to UPDATE payment
-                        // attributes in the payment table
-
-                        PreparedStatement pstmt = conn.prepareStatement(
-                        "UPDATE payment SET PAYAMT = ? " + 
-                        "WHERE STUDENTID = ?, PAYNUM = ?");
-
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setInt(3, Integer.parseInt(request.getParameter("PAYNUM")));
-                        pstmt.setFloat(1, Float.parseFloat(request.getParameter("PAYAMT")));
-
-                        conn.setAutocommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -67,13 +48,14 @@
                         conn.setAutoCommit(false);
 
                         // Create the prepared statement and use it to
-                        // DELETE the payment FROM the payment table.
+                        // DELETE the advisor FROM the advisors table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM payment WHERE STUDENTID = ?, PAYNUM = ?");
+                        "DELETE FROM advisor WHERE STUDENTID = ?, " +
+                        "faculty_name = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("PAYNUM")));
+                        pstmt.setString(2, request.getParameter("faculty_name"));
 
 
                         int rowCount = pstmt.executeUpdate();
@@ -87,23 +69,21 @@
                     // Create the statement
                     Statement statement = conn.createStatement();
 
-                    // Use the statement to SELECT the payment attributes
-                    // FROM the payment table
+                    // Use the statement to SELECT the advisor attributes
+                    // FROM the advisor table
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM payment");
+                        ("SELECT * FROM advisor");
                 %>
                 <table>
                     <tr>
-                        <th>Student ID</th>
-                        <th>Payment Number</th>
-                        <th>Payment Amount</th>
+                        <th>Student_ID</th>
+                        <th>Faculty Name</th>
                     </tr>
                     <tr>
-                        <form action="payment_entry_form.jsp" method="get">
+                        <form action="advisory_info_submission.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
                             <th><input value="" name="STUDENTID" size="10"></th>
-                            <th><input value="" name="PAYNUM" size="10"></th>
-                            <th><input value="" name="PAYAMT" size="10"></th>
+                            <th><input value="" name="faculty_name" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
@@ -112,19 +92,12 @@
                     while ( rs.next() ) {
                 %>
                 <tr>
-                    <form action="payment_entry_form.jsp" method="get">
-                        <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getInt('PAYNUM') %>" name="PAYNUM"></th>
-                        <th><input value="<%= rs.getFloat('PAYAMT') %>" name="PAYAMT"></th>
-                        <th><input type="submit" value="Update"></th>
-                    </form>
-                    <form action="payment_entry_form.jsp" method="get">
+                    <form action="advisory_info_submission.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
                             name="STUDENTID">
-                            <input type="hidden" value="<%= rs.getInt('PAYNUM') %>"
-                            name="PAYNUM">
+                        <input type="hidden" value="<%= rs.getString('faculty_name') %>"
+                            name="faculty_name">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>

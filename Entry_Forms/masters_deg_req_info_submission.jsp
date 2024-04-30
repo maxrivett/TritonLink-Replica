@@ -29,17 +29,22 @@
                         conn.setAutoCommit(false);
                         
                         // Create the prepared statement and use it to 
-                        // INSERT the finaid attrs INTO the finaid table
+                        // INSERT the degree attrs INTO the degree table
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO finaid VALUES (?, ?, ?, ?, ?)"));
+                        ("INSERT INTO degree VALUES (?, ?, ?, ?, ?, ?)"));
 
-                        pstmt.setString(1, request.getParameter("AIDNAME"));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("YEAR")));
-                        pstmt.setString(3, request.getParameter("TYPE"));
-                        pstmt.setString(4, request.getParameter("REQUIREMENTS"));
-                        pstmt.setFloat(5, Float.parseFloat(request.getParameter("AMOUNT")));
+                        pstmt.setString(1, request.getParameter("DEPARTMENT"));
+                        pstmt.setString(2, request.getParameter("DEGTYPE"));
+                        pstmt.setInt(3, Integer.parseInt(request.getParameter("TOTALUNITS")));
 
                         pstmt.executeUpdate();
+
+                        PreparedStatement pstmt2 = conn.prepareStatement(
+                        ("INSERT INTO masters_deg VALUES (?)"));
+
+                        pstmt2.setString(1, request.getParameter("DEPARTMENT"));
+
+                        pstmt2.executeUpdate();
 
                         conn.commit();
                         conn.setAutoCommit(true);
@@ -49,17 +54,15 @@
                     if (action != null && action.equals("update")) {
                         conn.setAutoCommit(false);
 
-                        // Create prepared statement to UPDATE finaid
-                        // attributes in the finaid table
+                        // Create prepared statement to UPDATE degree
+                        // attributes in the degree table
                         PreparedStatement pstatement = conn.prepareStatement(
-                        "UPDATE finaid SET TYPE = ?, REQUIREMENTS = ?, " +
-                        "AMOUNT = ? WHERE AIDNAME = ?, YEAR = ?");
+                        "UPDATE degree SET DEGTYPE = ?, TOTALUNITS = ? " +
+                        "WHERE DEPARTMENT = ?");
 
-                        pstatement.setString(4, request.getParameter("AIDNAME"));
-                        pstatement.setInt(5, Integer.parseInt(request.getParameter("YEAR")));
-                        pstatement.setString(1, request.getParameter("TYPE"));
-                        pstatement.setString(2, request.getParameter("REQUIREMENTS"));
-                        pstatement.setFloat(3, Float.parseFloat(request.getParameter("AMOUNT")));
+                        pstatement.setString(3, request.getParameter("DEPARTMENT"));
+                        pstatement.setString(1, request.getParameter("DEGTYPE"));
+                        pstatement.setInt(2, Integer.parseInt(request.getParameter("TOTALUNITS")));
 
                         int rowCount = pstatement.executeUpdate();
 
@@ -73,23 +76,35 @@
                         conn.setAutoCommit(false);
 
                         // Create the prepared statement and use it to
-                        // DELETE the finaid FROM the finaid table.
+                        // DELETE the degree FROM the degree table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM finaid WHERE AIDNAME = ?, YEAR = ?");
+                        "DELETE FROM degree WHERE DEPARTMENT = ?");
 
-                        pstmt.setString(1, request.getParameter("AIDNAME"));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("YEAR")));
+                        pstmt.setString(1, request.getParameter("DEPARTMENT"));
 
                         int rowCount = pstmt.executeUpdate();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM aid_awarded WHERE AIDNAME = ?, YEAR = ?");
+                        "DELETE FROM categories WHERE DEPARTMENT = ?");
 
-                        pstmt2.setString(1, request.getParameter("AIDNAME"));
-                        pstmt2.setInt(2, Integer.parseInt(request.getParameter("YEAR")));
+                        pstmt2.setString(1, request.getParameter("DEPARTMENT"));
 
                         pstmt2.executeUpdate();
+
+                        PreparedStatement pstmt3 = conn.prepareStatement(
+                        "DELETE FROM masters_deg WHERE DEPARTMENT = ?");
+
+                        pstmt3.setString(1, request.getParameter("DEPARTMENT"));
+
+                        pstmt3.executeUpdate();
+
+                        PreparedStatement pstmt4 = conn.prepareStatement(
+                        "DELETE FROM concentrations WHERE DEPARTMENT = ?");
+
+                        pstmt4.setString(1, request.getParameter("DEPARTMENT"));
+
+                        pstmt4.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
@@ -100,50 +115,48 @@
                     // Create the statement
                     Statement statement = conn.createStatement();
 
-                    // Use the statement to SELECT the finaid attributes
-                    // FROM the finaid table
+                    // Use the statement to SELECT the degree attributes
+                    // FROM the degree table
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM finaid");
+                        ("SELECT * FROM masters_deg");
                 %>
                 <table>
                     <tr>
-                        <th>Aid Name</th>
-                        <th>Aid Year</th>
-                        <th>Aid Type</th>
-                        <th>Aid Requirements</th>
-                        <th>Aid Amount</th>
+                        <th>Department</th>
+                        <th>Degree Type</th>
+                        <th>Total Units</th>
                     </tr>
                     <tr>
-                        <form action="finaid_entry_form.jsp" method="get">
+                        <form action="masters_deg_req_info_submission.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
-                            <th><input value="" name="AIDNAME" size="10"></th>
-                            <th><input value="" name="YEAR" size="10"></th>
-                            <th><input value="" name="TYPE" size="10"></th>
-                            <th><input value="" name="REQUIREMENTS" size="10"></th>
-                            <th><input value="" name="AMOUNT" size="10"></th>
+                            <th><input value="" name="DEPARTMENT" size="10"></th>
+                            <th><input value="" name="DEGTYPE" size="10"></th>
+                            <th><input value="" name="TOTALUNITS" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
                 <%
                     // Iterate over the ResultSet
                     while ( rs.next() ) {
+                        PreparedStatement pstmt = conn.prepareStatement(
+                        "SELECT * FROM degree WHERE DEPARTMENT = ?");
+
+                        pstmt.setString(1, rs.getString('DEPARTMENT'));
+
+                        ResultSet rs2 = pstmt.executeQuery();
                 %>
                 <tr>
-                    <form action="finaid_entry_form.jsp" method="get">
+                    <form action="masters_deg_req_info_submission.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getString('AIDNAME') %>" name="AIDNAME"></th>
-                        <th><input value="<%= rs.getInt('YEAR') %>" name="YEAR"></th>
-                        <th><input value="<%= rs.getString('TYPE') %>" name="TYPE"></th>
-                        <th><input value="<%= rs.getString('REQUIREMENTS') %>" name="REQUIREMENTS"></th>
-                        <th><input value="<%= rs.getFloat('AMOUNT') %>" name="AMOUNT"></th>
+                        <th><input value="<%= rs2.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
+                        <th><input value="<%= rs2.getString('DEGTYPE') %>" name="DEGTYPE"></th>
+                        <th><input value="<%= rs2.getInt('TOTALUNITS') %>" name="TOTALUNITS"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
-                    <form action="finaid_entry_form.jsp" method="get">
+                    <form action="masters_deg_req_info_submission.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getString('AIDNAME') %>"
-                            name="AIDNAME">
-                        <input type="hidden" value="<%= rs.getInt('YEAR') %>"
-                            name="YEAR">
+                        <input type="hidden" value="<%= rs.getString('DEPARTMENT') %>"
+                            name="DEPARTMENT">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>

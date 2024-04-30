@@ -29,35 +29,16 @@
                         conn.setAutoCommit(false);
                         
                         // Create the prepared statement and use it to 
-                        // INSERT the payment attrs INTO the payment table
+                        // INSERT the previous degree attrs INTO the previous degrees table
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO payment VALUES (?, ?, ?)"));
+                        ("INSERT INTO previous_degrees VALUES (?, ?, ?)"));
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("PAYNUM")));
-                        pstmt.setFloat(3, Float.parseFloat(request.getParameter("PAYAMT")));
+                        pstmt.setString(2, request.getParameter("PREVUNI"));
+                        pstmt.setString(3, request.getParameter("PREVDEG"));
 
                         conn.commit();
-                        conn.setAutoCommit(true);
-                    }
-
-                    // Check if an update is requested
-                    if (action != null && action.equals("update")) {
-                        conn.setAutoCommit(false);
-
-                        // Create prepared statement to UPDATE payment
-                        // attributes in the payment table
-
-                        PreparedStatement pstmt = conn.prepareStatement(
-                        "UPDATE payment SET PAYAMT = ? " + 
-                        "WHERE STUDENTID = ?, PAYNUM = ?");
-
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setInt(3, Integer.parseInt(request.getParameter("PAYNUM")));
-                        pstmt.setFloat(1, Float.parseFloat(request.getParameter("PAYAMT")));
-
-                        conn.setAutocommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -67,13 +48,14 @@
                         conn.setAutoCommit(false);
 
                         // Create the prepared statement and use it to
-                        // DELETE the payment FROM the payment table.
+                        // DELETE the previous_degrees FROM the previous_degrees table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM payment WHERE STUDENTID = ?, PAYNUM = ?");
+                        "DELETE FROM previous_degrees WHERE STUDENTID = ?, PREVUNI = ?, PREVDEG = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("PAYNUM")));
+                        pstmt.setString(2, request.getParameter("PREVUNI"));
+                        pstmt.setString(3, request.getParameter("PREVDEG"));
 
 
                         int rowCount = pstmt.executeUpdate();
@@ -90,20 +72,20 @@
                     // Use the statement to SELECT the payment attributes
                     // FROM the payment table
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM payment");
+                        ("SELECT * FROM previous_degrees");
                 %>
                 <table>
                     <tr>
                         <th>Student ID</th>
-                        <th>Payment Number</th>
-                        <th>Payment Amount</th>
+                        <th>Previous University</th>
+                        <th>Previous Degree</th>
                     </tr>
                     <tr>
-                        <form action="payment_entry_form.jsp" method="get">
+                        <form action="previous_degrees_entry_form.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
                             <th><input value="" name="STUDENTID" size="10"></th>
-                            <th><input value="" name="PAYNUM" size="10"></th>
-                            <th><input value="" name="PAYAMT" size="10"></th>
+                            <th><input value="" name="PREVUNI" size="10"></th>
+                            <th><input value="" name="PREVDEG" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
@@ -112,18 +94,13 @@
                     while ( rs.next() ) {
                 %>
                 <tr>
-                    <form action="payment_entry_form.jsp" method="get">
-                        <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getInt('PAYNUM') %>" name="PAYNUM"></th>
-                        <th><input value="<%= rs.getFloat('PAYAMT') %>" name="PAYAMT"></th>
-                        <th><input type="submit" value="Update"></th>
-                    </form>
-                    <form action="payment_entry_form.jsp" method="get">
+                    <form action="previous_degrees_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
                             name="STUDENTID">
-                            <input type="hidden" value="<%= rs.getInt('PAYNUM') %>"
+                            <input type="hidden" value="<%= rs.getString('PREVUNI') %>"
+                            name="PAYNUM">
+                            <input type="hidden" value="<%= rs.getString('PREVDEG') %>"
                             name="PAYNUM">
                         <td><input type="submit" value="Delete"></td>
                     </form>

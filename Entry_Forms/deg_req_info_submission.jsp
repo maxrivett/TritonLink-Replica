@@ -50,7 +50,7 @@
                         // Create prepared statement to UPDATE degree
                         // attributes in the degree table
                         PreparedStatement pstatement = conn.prepareStatement(
-                        "UPDATE classes_taken SET DEGTYPE = ?, TOTALUNITS = ? " +
+                        "UPDATE degree SET DEGTYPE = ?, TOTALUNITS = ? " +
                         "WHERE DEPARTMENT = ?");
 
                         pstatement.setString(3, request.getParameter("DEPARTMENT"));
@@ -84,6 +84,20 @@
                         pstmt2.setString(1, request.getParameter("DEPARTMENT"));
 
                         pstmt2.executeUpdate();
+
+                        PreparedStatement pstmt3 = conn.prepareStatement(
+                        "DELETE FROM masters_deg WHERE DEPARTMENT = ?");
+
+                        pstmt3.setString(1, request.getParameter("DEPARTMENT"));
+
+                        pstmt3.executeUpdate();
+
+                        PreparedStatement pstmt4 = conn.prepareStatement(
+                        "DELETE FROM concentrations WHERE DEPARTMENT = ?");
+
+                        pstmt4.setString(1, request.getParameter("DEPARTMENT"));
+
+                        pstmt4.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
@@ -121,14 +135,14 @@
                 <tr>
                     <form action="deg_req_info_submission.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('DEPARTMENT') %>" name="DEPARTMENT"></th>
-                        <th><input value="<%= rs.getBoolean('DEGTYPE') %>" name="DEGTYPE"></th>
-                        <th><input value="<%= rs.getBoolean('TOTALUNITS') %>" name="TOTALUNITS"></th>
+                        <th><input value="<%= rs.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
+                        <th><input value="<%= rs.getString('DEGTYPE') %>" name="DEGTYPE"></th>
+                        <th><input value="<%= rs.getInt('TOTALUNITS') %>" name="TOTALUNITS"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="deg_req_info_submission.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('DEPARTMENT') %>"
+                        <input type="hidden" value="<%= rs.getString('DEPARTMENT') %>"
                             name="DEPARTMENT">
                         <td><input type="submit" value="Delete"></td>
                     </form>
