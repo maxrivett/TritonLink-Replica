@@ -34,9 +34,11 @@
                         ("INSERT INTO probation_info VALUES (?, ?, ?, ?, ?, ?)"));
 
                         pstmt.setString(1, request.getParameter("STUDENTID"));
-                        pstmt.setString(2, request.getParameter("PROBSTARTTIME"));
-                        pstmt.setString(3, request.getParameter("PROBENDTIME"));
-                        pstmt.setString(4, request.getParameter("REASON"));
+                        pstmt.setString(2, request.getParameter("STARTQUARTER"));
+                        pstmt.setString(3, request.getParameter("ENDQUARTER"));
+                        pstmt.setInt(4, request.getParameter("STARTYEAR"));
+                        pstmt.setInt(5, request.getParameter("ENDYEAR"));
+                        pstmt.setString(6, request.getParameter("REASON"));
 
                         pstmt.executeUpdate();
 
@@ -52,12 +54,14 @@
                         // attributes in the probation_info table
                         PreparedStatement pstatement = conn.prepareStatement(
                         "UPDATE probation_info SET REASON = ? +
-                        "WHERE STUDENTID = ?, PROBSTARTTIME = ?, PROBENDTIME = ?");
+                        "WHERE STUDENTID = ?, STARTQUARTER = ?, ENDQUARTER = ?, STARTYEAR = ?, ENDYEAR = ?");
 
                         pstmt.setString(1, request.getParameter("REASON"));
                         pstmt.setString(2, request.getParameter("STUDENTID"));
-                        pstmt.setString(3, request.getParameter("PROBSTARTTIME"));
-                        pstmt.setInt(4, request.getParameter("PROBENDTIME"));
+                        pstmt.setString(3, request.getParameter("STARTQUARTER"));
+                        pstmt.setString(4, request.getParameter("ENDQUARTER"));
+                        pstmt.setInt(5, request.getParameter("STARTYEAR"));
+                        pstmt.setInt(6, request.getParameter("ENDYEAR"));
 
                         int rowCount = pstatement.executeUpdate();
 
@@ -74,11 +78,13 @@
                         // DELETE the probation_info FROM the probation_info table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM probation_info WHERE STUDENTID = ?, PROBSTARTTIME = ?, PROBENDTIME = ?");
+                        "DELETE FROM probation_info WHERE STUDENTID = ?, STARTQUARTER = ?, ENDQUARTER = ?, STARTYEAR = ?, ENDYEAR = ?");
 
                         pstmt.setString(1, request.getParameter("STUDENTID"));
-                        pstmt.setString(2, request.getParameter("PROBSTARTTIME"));
-                        pstmt.setString(3, request.getParameter("PROBENDTIME"));
+                        pstmt.setString(2, request.getParameter("STARTQUARTER"));
+                        pstmt.setString(3, request.getParameter("ENDQUARTER"));
+                        pstmt.setInt(4, request.getParameter("STARTYEAR"));
+                        pstmt.setInt(5, request.getParameter("ENDYEAR"));
 
                         int rowCount = pstmt.executeUpdate();
 
@@ -99,16 +105,20 @@
                 <table>
                     <tr>
                         <th>Student ID</th>
-                        <th>Probation Start Time</th>
-                        <th>Probation End Time</th>
+                        <th>Probation Start Quarter</th>
+                        <th>Probation End Quarter</th>
+                        <th>Probation Start Year</th>
+                        <th>Probation End Year</th>
                         <th>Reason</th>
                     </tr>
                     <tr>
                         <form action="probation_info_submission.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
                             <th><input value="" name="STUDENTID" size="10"></th>
-                            <th><input value="" name="PROBSTARTTIME" size="10"></th>
-                            <th><input value="" name="PROBENDTIME" size="10"></th>
+                            <th><input value="" name="STARTQUARTER" size="10"></th>
+                            <th><input value="" name="ENDQUARTER" size="10"></th>
+                            <th><input value="" name="STARTYEAR" size="4"></th>
+                            <th><input value="" name="ENDYEAR" size="4"></th>
                             <th><input value="" name="REASON" size="100"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
@@ -121,16 +131,20 @@
                     <form action="probation_info_submission.jsp" method="get">
                         <input type="hidden" value="update" name="action">
                         <th><input value="<%= rs.getString('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getString('PROBSTARTTIME') %>" name="PROBSTARTTIME"></th>
-                        <th><input value="<%= rs.getString('PROBENDTIME') %>" name="PROBENDTIME"></th>
+                        <th><input value="<%= rs.getString('STARTQUARTER') %>" name="STARTQUARTER"></th>
+                        <th><input value="<%= rs.getString('ENDQUARTER') %>" name="ENDQUARTER"></th>
+                        <th><input value="<%= rs.getString('STARTYEAR') %>" name="STARTYEAR"></th>
+                        <th><input value="<%= rs.getString('ENDYEAR') %>" name="ENDYEAR"></th>
                         <th><input value="<%= rs.getString('REASON') %>" name="REASON"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="probation_info_submission.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getString('STUDENTID') %>" name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getString('PROBSTARTTIME') %>" name="PROBSTARTTIME">
-                        <input type="hidden" value="<%= rs.getString('PROBENDTIME') %>" name="PROBENDTIME">
+                        <input type="hidden" value="<%= rs.getString('STARTQUARTER') %>" name="STARTQUARTER">
+                        <input type="hidden" value="<%= rs.getString('ENDQUARTER') %>" name="ENDQUARTER">
+                        <input type="hidden" value="<%= rs.getString('STARTYEAR') %>" name="STARTYEAR">
+                        <input type="hidden" value="<%= rs.getString('ENDYEAR') %>" name="ENDYEAR">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>
