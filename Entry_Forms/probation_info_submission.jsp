@@ -133,8 +133,8 @@
                         <th><input value="<%= rs.getString('STUDENTID') %>" name="STUDENTID"></th>
                         <th><input value="<%= rs.getString('STARTQUARTER') %>" name="STARTQUARTER"></th>
                         <th><input value="<%= rs.getString('ENDQUARTER') %>" name="ENDQUARTER"></th>
-                        <th><input value="<%= rs.getString('STARTYEAR') %>" name="STARTYEAR"></th>
-                        <th><input value="<%= rs.getString('ENDYEAR') %>" name="ENDYEAR"></th>
+                        <th><input value="<%= rs.getInt('STARTYEAR') %>" name="STARTYEAR"></th>
+                        <th><input value="<%= rs.getInt('ENDYEAR') %>" name="ENDYEAR"></th>
                         <th><input value="<%= rs.getString('REASON') %>" name="REASON"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
@@ -143,8 +143,8 @@
                         <input type="hidden" value="<%= rs.getString('STUDENTID') %>" name="STUDENTID">
                         <input type="hidden" value="<%= rs.getString('STARTQUARTER') %>" name="STARTQUARTER">
                         <input type="hidden" value="<%= rs.getString('ENDQUARTER') %>" name="ENDQUARTER">
-                        <input type="hidden" value="<%= rs.getString('STARTYEAR') %>" name="STARTYEAR">
-                        <input type="hidden" value="<%= rs.getString('ENDYEAR') %>" name="ENDYEAR">
+                        <input type="hidden" value="<%= rs.getInt('STARTYEAR') %>" name="STARTYEAR">
+                        <input type="hidden" value="<%= rs.getInt('ENDYEAR') %>" name="ENDYEAR">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>
