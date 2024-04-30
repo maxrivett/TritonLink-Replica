@@ -44,6 +44,19 @@
 
                         pstmt.executeUpdate();
 
+                        PreparedStatement pstmt2 = conn.prepareStatement(
+                        ("INSERT INTO graduate VALUES (?, ?, 'PhD')"));
+
+                        pstmt2.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstmt2.setString(2, request.getParameter("DEPARTMENT"));
+
+                        PreparedStatement pstmt3 = conn.prepareStatement(
+                        ("INSERT INTO phd VALUES (?, 'Precandidate')"));
+
+                        pstmt3.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+
+                        pstmt3.executeUpdate();
+
                         conn.commit();
                         conn.setAutoCommit(true);
                     }
@@ -68,6 +81,14 @@
                         pstatement.setFloat(7, Float.parseFloat(request.getParameter("ACCOUNTBALANCE")));
 
                         int rowCount = pstatement.executeUpdate();
+
+                        PreparedStatement pstatement2 = conn.prepareStatement(
+                        "UPDATE graduate SET DEPARTMENT = ? WHERE STUDENTID = ?");
+
+                        pstatement2.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstatement2.setString(1, request.getParameter("DEPARTMENT"));
+
+                        pstatement2.executeUpdate();
 
                         conn.setAutocommit(false);
                         conn.setAutoCommit(true);
@@ -109,6 +130,20 @@
                             Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt4.executeUpdate();
 
+                        PreparedStatement pstmt5 = conn.prepareStatement(
+                        "DELETE FROM graduate WHERE STUDENTID = ?");
+
+                        pstmt5.setInt(1,
+                            Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstmt5.executeUpdate();
+
+                        PreparedStatement pstmt6 = conn.prepareStatement(
+                        "DELETE FROM phd WHERE STUDENTID = ?");
+
+                        pstmt6.setInt(1,
+                            Integer.parseInt(request.getParameter("STUDENTID")));
+                        pstmt6.executeUpdate();
+
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
@@ -118,10 +153,10 @@
                     // Create the statement
                     Statement statement = conn.createStatement();
 
-                    // Use the statement to SELECT the student attributes
-                    // FROM the Student table
+                    // Use the statement to SELECT the undergrad attributes
+                    // FROM the undergrad table
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM Student");
+                        ("SELECT * FROM phd WHERE gradtype = 'Precandidate'");
                 %>
                 <table>
                     <tr>
@@ -133,9 +168,10 @@
                         <th>SSN</th>
                         <th>Residency</th>
                         <th>Account_Balance</th>
+                        <th>Department</th>
                     </tr>
                     <tr>
-                        <form action="student_entry_form.jsp" method="get">
+                        <form action="precandidate_entry_form.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
                             <th><input value="" name="STUDENTID" size="10"></th>
                             <th><input value="" name="FIRSTNAME" size="10"></th>
@@ -145,6 +181,7 @@
                             <th><input value="" name="SSN" size="10"></th>
                             <th><input value="" name="RESIDENCY" size="10"></th>
                             <th><input value="" name="ACCOUNTBALANCE" size="10"></th>
+                            <th><input value="" name="DEPARTMENT" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
@@ -153,19 +190,20 @@
                     while ( rs.next() ) {
                 %>
                 <tr>
-                    <form action="student_entry_form.jsp" method="get">
+                    <form action="precandidate_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
                         <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getBoolean('FIRSTNAME') %>" name="FIRSTNAME"></th>
-                        <th><input value="<%= rs.getBoolean('MIDDLENAME') %>" name="MIDDLENAME"></th>
-                        <th><input value="<%= rs.getBoolean('LASTNAME') %>" name="LASTNAME"></th>
-                        <th><input value="<%= rs.getString('ENROLLED') %>" name="ENROLLED"></th>
+                        <th><input value="<%= rs.getString('FIRSTNAME') %>" name="FIRSTNAME"></th>
+                        <th><input value="<%= rs.getString('MIDDLENAME') %>" name="MIDDLENAME"></th>
+                        <th><input value="<%= rs.getString('LASTNAME') %>" name="LASTNAME"></th>
+                        <th><input value="<%= rs.getBoolean('ENROLLED') %>" name="ENROLLED"></th>
                         <th><input value="<%= rs.getInt('SSN') %>" name="SSN"></th>
                         <th><input value="<%= rs.getInt('RESIDENCY') %>" name="RESIDENCY"></th>
-                        <th><input value="<%= rs.getBoolean('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
+                        <th><input value="<%= rs.getFloat('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
+                        <th><input value="<%= rs.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
-                    <form action="student_entry_form.jsp" method="get">
+                    <form action="precandidate_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
                             name="STUDENTID">
