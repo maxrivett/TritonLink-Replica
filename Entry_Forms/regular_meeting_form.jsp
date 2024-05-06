@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -53,7 +54,7 @@
                         // attributes in the regular_meeting table
                         PreparedStatement pstatement = conn.prepareStatement(
                         "UPDATE regular_meeting SET TYPE = ? +
-                        "WHERE WEEKDAY = ?, CLASS = ?, STARTTIME = ?, ENDTIME = ?");
+                        "WHERE WEEKDAY = ? AND CLASS = ? AND STARTTIME = ? AND ENDTIME = ?");
 
                         pstmt.setString(1, request.getParameter("TYPE"));
                         pstmt.setString(2, request.getParameter("WEEKDAY"));
@@ -76,7 +77,7 @@
                         // DELETE the regular_meeting FROM the regular_meeting table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM regular_meeting WHERE WEEKDAY = ?, CLASS = ?, STARTTIME = ?, ENDTIME = ?");
+                        "DELETE FROM regular_meeting WHERE WEEKDAY = ? AND CLASS = ? AND STARTTIME = ? AND ENDTIME = ?");
 
                         pstmt.setString(1, request.getParameter("WEEKDAY"));
                         pstmt.setString(2, request.getParameter("CLASS"));

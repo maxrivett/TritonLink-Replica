@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -58,7 +59,7 @@
 
                         pstmt2.executeUpdate();
 
-                        if (request.getParameter("LABREQ")) {
+                        if (Boolean.parseBoolean(request.getParameter("LABREQ"))) {
                             PreparedStatement pstmt3 = conn.prepareStatement(
                             ("INSERT INTO Corequisites VALUES (?, ?)"));
 
@@ -122,7 +123,7 @@
 
                         pstmt4.executeUpdate();
 
-                        if (request.getParameter("LABREQ")) {
+                        if (Boolean.parseBoolean(request.getParameter("LABREQ"))) {
                             PreparedStatement pstmt5 = conn.prepareStatement(
                             ("INSERT INTO Corequisites VALUES (?, ?)"));
 
@@ -133,7 +134,7 @@
 
                         }
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -169,20 +170,12 @@
                         pstmt3.executeUpdate();
 
                         PreparedStatement pstmt4 = conn.prepareStatement(
-                        "DELETE FROM class_courses WHERE COURSEID = ?");
+                        "DELETE FROM classes WHERE COURSEID = ?");
 
                         pstmt4.setInt(1,
                             Integer.parseInt(request.getParameter("COURSEID")));
 
                         pstmt4.executeUpdate();
-
-                        PreparedStatement pstmt5 = conn.prepareStatement(
-                        "DELETE FROM classes WHERE COURSEID = ?");
-
-                        pstmt5.setInt(1,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt5.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
@@ -233,21 +226,21 @@
                 <tr>
                     <form action="course_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('COURSEID') %>" name="COURSEID"></th>
-                        <th><input value="<%= rs.getBoolean('LABREQ') %>" name="LABREQ"></th>
-                        <th><input value="<%= rs.getBoolean('SUALLOW') %>" name="SUALLOW"></th>
-                        <th><input value="<%= rs.getBoolean('LETTERGRADE') %>" name="LETTERGRADE"></th>
-                        <th><input value="<%= rs.getString('COURSENUM') %>" name="COURSENUM"></th>
-                        <th><input value="<%= rs.getInt('UNITMIN') %>" name="UNITMIN"></th>
-                        <th><input value="<%= rs.getInt('UNITMAX') %>" name="UNITMAX"></th>
-                        <th><input value="<%= rs.getBoolean('INSTPERM') %>" name="INSTPERM"></th>
-                        <th><input value="<%= rs.getString('PREREQUISITES') %>" name="PREREQUISITES"></th>
-                        <th><input value="<%= rs.getString('COREQUISITE') %>" name="COREQUISITE"></th>
-                        <th><input type="submit" value="Update"></th>
+                        <td><input value="<%= rs.getInt("COURSEID") %>" name="COURSEID"></td>
+                        <td><input value="<%= rs.getBoolean("LABREQ") %>" name="LABREQ"></td>
+                        <td><input value="<%= rs.getBoolean("SUALLOW") %>" name="SUALLOW"></td>
+                        <td><input value="<%= rs.getBoolean("LETTERGRADE") %>" name="LETTERGRADE"></td>
+                        <td><input value="<%= rs.getString("COURSENUM") %>" name="COURSENUM"></td>
+                        <td><input value="<%= rs.getInt("UNITMIN") %>" name="UNITMIN"></td>
+                        <td><input value="<%= rs.getInt("UNITMAX") %>" name="UNITMAX"></td>
+                        <td><input value="<%= rs.getBoolean("INSTPERM") %>" name="INSTPERM"></td>
+                        <td><input value="<%= rs.getString("PREREQUISITES") %>" name="PREREQUISITES"></td>
+                        <td><input value="<%= rs.getString("COREQUISITE") %>" name="COREQUISITE"></td>
+                        <td><input type="submit" value="Update"></td>
                     </form>
                     <form action="course_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('COURSEID') %>"
+                        <input type="hidden" value="<%= rs.getInt("COURSEID") %>"
                             name="COURSEID">
                         <td><input type="submit" value="Delete"></td>
                     </form>

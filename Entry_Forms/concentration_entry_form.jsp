@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -68,7 +69,7 @@
 
                         PreparedStatement pstmt = conn.prepareStatement(
                         "UPDATE concentration SET CONGPA = ?, CONUNITS = ? " + 
-                        "WHERE DEPARTMENT = ?, CONNAME = ?");
+                        "WHERE DEPARTMENT = ? AND CONNAME = ?");
 
                         pstmt.setString(3, request.getParameter("DEPARTMENT"));
                         pstmt.setString(4, request.getParameter("CONNAME"));
@@ -76,7 +77,7 @@
                         pstmt.setInteger(2, Integer.parseInt(request.getParameter("CONUNITS")));
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM concentration_courses WHERE DEPARTMENT = ?, CONNAME = ?");
+                        "DELETE FROM concentration_courses WHERE DEPARTMENT = ? AND CONNAME = ?");
 
                         pstmt2.setString(1, request.getParameter("DEPARTMENT"));
                         pstmt2.setString(2, request.getParameter("CONNAME"));
@@ -97,7 +98,7 @@
 
 
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -166,18 +167,18 @@
                 <tr>
                     <form action="concentration_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('DEPARTMENT') %>" name="DEPARTMENT"></th>
-                        <th><input value="<%= rs.getBoolean('CONNAME') %>" name="CONNAME"></th>
-                        <th><input value="<%= rs.getInt('CONGPA') %>" name="CONGPA"></th>
-                        <th><input value="<%= rs.getBoolean('CONUNITS') %>" name="CONUNITS"></th>
-                        <th><input value="<%= rs.getInt('COURSES') %>" name="COURSES"></th>
+                        <th><input value="<%= rs.getInt("DEPARTMENT") %>" name="DEPARTMENT"></th>
+                        <th><input value="<%= rs.getBoolean("CONNAME") %>" name="CONNAME"></th>
+                        <th><input value="<%= rs.getInt("CONGPA") %>" name="CONGPA"></th>
+                        <th><input value="<%= rs.getBoolean("CONUNITS") %>" name="CONUNITS"></th>
+                        <th><input value="<%= rs.getInt("COURSES") %>" name="COURSES"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="concentration_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('DEPARTMENT') %>"
+                        <input type="hidden" value="<%= rs.getInt("DEPARTMENT") %>"
                             name="DEPARTMENT">
-                            <input type="hidden" value="<%= rs.getInt('CONNAME') %>"
+                            <input type="hidden" value="<%= rs.getInt("CONNAME") %>"
                             name="CONNAME">
                         <td><input type="submit" value="Delete"></td>
                     </form>

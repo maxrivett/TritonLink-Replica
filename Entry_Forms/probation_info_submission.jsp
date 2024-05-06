@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -54,7 +55,7 @@
                         // attributes in the probation_info table
                         PreparedStatement pstatement = conn.prepareStatement(
                         "UPDATE probation_info SET REASON = ? +
-                        "WHERE STUDENTID = ?, STARTQUARTER = ?, ENDQUARTER = ?, STARTYEAR = ?, ENDYEAR = ?");
+                        "WHERE STUDENTID = ? AND STARTQUARTER = ? AND ENDQUARTER = ? AND STARTYEAR = ? AND ENDYEAR = ?");
 
                         pstmt.setString(1, request.getParameter("REASON"));
                         pstmt.setString(2, request.getParameter("STUDENTID"));
@@ -78,7 +79,7 @@
                         // DELETE the probation_info FROM the probation_info table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM probation_info WHERE STUDENTID = ?, STARTQUARTER = ?, ENDQUARTER = ?, STARTYEAR = ?, ENDYEAR = ?");
+                        "DELETE FROM probation_info WHERE STUDENTID = ? AND STARTQUARTER = ? AND ENDQUARTER = ? AND STARTYEAR = ? AND ENDYEAR = ?");
 
                         pstmt.setString(1, request.getParameter("STUDENTID"));
                         pstmt.setString(2, request.getParameter("STARTQUARTER"));

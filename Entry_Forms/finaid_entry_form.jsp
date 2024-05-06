@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -53,7 +54,7 @@
                         // attributes in the finaid table
                         PreparedStatement pstatement = conn.prepareStatement(
                         "UPDATE finaid SET TYPE = ?, REQUIREMENTS = ?, " +
-                        "AMOUNT = ? WHERE AIDNAME = ?, YEAR = ?");
+                        "AMOUNT = ? WHERE AIDNAME = ? AND YEAR = ?");
 
                         pstatement.setString(4, request.getParameter("AIDNAME"));
                         pstatement.setInt(5, Integer.parseInt(request.getParameter("YEAR")));
@@ -63,7 +64,7 @@
 
                         int rowCount = pstatement.executeUpdate();
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -76,7 +77,7 @@
                         // DELETE the finaid FROM the finaid table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM finaid WHERE AIDNAME = ?, YEAR = ?");
+                        "DELETE FROM finaid WHERE AIDNAME = ? AND YEAR = ?");
 
                         pstmt.setString(1, request.getParameter("AIDNAME"));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("YEAR")));
@@ -131,18 +132,18 @@
                 <tr>
                     <form action="finaid_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getString('AIDNAME') %>" name="AIDNAME"></th>
-                        <th><input value="<%= rs.getInt('YEAR') %>" name="YEAR"></th>
-                        <th><input value="<%= rs.getString('TYPE') %>" name="TYPE"></th>
-                        <th><input value="<%= rs.getString('REQUIREMENTS') %>" name="REQUIREMENTS"></th>
-                        <th><input value="<%= rs.getFloat('AMOUNT') %>" name="AMOUNT"></th>
-                        <th><input type="submit" value="Update"></th>
+                        <td><input value="<%= rs.getString("AIDNAME") %>" name="AIDNAME"></td>
+                        <td><input value="<%= rs.getInt("YEAR") %>" name="YEAR"></td>
+                        <td><input value="<%= rs.getString("TYPE") %>" name="TYPE"></td>
+                        <td><input value="<%= rs.getString("REQUIREMENTS") %>" name="REQUIREMENTS"></td>
+                        <td><input value="<%= rs.getFloat("AMOUNT") %>" name="AMOUNT"></td>
+                        <td><input type="submit" value="Update"></td>
                     </form>
                     <form action="finaid_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getString('AIDNAME') %>"
+                        <input type="hidden" value="<%= rs.getString("AIDNAME") %>"
                             name="AIDNAME">
-                        <input type="hidden" value="<%= rs.getInt('YEAR') %>"
+                        <input type="hidden" value="<%= rs.getInt("YEAR") %>"
                             name="YEAR">
                         <td><input type="submit" value="Delete"></td>
                     </form>

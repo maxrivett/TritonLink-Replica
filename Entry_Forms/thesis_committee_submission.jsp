@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -80,7 +81,7 @@
                         }
 
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -90,7 +91,7 @@
                         conn.setAutoCommit(false);
 
                         // Create the prepared statement and use it to
-                        // DELETE the class taken FROM the thesis_committee table.
+                        // DELETE the committee FROM the thesis_committee table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
                         "DELETE FROM thesis_committee WHERE STUDENTID = ?");
@@ -134,13 +135,13 @@
                 <tr>
                     <form action="thesis_committee_submission.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getBoolean('PROFESSORS') %>" name="PROFESSORS"></th>
+                        <th><input value="<%= rs.getInt("STUDENTID") %>" name="STUDENTID"></th>
+                        <th><input value="<%= rs.getBoolean("PROFESSORS") %>" name="PROFESSORS"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="thesis_committee_submission.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
+                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
                         <td><input type="submit" value="Delete"></td>
                     </form>

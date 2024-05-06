@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -53,8 +54,8 @@
                         // Create prepared statement to UPDATE classes_taken
                         // attributes in the classes_taken table
                         PreparedStatement pstatement = conn.prepareStatement(
-                        "UPDATE classes_taken SET GRADE = ?, WHERE STUDENTID = ?, " +
-                        "COURSEID = ?, QUARTER = ?, YEAR = ?, SECTIONID = ?");
+                        "UPDATE classes_taken SET GRADE = ?, WHERE STUDENTID = ? AND " +
+                        "COURSEID = ? AND QUARTER = ? AND YEAR = ? AND SECTIONID = ?");
 
                         pstatement.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstatement.setInt(3, Integer.parseInt(request.getParameter("COURSEID")));
@@ -65,7 +66,7 @@
 
                         int rowCount = pstatement.executeUpdate();
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -79,7 +80,7 @@
 
                         PreparedStatement pstmt = conn.prepareStatement(
                         "DELETE FROM classes_taken WHERE STUDENTID = ?, " +
-                        "COURSEID = ?, QUARTER = ?, YEAR = ?, SECTIONID = ?");
+                        "COURSEID = ? AND QUARTER = ? AND YEAR = ? AND SECTIONID = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("COURSEID")));
@@ -132,25 +133,25 @@
                 <tr>
                     <form action="classes_taken_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getBoolean('COURSEID') %>" name="COURSEID"></th>
-                        <th><input value="<%= rs.getBoolean('QUARTER') %>" name="QUARTER"></th>
-                        <th><input value="<%= rs.getBoolean('YEAR') %>" name="YEAR"></th>
-                        <th><input value="<%= rs.getString('GRADE') %>" name="GRADE"></th>
-                        <th><input value="<%= rs.getInt('SECTIONID') %>" name="SECTIONID"></th>
+                        <th><input value="<%= rs.getInt("STUDENTID") %>" name="STUDENTID"></th>
+                        <th><input value="<%= rs.getBoolean("COURSEID") %>" name="COURSEID"></th>
+                        <th><input value="<%= rs.getBoolean("QUARTER") %>" name="QUARTER"></th>
+                        <th><input value="<%= rs.getBoolean("YEAR") %>" name="YEAR"></th>
+                        <th><input value="<%= rs.getString("GRADE") %>" name="GRADE"></th>
+                        <th><input value="<%= rs.getInt("SECTIONID") %>" name="SECTIONID"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="classes_taken_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
+                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getInt('COURSEID') %>"
+                        <input type="hidden" value="<%= rs.getInt("COURSEID") %>"
                             name="COURSEID">
-                        <input type="hidden" value="<%= rs.getInt('QUARTER') %>"
+                        <input type="hidden" value="<%= rs.getInt("QUARTER") %>"
                             name="QUARTER">
-                        <input type="hidden" value="<%= rs.getInt('YEAR') %>"
+                        <input type="hidden" value="<%= rs.getInt("YEAR") %>"
                             name="YEAR">
-                        <input type="hidden" value="<%= rs.getInt('SECTIONID') %>"
+                        <input type="hidden" value="<%= rs.getInt("SECTIONID") %>"
                             name="SECTIONID">
                         <td><input type="submit" value="Delete"></td>
                     </form>

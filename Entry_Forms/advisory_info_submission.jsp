@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -51,7 +52,7 @@
                         // DELETE the advisor FROM the advisors table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM advisor WHERE STUDENTID = ?, " +
+                        "DELETE FROM advisor WHERE STUDENTID = ? AND " +
                         "faculty_name = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
@@ -94,9 +95,9 @@
                 <tr>
                     <form action="advisory_info_submission.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
+                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getString('faculty_name') %>"
+                        <input type="hidden" value="<%= rs.getString("faculty_name") %>"
                             name="faculty_name">
                         <td><input type="submit" value="Delete"></td>
                     </form>

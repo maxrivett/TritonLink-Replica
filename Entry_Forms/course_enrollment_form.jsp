@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -54,7 +55,7 @@
                         // attributes in the course_enrollment table
                         PreparedStatement pstatement = conn.prepareStatement(
                         "UPDATE course_enrollment SET NUMUNITS = ? +
-                        "WHERE STUDENTID = ?, CLASS = ?, QUARTER = ?, YEAR = ?, SECTION = ?");
+                        "WHERE STUDENTID = ? AND CLASS = ? AND QUARTER = ? AND YEAR = ? AND SECTION = ?");
 
                         pstmt.setInt(1, request.getParameter("NUMUNITS"));
                         pstmt.setString(2, request.getParameter("STUDENTID"));
@@ -65,7 +66,7 @@
 
                         int rowCount = pstatement.executeUpdate();
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -78,7 +79,7 @@
                         // DELETE the course_enrollment FROM the course_enrollment table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM course_enrollment WHERE STUDENTID = ?, CLASS = ?, QUARTER = ?, YEAR = ?, SECTION = ?");
+                        "DELETE FROM course_enrollment WHERE STUDENTID = ? AND CLASS = ? AND QUARTER = ? AND YEAR = ? AND SECTION = ?");
 
                         pstmt.setString(1, request.getParameter("STUDENTID"));
                         pstmt.setString(2, request.getParameter("CLASS"));
@@ -130,21 +131,21 @@
                 <tr>
                     <form action="course_enrollment_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getString('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getString('CLASS') %>" name="CLASS"></th>
-                        <th><input value="<%= rs.getString('QUARTER') %>" name="QUARTER"></th>
-                        <th><input value="<%= rs.getInt('YEAR') %>" name="YEAR"></th>
-                        <th><input value="<%= rs.getString('SECTION') %>" name="SECTION"></th>
-                        <th><input value="<%= rs.getInt('NUMUNITS') %>" name="NUMUNITS"></th>
+                        <th><input value="<%= rs.getString("STUDENTID") %>" name="STUDENTID"></th>
+                        <th><input value="<%= rs.getString("CLASS") %>" name="CLASS"></th>
+                        <th><input value="<%= rs.getString("QUARTER") %>" name="QUARTER"></th>
+                        <th><input value="<%= rs.getInt("YEAR") %>" name="YEAR"></th>
+                        <th><input value="<%= rs.getString("SECTION") %>" name="SECTION"></th>
+                        <th><input value="<%= rs.getInt("NUMUNITS") %>" name="NUMUNITS"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="course_enrollment_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getString('STUDENTID') %>" name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getString('CLASS') %>" name="CLASS">
-                        <input type="hidden" value="<%= rs.getString('QUARTER') %>" name="QUARTER">
-                        <input type="hidden" value="<%= rs.getInt('YEAR') %>" name="YEAR">
-                        <input type="hidden" value="<%= rs.getString('SECTION') %>" name="SECTION">
+                        <input type="hidden" value="<%= rs.getString("STUDENTID") %>" name="STUDENTID">
+                        <input type="hidden" value="<%= rs.getString("CLASS") %>" name="CLASS">
+                        <input type="hidden" value="<%= rs.getString("QUARTER") %>" name="QUARTER">
+                        <input type="hidden" value="<%= rs.getInt("YEAR") %>" name="YEAR">
+                        <input type="hidden" value="<%= rs.getString("SECTION") %>" name="SECTION">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>

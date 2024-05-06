@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -52,8 +53,8 @@
                         // DELETE the aid_awarded FROM the aid_awarded table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM aid_awarded WHERE STUDENTID = ?, " +
-                        "AIDNAME = ?, YEAR = ?");
+                        "DELETE FROM aid_awarded WHERE STUDENTID = ? AND " +
+                        "AIDNAME = ? AND YEAR = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setString(2, request.getParameter("AIDNAME"));
@@ -98,11 +99,11 @@
                 <tr>
                     <form action="award_aid_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
+                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getString('AIDNAME') %>"
+                        <input type="hidden" value="<%= rs.getString("AIDNAME") %>"
                             name="AIDNAME">
-                        <input type="hidden" value="<%= rs.getInt('YEAR') %>"
+                        <input type="hidden" value="<%= rs.getInt("YEAR") %>"
                             name="YEAR">
                         <td><input type="submit" value="Delete"></td>
                     </form>

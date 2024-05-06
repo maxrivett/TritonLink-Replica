@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -54,7 +55,7 @@
                         // attributes in the review_session_info table
                         PreparedStatement pstatement = conn.prepareStatement(
                         "UPDATE review_session_info SET CLASS = ? +
-                        "WHERE DATE = ?, STARTTIME = ?, ENDTIME = ?, BUILDING = ?, ROOM = ?");
+                        "WHERE DATE = ? AND STARTTIME = ? AND ENDTIME = ? AND BUILDING = ? AND ROOM = ?");
 
                         pstmt.setString(1, request.getParameter("CLASS"));
                         pstmt.setString(2, request.getParameter("DATE"));
@@ -65,7 +66,7 @@
 
                         int rowCount = pstatement.executeUpdate();
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -78,7 +79,7 @@
                         // DELETE the review_session_info FROM the review_session_info table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM review_session_info WHERE DATE = ?, STARTTIME = ?, ENDTIME = ?, BUILDING = ?, ROOM = ?");
+                        "DELETE FROM review_session_info WHERE DATE = ? AND STARTTIME = ? AND ENDTIME = ? AND BUILDING = ? AND ROOM = ?");
 
                         pstmt.setString(1, request.getParameter("DATE"));
                         pstmt.setString(2, request.getParameter("STARTTIME"));
@@ -130,21 +131,21 @@
                 <tr>
                     <form action="review_session_info_submission.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getString('DATE') %>" name="DATE"></th>
-                        <th><input value="<%= rs.getString('CLASS') %>" name="CLASS"></th>
-                        <th><input value="<%= rs.getString('STARTTIME') %>" name="STARTTIME"></th>
-                        <th><input value="<%= rs.getString('ENDTIME') %>" name="ENDTIME"></th>
-                        <th><input value="<%= rs.getString('BUILDING') %>" name="BUILDING"></th>
-                        <th><input value="<%= rs.getInt('ROOM') %>" name="ROOM"></th>
+                        <th><input value="<%= rs.getString("DATE") %>" name="DATE"></th>
+                        <th><input value="<%= rs.getString("CLASS") %>" name="CLASS"></th>
+                        <th><input value="<%= rs.getString("STARTTIME") %>" name="STARTTIME"></th>
+                        <th><input value="<%= rs.getString("ENDTIME") %>" name="ENDTIME"></th>
+                        <th><input value="<%= rs.getString("BUILDING") %>" name="BUILDING"></th>
+                        <th><input value="<%= rs.getInt("ROOM") %>" name="ROOM"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="review_session_info_submission.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getString('DATE') %>" name="DATE">
-                        <input type="hidden" value="<%= rs.getString('STARTTIME') %>" name="STARTTIME">
-                        <input type="hidden" value="<%= rs.getString('ENDTIME') %>" name="ENDTIME">
-                        <input type="hidden" value="<%= rs.getString('BUILDING') %>" name="BUILDING">
-                        <input type="hidden" value="<%= rs.getInt('ROOM') %>" name="ROOM">
+                        <input type="hidden" value="<%= rs.getString("DATE") %>" name="DATE">
+                        <input type="hidden" value="<%= rs.getString("STARTTIME") %>" name="STARTTIME">
+                        <input type="hidden" value="<%= rs.getString("ENDTIME") %>" name="ENDTIME">
+                        <input type="hidden" value="<%= rs.getString("BUILDING") %>" name="BUILDING">
+                        <input type="hidden" value="<%= rs.getInt("ROOM") %>" name="ROOM">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>

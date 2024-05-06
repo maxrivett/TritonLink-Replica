@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -59,7 +60,7 @@
 
                         int rowCount = pstatement.executeUpdate();
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -135,14 +136,14 @@
                 <tr>
                     <form action="deg_req_info_submission.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
-                        <th><input value="<%= rs.getString('DEGTYPE') %>" name="DEGTYPE"></th>
-                        <th><input value="<%= rs.getInt('TOTALUNITS') %>" name="TOTALUNITS"></th>
+                        <th><input value="<%= rs.getString("DEPARTMENT") %>" name="DEPARTMENT"></th>
+                        <th><input value="<%= rs.getString("DEGTYPE") %>" name="DEGTYPE"></th>
+                        <th><input value="<%= rs.getInt("TOTALUNITS") %>" name="TOTALUNITS"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="deg_req_info_submission.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getString('DEPARTMENT') %>"
+                        <input type="hidden" value="<%= rs.getString("DEPARTMENT") %>"
                             name="DEPARTMENT">
                         <td><input type="submit" value="Delete"></td>
                     </form>

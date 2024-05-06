@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -51,13 +52,13 @@
 
                         PreparedStatement pstmt = conn.prepareStatement(
                         "UPDATE payment SET PAYAMT = ? " + 
-                        "WHERE STUDENTID = ?, PAYNUM = ?");
+                        "WHERE STUDENTID = ? AND PAYNUM = ?");
 
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setInt(3, Integer.parseInt(request.getParameter("PAYNUM")));
                         pstmt.setFloat(1, Float.parseFloat(request.getParameter("PAYAMT")));
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -70,7 +71,7 @@
                         // DELETE the payment FROM the payment table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM payment WHERE STUDENTID = ?, PAYNUM = ?");
+                        "DELETE FROM payment WHERE STUDENTID = ? AND PAYNUM = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("PAYNUM")));
@@ -114,16 +115,16 @@
                 <tr>
                     <form action="payment_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getInt('PAYNUM') %>" name="PAYNUM"></th>
-                        <th><input value="<%= rs.getFloat('PAYAMT') %>" name="PAYAMT"></th>
+                        <th><input value="<%= rs.getInt("STUDENTID") %>" name="STUDENTID"></th>
+                        <th><input value="<%= rs.getInt("PAYNUM") %>" name="PAYNUM"></th>
+                        <th><input value="<%= rs.getFloat("PAYAMT") %>" name="PAYAMT"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="payment_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
+                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
-                            <input type="hidden" value="<%= rs.getInt('PAYNUM') %>"
+                            <input type="hidden" value="<%= rs.getInt("PAYNUM") %>"
                             name="PAYNUM">
                         <td><input type="submit" value="Delete"></td>
                     </form>

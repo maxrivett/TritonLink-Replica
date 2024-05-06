@@ -3,7 +3,7 @@
     <table>
         <tr>
             <td>
-                <jsp:include page=""menu.html" />
+                <jsp:include page="menu.html" />
             </td>
             <td>
                 <%-- Set the scripting langauge to java and --%>
@@ -13,13 +13,14 @@
                 <%
                     try {
                         // Load Oracle Driver class file
-                        DriverManager.registerDriver
-                        (new oracle.jdbc.driver.OracleDriver());
+                        // DriverManager.registerDriver
+                        // (new oracle.jdbc.driver.OracleDriver());
+
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
+                            "&password=HPost1QGres!&ssl=false";
 
                         // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection
-                        ("jdbc:oracle:thin:@feast.ucsd.edu:1521:source",
-                        "user", "pass");
+                        Connection conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -29,9 +30,9 @@
                         conn.setAutoCommit(false);
                         
                         // Create the prepared statement and use it to 
-                        // INSERT the student attrs INTO the Student table
+                        // INSERT the student attrs INTO the student table
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO Student VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
+                        ("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setString(2, request.getParameter("FIRSTNAME"));
@@ -45,13 +46,13 @@
                         pstmt.executeUpdate();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                        ("INSERT INTO graduate VALUES (?, ?, 'PhD')"));
+                        ("INSERT INTO graduate VALUES (?, ?, "PhD")"));
 
                         pstmt2.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt2.setString(2, request.getParameter("DEPARTMENT"));
 
                         PreparedStatement pstmt3 = conn.prepareStatement(
-                        ("INSERT INTO phd VALUES (?, 'Candidate')"));
+                        ("INSERT INTO phd VALUES (?, "Candidate")"));
 
                         pstmt3.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
 
@@ -73,9 +74,9 @@
                         conn.setAutoCommit(false);
 
                         // Create prepared statement to UPDATE student
-                        // attributes in the Student table
+                        // attributes in the student table
                         PreparedStatement pstatement = conn.prepareStatement(
-                        "UPDATE Student SET FIRSTNAME = ?, MIDDLENAME = ?, LASTNAME = ?, " +
+                        "UPDATE student SET FIRSTNAME = ?, MIDDLENAME = ?, LASTNAME = ?, " +
                         "ENROLLED = ?, SSN = ?, RESIDENCY = ?, ACCOUNTBALANCE = ? WHERE STUDENTID = ?");
 
                         pstatement.setInt(8, Integer.parseInt(request.getParameter("STUDENTID")));
@@ -97,7 +98,7 @@
 
                         pstatement2.executeUpdate();
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -107,10 +108,10 @@
                         conn.setAutoCommit(false);
 
                         // Create the prepared statement and use it to
-                        // DELETE the student FROM the Student table.
+                        // DELETE the student FROM the student table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM Student WHERE STUDENTID = ?");
+                        "DELETE FROM student WHERE STUDENTID = ?");
 
                         pstmt.setInt(1,
                             Integer.parseInt(request.getParameter("STUDENTID")));
@@ -210,36 +211,36 @@
                     // Iterate over the ResultSet
                     while ( rs.next() ) {
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "SELECT * FROM Student WHERE STUDENTID = ?");
+                        "SELECT * FROM student WHERE STUDENTID = ?");
 
-                        pstmt.setString(1, rs.getString('STUDENTID'));
+                        pstmt.setString(1, rs.getString("STUDENTID"));
 
                         ResultSet rs2 = pstmt.executeQuery();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
                         "SELECT * FROM graduate WHERE STUDENTID = ?");
 
-                        pstmt2.setString(1, rs.getString('STUDENTID'));
+                        pstmt2.setString(1, rs.getString("STUDENTID"));
 
                         ResultSet rs3 = pstmt2.executeQuery();
                 %>
                 <tr>
                     <form action="phd_candidate_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs2.getInt('STUDENTID') %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs2.getString('FIRSTNAME') %>" name="FIRSTNAME"></th>
-                        <th><input value="<%= rs2.getString('MIDDLENAME') %>" name="MIDDLENAME"></th>
-                        <th><input value="<%= rs2.getString('LASTNAME') %>" name="LASTNAME"></th>
-                        <th><input value="<%= rs2.getBoolean('ENROLLED') %>" name="ENROLLED"></th>
-                        <th><input value="<%= rs2.getInt('SSN') %>" name="SSN"></th>
-                        <th><input value="<%= rs2.getString('RESIDENCY') %>" name="RESIDENCY"></th>
-                        <th><input value="<%= rs2.getFloat('ACCOUNTBALANCE') %>" name="ACCOUNTBALANCE"></th>
-                        <th><input value="<%= rs3.getString('DEPARTMENT') %>" name="DEPARTMENT"></th>
+                        <th><input value="<%= rs2.getInt("STUDENTID") %>" name="STUDENTID"></th>
+                        <th><input value="<%= rs2.getString("FIRSTNAME") %>" name="FIRSTNAME"></th>
+                        <th><input value="<%= rs2.getString("MIDDLENAME") %>" name="MIDDLENAME"></th>
+                        <th><input value="<%= rs2.getString("LASTNAME") %>" name="LASTNAME"></th>
+                        <th><input value="<%= rs2.getBoolean("ENROLLED") %>" name="ENROLLED"></th>
+                        <th><input value="<%= rs2.getInt("SSN") %>" name="SSN"></th>
+                        <th><input value="<%= rs2.getString("RESIDENCY") %>" name="RESIDENCY"></th>
+                        <th><input value="<%= rs2.getFloat("ACCOUNTBALANCE") %>" name="ACCOUNTBALANCE"></th>
+                        <th><input value="<%= rs3.getString("DEPARTMENT") %>" name="DEPARTMENT"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="phd_candidate_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt('STUDENTID') %>"
+                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
                         <td><input type="submit" value="Delete"></td>
                     </form>
