@@ -32,7 +32,7 @@
                         // Create the prepared statement and use it to 
                         // INSERT the degree attrs INTO the degree table
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO degree VALUES (?, ?, ?, ?, ?, ?)"));
+                        ("INSERT INTO degree VALUES (?, ?, ?)"));
 
                         pstmt.setString(1, request.getParameter("DEPARTMENT"));
                         pstmt.setString(2, request.getParameter("DEGTYPE"));

@@ -45,6 +45,8 @@
 
                         pstmt.executeUpdate();
 
+                        
+
                         PreparedStatement pstmt2 = conn.prepareStatement(
                         ("INSERT INTO undergrad VALUES (?, ?, ?, ?, ?)"));
 
@@ -56,6 +58,8 @@
                         
 
                         pstmt2.executeUpdate();
+
+                        
 
                         conn.commit();
                         conn.setAutoCommit(true);

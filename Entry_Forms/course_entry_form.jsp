@@ -32,7 +32,7 @@
                         // Create the prepared statement and use it to 
                         // INSERT the course attrs INTO the Course table
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO Course VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+                        ("INSERT INTO Course VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("COURSEID")));
                         pstmt.setBoolean(2, Boolean.parseBoolean(request.getParameter("LABREQ")));
@@ -44,31 +44,6 @@
                         pstmt.setBoolean(8, Boolean.parseBoolean(request.getParameter("INSTPERM")));
 
                         pstmt.executeUpdate();
-
-
-                        
-                        String[] prereq_array = request.getParameter("PREREQUISITES").split(",");
-
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        ("INSERT INTO Prerequisites VALUES (?, ?)"));
-
-                        for (int i = 0; i < prereq_array.length; i++) {
-                            pstmt2.setInt(1, Integer.parseInt(request.getParameter("COURSEID")));
-                            pstmt2.setInt(2, Integer.parseInt(prereq_array[i]));
-                        }
-
-                        pstmt2.executeUpdate();
-
-                        if (Boolean.parseBoolean(request.getParameter("LABREQ"))) {
-                            PreparedStatement pstmt3 = conn.prepareStatement(
-                            ("INSERT INTO Corequisites VALUES (?, ?)"));
-
-                            pstmt3.setInt(1, Integer.parseInt(request.getParameter("COURSEID")));
-                            pstmt3.setInt(2, Integer.parseInt(request.getParameter("COREQUISITE")));
-
-                            pstmt3.executeUpdate();
-
-                        }
 
                         conn.commit();
                         conn.setAutoCommit(true);
@@ -95,45 +70,6 @@
 
                         int rowCount = pstatement.executeUpdate();
 
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        ("DELETE FROM Prerequisites WHERE BASECOURSE = ?"));
-
-                        pstmt2.setInt(1, Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt2.executeUpdate();
-
-                        
-                        String[] prereq_array = request.getParameter("PREREQUISITES").split(",");
-                        
-                        PreparedStatement pstmt3 = conn.prepareStatement(
-                        ("INSERT INTO Prerequisites VALUES (?, ?)"));
-                        
-
-                        for (int i = 0; i < prereq_array.length; i++) {
-                            pstmt3.setInt(1, Integer.parseInt(request.getParameter("COURSEID")));
-                            pstmt3.setInt(2, Integer.parseInt(prereq_array[i]));
-                        }
-
-                        pstmt3.executeUpdate();
-
-                        PreparedStatement pstmt4 = conn.prepareStatement(
-                        ("DELETE FROM Corequisites WHERE BASECOURSE = ?"));
-
-                        pstmt4.setInt(1, Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt4.executeUpdate();
-
-                        if (Boolean.parseBoolean(request.getParameter("LABREQ"))) {
-                            PreparedStatement pstmt5 = conn.prepareStatement(
-                            ("INSERT INTO Corequisites VALUES (?, ?)"));
-
-                            pstmt5.setInt(1, Integer.parseInt(request.getParameter("COURSEID")));
-                            pstmt5.setInt(2, Integer.parseInt(request.getParameter("COREQUISITE")));
-
-                            pstmt5.executeUpdate();
-
-                        }
-
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
@@ -143,28 +79,22 @@
 
                         conn.setAutoCommit(false);
 
-                        // Create the prepared statement and use it to
-                        // DELETE the course FROM the Course table.
-
-                        PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM Course WHERE COURSEID = ?");
-
-                        pstmt.setInt(1,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-                        int rowCount = pstmt.executeUpdate();
-
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM Prerequisites WHERE BASECOURSE = ?");
+                        "DELETE FROM Prerequisites WHERE BASECOURSE = ? OR PREREQUISITE = ?");
 
                         pstmt2.setInt(1,
+                            Integer.parseInt(request.getParameter("COURSEID")));
+                        pstmt2.setInt(2,
                             Integer.parseInt(request.getParameter("COURSEID")));
 
                         pstmt2.executeUpdate();
 
                         PreparedStatement pstmt3 = conn.prepareStatement(
-                        "DELETE FROM Corequisites WHERE COURSEID = ?");
+                        "DELETE FROM Corequisites WHERE BASECOURSE = ? OR COREQUISITE = ?");
 
                         pstmt3.setInt(1,
+                            Integer.parseInt(request.getParameter("COURSEID")));
+                        pstmt3.setInt(2,
                             Integer.parseInt(request.getParameter("COURSEID")));
 
                         pstmt3.executeUpdate();
@@ -176,6 +106,16 @@
                             Integer.parseInt(request.getParameter("COURSEID")));
 
                         pstmt4.executeUpdate();
+
+                        // Create the prepared statement and use it to
+                        // DELETE the course FROM the Course table.
+
+                        PreparedStatement pstmt = conn.prepareStatement(
+                        "DELETE FROM Course WHERE COURSEID = ?");
+
+                        pstmt.setInt(1,
+                            Integer.parseInt(request.getParameter("COURSEID")));
+                        int rowCount = pstmt.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
@@ -197,11 +137,10 @@
                         <th>Lab Required?</th>
                         <th>S/U Allowed?</th>
                         <th>Letter Grade Allowed?</th>
-                        <th>Course Nu,</th>
+                        <th>Course Number</th>
                         <th>Units Minimum</th>
                         <th>Units Maximum</th>
                         <th>Instructor Permission</th>
-                        <th>Prerequisites</th>
                     </tr>
                     <tr>
                         <form action="course_entry_form.jsp" method="get">
@@ -214,8 +153,6 @@
                             <th><input value="" name="UNITMIN" size="10"></th>
                             <th><input value="" name="UNITMAX" size="10"></th>
                             <th><input value="" name="INSTPERM" size="10"></th>
-                            <th><input value="" name="PREREQUISITES" size="10"></th>
-                            <th><input value="" name="COREQUISITE" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
@@ -234,8 +171,6 @@
                         <td><input value="<%= rs.getInt("UNITMIN") %>" name="UNITMIN"></td>
                         <td><input value="<%= rs.getInt("UNITMAX") %>" name="UNITMAX"></td>
                         <td><input value="<%= rs.getBoolean("INSTPERM") %>" name="INSTPERM"></td>
-                        <td><input value="<%= rs.getString("PREREQUISITES") %>" name="PREREQUISITES"></td>
-                        <td><input value="<%= rs.getString("COREQUISITE") %>" name="COREQUISITE"></td>
                         <td><input type="submit" value="Update"></td>
                     </form>
                     <form action="course_entry_form.jsp" method="get">
