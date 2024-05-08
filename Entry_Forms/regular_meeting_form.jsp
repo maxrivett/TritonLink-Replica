@@ -11,16 +11,12 @@
                 <%@ page language="java" import="java.sql.*" %>
 
                 <%
+                    
+                    Connection conn;
                     try {
-                        // Load Oracle Driver class file
-                        // DriverManager.registerDriver
-                        // (new oracle.jdbc.driver.OracleDriver());
-
                         String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
                             "&password=HPost1QGres!&ssl=false";
-
-                        // Make a connection to the Oracle datasource
-                        Connection conn = DriverManager.getConnection(url);
+                        conn = DriverManager.getConnection(url);
                 %>
 
                 <%
@@ -52,8 +48,8 @@
 
                         // Create prepared statement to UPDATE regular_meeting
                         // attributes in the regular_meeting table
-                        PreparedStatement pstatement = conn.prepareStatement(
-                        "UPDATE regular_meeting SET TYPE = ? +
+                        PreparedStatement pstmt = conn.prepareStatement(
+                        "UPDATE regular_meeting SET TYPE = ?" +
                         "WHERE WEEKDAY = ? AND CLASS = ? AND STARTTIME = ? AND ENDTIME = ?");
 
                         pstmt.setString(1, request.getParameter("TYPE"));
@@ -62,9 +58,9 @@
                         pstmt.setString(4, request.getParameter("STARTTIME"));
                         pstmt.setString(5, request.getParameter("ENDTIME"));
 
-                        int rowCount = pstatement.executeUpdate();
+                        int rowCount = pstmt.executeUpdate();
 
-                        conn.setAutocommit(false);
+                        conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
@@ -126,19 +122,19 @@
                 <tr>
                     <form action="regular_meeting_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getString('WEEKDAY') %>" name="WEEKDAY"></th>
-                        <th><input value="<%= rs.getString('CLASS') %>" name="CLASS"></th>
-                        <th><input value="<%= rs.getString('STARTTIME') %>" name="STARTTIME"></th>
-                        <th><input value="<%= rs.getString('ENDTIME') %>" name="ENDTIME"></th>
-                        <th><input value="<%= rs.getString('TYPE') %>" name="TYPE"></th>
+                        <th><input value="<%= rs.getString("WEEKDAY") %>" name="WEEKDAY"></th>
+                        <th><input value="<%= rs.getString("CLASS") %>" name="CLASS"></th>
+                        <th><input value="<%= rs.getString("STARTTIME") %>" name="STARTTIME"></th>
+                        <th><input value="<%= rs.getString("ENDTIME") %>" name="ENDTIME"></th>
+                        <th><input value="<%= rs.getString("TYPE") %>" name="TYPE"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="regular_meeting_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getString('WEEKDAY') %>" name="DATE">
-                        <input type="hidden" value="<%= rs.getString('CLASS') %>" name="CLASS">
-                        <input type="hidden" value="<%= rs.getString('STARTTIME') %>" name="STARTTIME">
-                        <input type="hidden" value="<%= rs.getString('ENDTIME') %>" name="ENDTIME">
+                        <input type="hidden" value="<%= rs.getString("WEEKDAY") %>" name="DATE">
+                        <input type="hidden" value="<%= rs.getString("CLASS") %>" name="CLASS">
+                        <input type="hidden" value="<%= rs.getString("STARTTIME") %>" name="STARTTIME">
+                        <input type="hidden" value="<%= rs.getString("ENDTIME") %>" name="ENDTIME">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>

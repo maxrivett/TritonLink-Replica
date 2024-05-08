@@ -35,7 +35,7 @@
                         ("INSERT INTO section VALUES (?, ?, ?, ?)"));
 
                         pstmt.setString(1, request.getParameter("COURSEID"));
-                        pstmt.setString(2, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("SECTIONID")));
                         pstmt.setString(3, request.getParameter("FACULTYNAME"));
                         pstmt.setInt(4, request.getParameter("ENROLLMENTLIMIT"));
 
@@ -56,7 +56,7 @@
                         "WHERE COURSEID = ? AND SECTIONID = ?");
 
                         pstmt.setString(3, request.getParameter("COURSEID"));
-                        pstmt.setString(4, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt.setInt(4, Integer.parseInt(request.getParameter("SECTIONID")));
                         pstmt.setString(1, request.getParameter("FACULTYNAME"));
                         pstmt.setInt(2, request.getParameter("ENROLLMENTLIMIT"));
 
@@ -78,7 +78,7 @@
                         "DELETE FROM section WHERE COURSEID = ? AND SECTIONID = ?");
 
                         pstmt.setString(1, request.getParameter("COURSEID"));
-                        pstmt.setString(2, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("SECTIONID")));
 
                         int rowCount = pstmt.executeUpdate();
 
@@ -121,7 +121,7 @@
                     <form action="section_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
                         <td><input value="<%= rs.getString("COURSEID") %>" name="COURSEID"></td>
-                        <td><input value="<%= rs.getString("SECTIONID") %>" name="SECTIONID"></td>
+                        <td><input value="<%= rs.getInt("SECTIONID") %>" name="SECTIONID"></td>
                         <td><input value="<%= rs.getString("FACULTYNAME") %>" name="FACULTYNAME"></td>
                         <td><input value="<%= rs.getInt("ENROLLMENTLIMIT") %>" name="ENROLLMENTLIMIT"></td>
                         <td><input type="submit" value="Update"></td>
@@ -130,7 +130,7 @@
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getString("COURSEID") %>"
                             name="COURSEID">
-                        <input type="hidden" value="<%= rs.getString("SECTIONID") %>"
+                        <input type="hidden" value="<%= rs.getInt("SECTIONID") %>"
                             name="SECTIONID">
                         <td><input type="submit" value="Delete"></td>
                     </form>
