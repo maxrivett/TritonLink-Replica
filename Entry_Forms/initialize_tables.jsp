@@ -45,16 +45,16 @@
                         del_strings.add("DROP TABLE IF EXISTS Prerequisites");
                         del_strings.add("DROP TABLE IF EXISTS Corequisites");
                         del_strings.add("DROP TABLE IF EXISTS class_courses");
-                        del_strings.add("DROP TABLE IF EXISTS classes");
+                        del_strings.add("DROP TABLE IF EXISTS classes CASCADE");
                         del_strings.add("DROP TABLE IF EXISTS course_enrollment");
-                        del_strings.add("DROP TABLE IF EXISTS sections");
+                        del_strings.add("DROP TABLE IF EXISTS sections CASCADE");
                         del_strings.add("DROP TABLE IF EXISTS regular_meeting");
                         del_strings.add("DROP TABLE IF EXISTS review_session_info");
                         del_strings.add("DROP TABLE IF EXISTS degree CASCADE");
-                        del_strings.add("DROP TABLE IF EXISTS masters_deg");
-                        del_strings.add("DROP TABLE IF EXISTS categories");
-                        del_strings.add("DROP TABLE IF EXISTS concentrations");
-                        del_strings.add("DROP TABLE IF EXISTS finaid");
+                        del_strings.add("DROP TABLE IF EXISTS masters_deg CASCADE");
+                        del_strings.add("DROP TABLE IF EXISTS categories CASCADE");
+                        del_strings.add("DROP TABLE IF EXISTS concentrations CASCADE");
+                        del_strings.add("DROP TABLE IF EXISTS finaid CASCADE");
                         del_strings.add("DROP TABLE IF EXISTS payment");
                         del_strings.add("DROP TABLE IF EXISTS aid_awarded");
                         del_strings.add("DROP TABLE IF EXISTS classes_taken");
@@ -140,10 +140,10 @@
                         create_strings.add("CREATE TABLE masters_deg (DEPARTMENT varchar(255), " +
                             "PRIMARY KEY (DEPARTMENT), FOREIGN KEY (DEPARTMENT) REFERENCES degree(DEPARTMENT))");
                         create_strings.add("CREATE TABLE categories (DEPARTMENT varchar(255), CATNAME varchar(255), " +
-                            "CATUNITS integer, CATGPA numeric(1,2), PRIMARY KEY (DEPARTMENT, CATNAME), " +
+                            "CATGPA numeric(3,2), CATUNITS integer, PRIMARY KEY (DEPARTMENT, CATNAME), " +
                             "FOREIGN KEY (DEPARTMENT) REFERENCES degree(DEPARTMENT))");
                         create_strings.add("CREATE TABLE concentrations (DEPARTMENT varchar(255), CONNAME varchar(255), " +
-                            "CONUNITS integer, CONGPA numeric(1,2), PRIMARY KEY (DEPARTMENT, CONNAME), " +
+                            "CONGPA numeric(3,2), CONUNITS integer, PRIMARY KEY (DEPARTMENT, CONNAME), " +
                             "FOREIGN KEY (DEPARTMENT) REFERENCES masters_deg(DEPARTMENT))");
                         create_strings.add("CREATE TABLE finaid (AIDNAME varchar(255), YEAR integer, " +
                             "TYPE varchar(255), REQUIREMENTS varchar(255), AMOUNT numeric(10,2), " + 

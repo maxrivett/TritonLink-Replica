@@ -79,7 +79,7 @@
                         // DELETE the class taken FROM the classes_taken table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM classes_taken WHERE STUDENTID = ?, " +
+                        "DELETE FROM classes_taken WHERE STUDENTID = ? AND " +
                         "COURSEID = ? AND QUARTER = ? AND YEAR = ? AND SECTIONID = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));

@@ -85,7 +85,7 @@
                         int rowCount = pstmt.executeUpdate();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM aid_awarded WHERE AIDNAME = ?, YEAR = ?");
+                        "DELETE FROM aid_awarded WHERE AIDNAME = ? AND YEAR = ?");
 
                         pstmt2.setString(1, request.getParameter("AIDNAME"));
                         pstmt2.setInt(2, Integer.parseInt(request.getParameter("YEAR")));

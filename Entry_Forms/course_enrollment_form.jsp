@@ -54,7 +54,7 @@
                         // Create prepared statement to UPDATE course_enrollment
                         // attributes in the course_enrollment table
                         PreparedStatement pstatement = conn.prepareStatement(
-                        "UPDATE course_enrollment SET NUMUNITS = ? +
+                        "UPDATE course_enrollment SET NUMUNITS = ? " +
                         "WHERE STUDENTID = ? AND CLASS = ? AND QUARTER = ? AND YEAR = ? AND SECTION = ?");
 
                         pstmt.setInt(1, request.getParameter("NUMUNITS"));

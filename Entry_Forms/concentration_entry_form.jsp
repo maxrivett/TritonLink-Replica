@@ -111,7 +111,7 @@
                         // DELETE the concentration FROM the concentration table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM concentration WHERE DEPARTMENT = ?, CONNAME = ?");
+                        "DELETE FROM concentration WHERE DEPARTMENT = ? AND CONNAME = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("DEPARTMENT")));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("CONNAME")));
@@ -120,7 +120,7 @@
                         int rowCount = pstmt.executeUpdate();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM concentration_courses WHERE DEPARTMENT = ?, CONNAME = ?");
+                        "DELETE FROM concentration_courses WHERE DEPARTMENT = ? AND CONNAME = ?");
 
                         pstmt2.setString(1, request.getParameter("DEPARTMENT"));
                         pstmt2.setString(2, request.getParameter("CONNAME"));

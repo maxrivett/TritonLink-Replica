@@ -30,18 +30,18 @@
                         conn.setAutoCommit(false);
                         
                         // Create the prepared statement and use it to 
-                        // INSERT the advisor attrs INTO the advisors table
+                        // INSERT the prerequisite attrs INTO the Prerequisites table
+                        
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO advisors VALUES (?, ?)"));
-
-                        pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setString(2, request.getParameter("faculty_name"));
-
+                            ("INSERT INTO Prerequisites VALUES (?, ?)"));
+                        pstmt.setInt(1, Integer.parseInt(request.getParameter("BASECOURSE")));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("PREREQUISITE")));
                         pstmt.executeUpdate();
 
                         conn.commit();
                         conn.setAutoCommit(true);
                     }
+
 
                     // Check if a delete is requested
                     if (action != null && action.equals("delete")) {
@@ -49,15 +49,15 @@
                         conn.setAutoCommit(false);
 
                         // Create the prepared statement and use it to
-                        // DELETE the advisor FROM the advisors table.
+                        // DELETE the prerequisite FROM the Prerequisites table.
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM advisors WHERE STUDENTID = ? AND " +
-                        "faculty_name = ?");
+                        "DELETE FROM Prerequisites WHERE BASECOURSE = ? AND PREREQUISITE = ?");
 
-                        pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setString(2, request.getParameter("faculty_name"));
-
+                        pstmt.setInt(1,
+                            Integer.parseInt(request.getParameter("BASECOURSE")));
+                        pstmt.setInt(2,
+                            Integer.parseInt(request.getParameter("PREREQUISITE")));
 
                         int rowCount = pstmt.executeUpdate();
 
@@ -70,21 +70,21 @@
                     // Create the statement
                     Statement statement = conn.createStatement();
 
-                    // Use the statement to SELECT the advisor attributes
-                    // FROM the advisors table
+                    // Use the statement to SELECT the course attributes
+                    // FROM the Prerequisites table
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM advisors");
+                        ("SELECT * FROM Prerequisites");
                 %>
                 <table>
                     <tr>
-                        <th>Student_ID</th>
-                        <th>Faculty Name</th>
+                        <th>BASECOURSE</th>
+                        <th>PREREQUISITE</th>
                     </tr>
                     <tr>
-                        <form action="advisory_info_submission.jsp" method="get">
+                        <form action="prerequisite_entry_form.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
-                            <th><input value="" name="STUDENTID" size="10"></th>
-                            <th><input value="" name="faculty_name" size="10"></th>
+                            <th><input value="" name="BASECOURSE" size="10"></th>
+                            <th><input value="" name="PREREQUISITE" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
@@ -93,12 +93,12 @@
                     while ( rs.next() ) {
                 %>
                 <tr>
-                    <form action="advisory_info_submission.jsp" method="get">
+                    <form action="prerequisite_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
-                            name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getString("faculty_name") %>"
-                            name="faculty_name">
+                        <td><input value="<%= rs.getInt("BASECOURSE") %>"
+                            name="BASECOURSE"></td>
+                        <td><input value="<%= rs.getInt("PREREQUISITE") %>"
+                            name="PREREQUISITE"></td>
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>
