@@ -36,8 +36,10 @@
                         ("INSERT INTO previous_degrees VALUES (?, ?, ?)"));
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setString(2, request.getParameter("PREVUNI"));
-                        pstmt.setString(3, request.getParameter("PREVDEG"));
+                        pstmt.setString(2, request.getParameter("PREVUNI").strip());
+                        pstmt.setString(3, request.getParameter("PREVDEG").strip());
+
+                        pstmt.executeUpdate();
 
                         conn.commit();
                         conn.setAutoCommit(true);
@@ -97,12 +99,12 @@
                 <tr>
                     <form action="previous_degrees_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
+                        <td><input value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
-                            <input type="hidden" value="<%= rs.getString("PREVUNI") %>"
-                            name="PAYNUM">
-                            <input type="hidden" value="<%= rs.getString("PREVDEG") %>"
-                            name="PAYNUM">
+                        <td><input value="<%= rs.getString("PREVUNI") %>"
+                            name="PREVUNI"></td>
+                        <td><input value="<%= rs.getString("PREVDEG") %>"
+                            name="PREVDEG"></td>
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>
