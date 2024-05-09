@@ -35,7 +35,7 @@
                         PreparedStatement pstmt = conn.prepareStatement(
                         ("INSERT INTO categories VALUES (?, ?, ?, ?)"));
 
-                        pstmt.setString(1, request.getParameter("DEPARTMENT"));
+                        pstmt.setString(1, request.getParameter("DEPARTMENT").strip());
                         pstmt.setString(2, request.getParameter("CATNAME"));
                         pstmt.setFloat(3, Float.parseFloat(request.getParameter("CATGPA")));
                         pstmt.setInt(4, Integer.parseInt(request.getParameter("CATUNITS")));
@@ -144,7 +144,7 @@
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getString("DEPARTMENT") %>"
                             name="DEPARTMENT">
-                            <input type="hidden" value="<%= rs.getString("CATNAME") %>"
+                        <input type="hidden" value="<%= rs.getString("CATNAME") %>"
                             name="CATNAME">
                         <td><input type="submit" value="Delete"></td>
                     </form>

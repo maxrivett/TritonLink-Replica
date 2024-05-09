@@ -30,29 +30,17 @@
                         conn.setAutoCommit(false);
                         
                         // Create the prepared statement and use it to 
-                        // INSERT the concentration attrs INTO the concentration table
-
-                        String[] courses = request.getParameter("COURSES").split(",");
+                        // INSERT the concentration attrs INTO the concentrations table
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO category VALUES (?, ?, ?, ?)"));
+                        ("INSERT INTO concentrations VALUES (?, ?, ?, ?)"));
 
-                        pstmt.setString(1, request.getParameter("DEPARTMENT"));
+                        pstmt.setString(1, request.getParameter("DEPARTMENT").strip());
                         pstmt.setString(2, request.getParameter("CONNAME"));
                         pstmt.setFloat(3, Float.parseFloat(request.getParameter("CONGPA")));
-                        pstmt.setInteger(4, Integer.parseInt(request.getParameter("CONUNITS")));
-                        
+                        pstmt.setInt(4, Integer.parseInt(request.getParameter("CONUNITS")));
 
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        ("INSERT INTO concentration_courses VALUES (?, ?)"));
-
-                        for (int i = 0; i < courses.length; i++) {
-                            pstmt2.setString(1, request.getParameter("DEPARTMENT"));
-                            pstmt2.setString(2, request.getParameter("CONNAME"));
-                            pstmt2.setInt(3, courses[i]);
-
-                            pstmt2.executeUpdate();
-                        }
+                        pstmt.executeUpdate();
 
                         conn.commit();
                         conn.setAutoCommit(true);
@@ -63,40 +51,18 @@
                         conn.setAutoCommit(false);
 
                         // Create prepared statement to UPDATE concentration
-                        // attributes in the concentration table
-
-                        String[] courses = request.getParameter("COURSES").split(",");
+                        // attributes in the concentrations table
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "UPDATE concentration SET CONGPA = ?, CONUNITS = ? " + 
+                        "UPDATE concentrations SET CONGPA = ?, CONUNITS = ? " + 
                         "WHERE DEPARTMENT = ? AND CONNAME = ?");
 
                         pstmt.setString(3, request.getParameter("DEPARTMENT"));
                         pstmt.setString(4, request.getParameter("CONNAME"));
                         pstmt.setFloat(1, Float.parseFloat(request.getParameter("CONGPA")));
-                        pstmt.setInteger(2, Integer.parseInt(request.getParameter("CONUNITS")));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("CONUNITS")));
 
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM concentration_courses WHERE DEPARTMENT = ? AND CONNAME = ?");
-
-                        pstmt2.setString(1, request.getParameter("DEPARTMENT"));
-                        pstmt2.setString(2, request.getParameter("CONNAME"));
-
-                        pstmt2.executeUpdate();
-                        
-
-                        PreparedStatement pstmt3 = conn.prepareStatement(
-                        ("INSERT INTO concentration_courses VALUES (?, ?)"));
-
-                        for (int i = 0; i < courses.length; i++) {
-                            pstmt3.setString(1, request.getParameter("DEPARTMENT"));
-                            pstmt3.setString(2, request.getParameter("CONNAME"));
-                            pstmt3.setInt(3, courses[i]);
-
-                            pstmt3.executeUpdate();
-                        }
-
-
+                        pstmt.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
@@ -107,18 +73,6 @@
 
                         conn.setAutoCommit(false);
 
-                        // Create the prepared statement and use it to
-                        // DELETE the concentration FROM the concentration table.
-
-                        PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM concentration WHERE DEPARTMENT = ? AND CONNAME = ?");
-
-                        pstmt.setInt(1, Integer.parseInt(request.getParameter("DEPARTMENT")));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("CONNAME")));
-
-
-                        int rowCount = pstmt.executeUpdate();
-
                         PreparedStatement pstmt2 = conn.prepareStatement(
                         "DELETE FROM concentration_courses WHERE DEPARTMENT = ? AND CONNAME = ?");
 
@@ -126,6 +80,17 @@
                         pstmt2.setString(2, request.getParameter("CONNAME"));
 
                         pstmt2.executeUpdate();
+
+                        // Create the prepared statement and use it to
+                        // DELETE the concentration FROM the concentrations table.
+
+                        PreparedStatement pstmt = conn.prepareStatement(
+                        "DELETE FROM concentrations WHERE DEPARTMENT = ? AND CONNAME = ?");
+
+                        pstmt.setString(1, request.getParameter("DEPARTMENT"));
+                        pstmt.setString(2, request.getParameter("CONNAME"));
+
+                        int rowCount = pstmt.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
@@ -137,9 +102,9 @@
                     Statement statement = conn.createStatement();
 
                     // Use the statement to SELECT the concentration attributes
-                    // FROM the concentration table
+                    // FROM the concentrations table
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM concentration");
+                        ("SELECT * FROM concentrations");
                 %>
                 <table>
                     <tr>
@@ -147,7 +112,6 @@
                         <th>Concentration Name</th>
                         <th>Concentration GPA</th>
                         <th>Concentration Units</th>
-                        <th>Concentration Courses</th>
                     </tr>
                     <tr>
                         <form action="concentration_entry_form.jsp" method="get">
@@ -156,7 +120,6 @@
                             <th><input value="" name="CONNAME" size="10"></th>
                             <th><input value="" name="CONGPA" size="10"></th>
                             <th><input value="" name="CONUNITS" size="10"></th>
-                            <th><input value="" name="COURSES" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
@@ -167,18 +130,17 @@
                 <tr>
                     <form action="concentration_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt("DEPARTMENT") %>" name="DEPARTMENT"></th>
-                        <th><input value="<%= rs.getBoolean("CONNAME") %>" name="CONNAME"></th>
-                        <th><input value="<%= rs.getInt("CONGPA") %>" name="CONGPA"></th>
-                        <th><input value="<%= rs.getBoolean("CONUNITS") %>" name="CONUNITS"></th>
-                        <th><input value="<%= rs.getInt("COURSES") %>" name="COURSES"></th>
-                        <th><input type="submit" value="Update"></th>
+                        <td><input value="<%= rs.getString("DEPARTMENT") %>" name="DEPARTMENT"></td>
+                        <td><input value="<%= rs.getString("CONNAME") %>" name="CONNAME"></td>
+                        <td><input value="<%= rs.getFloat("CONGPA") %>" name="CONGPA"></td>
+                        <td><input value="<%= rs.getInt("CONUNITS") %>" name="CONUNITS"></td>
+                        <td><input type="submit" value="Update"></td>
                     </form>
                     <form action="concentration_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt("DEPARTMENT") %>"
+                        <input type="hidden" value="<%= rs.getString("DEPARTMENT") %>"
                             name="DEPARTMENT">
-                            <input type="hidden" value="<%= rs.getInt("CONNAME") %>"
+                            <input type="hidden" value="<%= rs.getString("CONNAME") %>"
                             name="CONNAME">
                         <td><input type="submit" value="Delete"></td>
                     </form>

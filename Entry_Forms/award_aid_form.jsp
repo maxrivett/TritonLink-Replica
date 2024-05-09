@@ -86,10 +86,10 @@
                     <tr>
                         <form action="award_aid_form.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
-                            <th><input value="" name="STUDENTID" size="10"></th>
-                            <th><input value="" name="AIDNAME" size="10"></th>
-                            <th><input value="" name="YEAR" size="10"></th>
-                            <th><input type="submit" value="Insert"></th>
+                            <td><input value="" name="STUDENTID" size="10"></td>
+                            <td><input value="" name="AIDNAME" size="10"></td>
+                            <td><input value="" name="YEAR" size="10"></td>
+                            <td><input type="submit" value="Insert"></td>
                         </form>
                     </tr>
                 <%
@@ -99,12 +99,12 @@
                 <tr>
                     <form action="award_aid_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
-                            name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getString("AIDNAME") %>"
-                            name="AIDNAME">
-                        <input type="hidden" value="<%= rs.getInt("YEAR") %>"
-                            name="YEAR">
+                        <td><input value="<%= rs.getInt("STUDENTID") %>"
+                            name="STUDENTID"></td>
+                        <td><input value="<%= rs.getString("AIDNAME") %>"
+                            name="AIDNAME"></td>
+                        <td><input value="<%= rs.getInt("YEAR") %>"
+                            name="YEAR"></td>
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>

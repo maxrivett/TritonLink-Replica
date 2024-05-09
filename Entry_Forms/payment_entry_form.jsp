@@ -37,7 +37,9 @@
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("PAYNUM")));
-                        pstmt.setFloat(3, Float.parseFloat(request.getParameter("PAYAMT")));
+                        pstmt.setFloat(3, Float.parseFloat(request.getParameter("AMOUNT")));
+
+                        pstmt.executeUpdate();
 
                         conn.commit();
                         conn.setAutoCommit(true);
@@ -51,12 +53,14 @@
                         // attributes in the payment table
 
                         PreparedStatement pstmt = conn.prepareStatement(
-                        "UPDATE payment SET PAYAMT = ? " + 
+                        "UPDATE payment SET AMOUNT = ? " + 
                         "WHERE STUDENTID = ? AND PAYNUM = ?");
 
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setInt(3, Integer.parseInt(request.getParameter("PAYNUM")));
-                        pstmt.setFloat(1, Float.parseFloat(request.getParameter("PAYAMT")));
+                        pstmt.setFloat(1, Float.parseFloat(request.getParameter("AMOUNT")));
+
+                        int rowCount = pstmt.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
@@ -104,7 +108,7 @@
                             <input type="hidden" value="insert" name="action">
                             <th><input value="" name="STUDENTID" size="10"></th>
                             <th><input value="" name="PAYNUM" size="10"></th>
-                            <th><input value="" name="PAYAMT" size="10"></th>
+                            <th><input value="" name="AMOUNT" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
@@ -115,16 +119,16 @@
                 <tr>
                     <form action="payment_entry_form.jsp" method="get">
                         <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt("STUDENTID") %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getInt("PAYNUM") %>" name="PAYNUM"></th>
-                        <th><input value="<%= rs.getFloat("PAYAMT") %>" name="PAYAMT"></th>
-                        <th><input type="submit" value="Update"></th>
+                        <td><input value="<%= rs.getInt("STUDENTID") %>" name="STUDENTID"></td>
+                        <td><input value="<%= rs.getInt("PAYNUM") %>" name="PAYNUM"></td>
+                        <td><input value="<%= rs.getFloat("AMOUNT") %>" name="AMOUNT"></td>
+                        <td><input type="submit" value="Update"></td>
                     </form>
                     <form action="payment_entry_form.jsp" method="get">
                         <input type="hidden" value="delete" name="action">
                         <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
-                            <input type="hidden" value="<%= rs.getInt("PAYNUM") %>"
+                        <input type="hidden" value="<%= rs.getInt("PAYNUM") %>"
                             name="PAYNUM">
                         <td><input type="submit" value="Delete"></td>
                     </form>
