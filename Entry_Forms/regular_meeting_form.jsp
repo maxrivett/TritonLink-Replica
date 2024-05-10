@@ -6,159 +6,140 @@
                 <jsp:include page="menu.html" />
             </td>
             <td>
-                <%-- Set the scripting langauge to java and --%>
-                <%-- import the java.sql package --%>
+                <%-- Set the scripting language to java and import the java.sql package --%>
                 <%@ page language="java" import="java.sql.*" %>
 
                 <%
-                    
                     Connection conn;
                     try {
-                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres" + 
-                            "&password=HPost1QGres!&ssl=false";
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres&password=HPost1QGres!&ssl=false";
                         conn = DriverManager.getConnection(url);
                 %>
 
                 <%
-                    // Check if an insertion is requested
+                    // Check if an action is requested
                     String action = request.getParameter("action");
-                    if (action != null && action.equals("insert")) {
+                    if ("insert".equals(action)) {
                         conn.setAutoCommit(false);
-                        
-                        // Create the prepared statement and use it to 
-                        // INSERT the regular_meeting attrs INTO the regular_meeting table
+
                         PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO regular_meeting VALUES (?, ?, ?, ?, ?)"));
-
-                        pstmt.setString(1, request.getParameter("WEEKDAY"));
-                        pstmt.setString(2, request.getParameter("CLASS"));
-                        pstmt.setString(3, request.getParameter("STARTTIME"));
-                        pstmt.setString(4, request.getParameter("ENDTIME"));
-                        pstmt.setString(5, request.getParameter("TYPE"));
-
+                            "INSERT INTO regular_meeting (SECTIONID, STARTHOUR, STARTMINUTE, ENDHOUR, ENDMINUTE, WEEKDAY, TYPE, MANDATORY, BUILDING, ROOM) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        pstmt.setInt(1, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("STARTHOUR")));
+                        pstmt.setInt(3, Integer.parseInt(request.getParameter("STARTMINUTE")));
+                        pstmt.setInt(4, Integer.parseInt(request.getParameter("ENDHOUR")));
+                        pstmt.setInt(5, Integer.parseInt(request.getParameter("ENDMINUTE")));
+                        pstmt.setString(6, request.getParameter("WEEKDAY"));
+                        pstmt.setString(7, request.getParameter("TYPE"));
+                        pstmt.setBoolean(8, Boolean.parseBoolean(request.getParameter("MANDATORY")));
+                        pstmt.setString(9, request.getParameter("BUILDING"));
+                        pstmt.setString(10, request.getParameter("ROOM"));
                         pstmt.executeUpdate();
+                        conn.commit();
+                        conn.setAutoCommit(true);
+                    } else if ("update".equals(action)) {
+                        conn.setAutoCommit(false);
 
+                        PreparedStatement pstmt = conn.prepareStatement(
+                            "UPDATE regular_meeting SET TYPE = ?, MANDATORY = ?, BUILDING = ?, ROOM = ? WHERE SECTIONID = ? AND STARTHOUR = ? AND STARTMINUTE = ? AND ENDHOUR = ? AND ENDMINUTE = ? AND WEEKDAY = ?");
+                        pstmt.setString(1, request.getParameter("TYPE"));
+                        pstmt.setBoolean(2, Boolean.parseBoolean(request.getParameter("MANDATORY")));
+                        pstmt.setString(3, request.getParameter("BUILDING"));
+                        pstmt.setString(4, request.getParameter("ROOM"));
+                        pstmt.setInt(5, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt.setInt(6, Integer.parseInt(request.getParameter("STARTHOUR")));
+                        pstmt.setInt(7, Integer.parseInt(request.getParameter("STARTMINUTE")));
+                        pstmt.setInt(8, Integer.parseInt(request.getParameter("ENDHOUR")));
+                        pstmt.setInt(9, Integer.parseInt(request.getParameter("ENDMINUTE")));
+                        pstmt.setString(10, request.getParameter("WEEKDAY"));
+                        pstmt.executeUpdate();
+                        conn.commit();
+                        conn.setAutoCommit(true);
+                    } else if ("delete".equals(action)) {
+                        conn.setAutoCommit(false);
+
+                        PreparedStatement pstmt = conn.prepareStatement(
+                            "DELETE FROM regular_meeting WHERE SECTIONID = ? AND STARTHOUR = ? AND STARTMINUTE = ? AND ENDHOUR = ? AND ENDMINUTE = ? AND WEEKDAY = ?");
+                        pstmt.setInt(1, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("STARTHOUR")));
+                        pstmt.setInt(3, Integer.parseInt(request.getParameter("STARTMINUTE")));
+                        pstmt.setInt(4, Integer.parseInt(request.getParameter("ENDHOUR")));
+                        pstmt.setInt(5, Integer.parseInt(request.getParameter("ENDMINUTE")));
+                        pstmt.setString(6, request.getParameter("WEEKDAY"));
+                        pstmt.executeUpdate();
                         conn.commit();
                         conn.setAutoCommit(true);
                     }
-
-                    // Check if an update is requested
-                    if (action != null && action.equals("update")) {
-                        conn.setAutoCommit(false);
-
-                        // Create prepared statement to UPDATE regular_meeting
-                        // attributes in the regular_meeting table
-                        PreparedStatement pstmt = conn.prepareStatement(
-                        "UPDATE regular_meeting SET TYPE = ?" +
-                        "WHERE WEEKDAY = ? AND CLASS = ? AND STARTTIME = ? AND ENDTIME = ?");
-
-                        pstmt.setString(1, request.getParameter("TYPE"));
-                        pstmt.setString(2, request.getParameter("WEEKDAY"));
-                        pstmt.setString(3, request.getParameter("CLASS"));
-                        pstmt.setString(4, request.getParameter("STARTTIME"));
-                        pstmt.setString(5, request.getParameter("ENDTIME"));
-
-                        int rowCount = pstmt.executeUpdate();
-
-                        conn.setAutoCommit(false);
-                        conn.setAutoCommit(true);
-                    }
-
-                    // Check if a delete is requested
-                    if (action != null && action.equals("delete")) {
-
-                        conn.setAutoCommit(false);
-
-                        // Create the prepared statement and use it to
-                        // DELETE the regular_meeting FROM the regular_meeting table.
-
-                        PreparedStatement pstmt = conn.prepareStatement(
-                        "DELETE FROM regular_meeting WHERE WEEKDAY = ? AND CLASS = ? AND STARTTIME = ? AND ENDTIME = ?");
-
-                        pstmt.setString(1, request.getParameter("WEEKDAY"));
-                        pstmt.setString(2, request.getParameter("CLASS"));
-                        pstmt.setString(3, request.getParameter("STARTTIME"));
-                        pstmt.setString(4, request.getParameter("ENDTIME"));
-
-                        int rowCount = pstmt.executeUpdate();
-
-                        conn.setAutoCommit(false);
-                        conn.setAutoCommit(true);
-                    }
                 %>
 
                 <%
-                    // Create the statement
                     Statement statement = conn.createStatement();
-
-                    // Use the statement to SELECT the regular_meeting attributes
-                    // FROM the regular_meeting table
-                    ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM regular_meeting");
+                    ResultSet rs = statement.executeQuery("SELECT * FROM regular_meeting");
                 %>
                 <table>
                     <tr>
-                        <th>Day of Week</th>
-                        <th>Class</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
+                        <th>Section ID</th>
+                        <th>Start Hour</th>
+                        <th>Start Minute</th>
+                        <th>End Hour</th>
+                        <th>End Minute</th>
+                        <th>Weekday</th>
                         <th>Type</th>
+                        <th>Mandatory</th>
+                        <th>Building</th>
+                        <th>Room</th>
+                        <th>Actions</th>
                     </tr>
                     <tr>
-                        <form action="regular_meeting_form.jsp" method="get">
+                        <form action="regular_meeting_form.jsp" method="post">
                             <input type="hidden" value="insert" name="action">
-                            <th><input value="" name="WEEKDAY" size="10"></th>
-                            <th><input value="" name="CLASS" size="20"></th>
-                            <th><input value="" name="STARTTIME" size="10"></th>
-                            <th><input value="" name="ENDTIME" size="10"></th>
-                            <th><input value="" name="TYPE" size="10"></th>
-                            <th><input type="submit" value="Insert"></th>
+                            <td><input type="text" name="SECTIONID"></td>
+                            <td><input type="text" name="STARTHOUR"></td>
+                            <td><input type="text" name="STARTMINUTE"></td>
+                            <td><input type="text" name="ENDHOUR"></td>
+                            <td><input type="text" name="ENDMINUTE"></td>
+                            <td><input type="text" name="WEEKDAY"></td>
+                            <td><input type="text" name="TYPE"></td>
+                            <td><input type="checkbox" name="MANDATORY"></td>
+                            <td><input type="text" name="BUILDING"></td>
+                            <td><input type="text" name="ROOM"></td>
+                            <td><input type="submit" value="Insert"></td>
                         </form>
                     </tr>
-                <%
-                    // Iterate over the ResultSet
-                    while ( rs.next() ) {
-                %>
-                <tr>
-                    <form action="regular_meeting_form.jsp" method="get">
-                        <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getString("WEEKDAY") %>" name="WEEKDAY"></th>
-                        <th><input value="<%= rs.getString("CLASS") %>" name="CLASS"></th>
-                        <th><input value="<%= rs.getString("STARTTIME") %>" name="STARTTIME"></th>
-                        <th><input value="<%= rs.getString("ENDTIME") %>" name="ENDTIME"></th>
-                        <th><input value="<%= rs.getString("TYPE") %>" name="TYPE"></th>
-                        <th><input type="submit" value="Update"></th>
-                    </form>
-                    <form action="regular_meeting_form.jsp" method="get">
-                        <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getString("WEEKDAY") %>" name="DATE">
-                        <input type="hidden" value="<%= rs.getString("CLASS") %>" name="CLASS">
-                        <input type="hidden" value="<%= rs.getString("STARTTIME") %>" name="STARTTIME">
-                        <input type="hidden" value="<%= rs.getString("ENDTIME") %>" name="ENDTIME">
-                        <td><input type="submit" value="Delete"></td>
-                    </form>
-                </tr>
-                <%
+                    <%
+                        while (rs.next()) {
+                    %>
+                    <tr>
+                        <form action="regular_meeting_form.jsp" method="get">
+                            <input type="hidden" value="update" name="action">
+                            <td><input type="text" value="<%= rs.getInt("SECTIONID") %>" name="SECTIONID"></td>
+                            <td><input type="text" value="<%= rs.getInt("STARTHOUR") %>" name="STARTHOUR"></td>
+                            <td><input type="text" value="<%= rs.getInt("STARTMINUTE") %>" name="STARTMINUTE"></td>
+                            <td><input type="text" value="<%= rs.getInt("ENDHOUR") %>" name="ENDHOUR"></td>
+                            <td><input type="text" value="<%= rs.getInt("ENDMINUTE") %>" name="ENDMINUTE"></td>
+                            <td><input type="text" value="<%= rs.getString("WEEKDAY") %>" name="WEEKDAY"></td>
+                            <td><input type="text" value="<%= rs.getString("TYPE") %>" name="TYPE"></td>
+                            <td><input type="checkbox" name="MANDATORY" <%= rs.getBoolean("MANDATORY") ? "checked" : "" %>></td>
+                            <td><input type="text" value="<%= rs.getString("BUILDING") %>" name="BUILDING"></td>
+                            <td><input type="text" value="<%= rs.getString("ROOM") %>" name="ROOM"></td>
+                            <td>
+                                <input type="submit" name="action" value="update" />
+                                <input type="submit" name="action" value="delete" />
+                            </td>
+                        </form>
+                    </tr>
+                    <%
+                        }
+                        rs.close();
+                        statement.close();
+                        conn.close();
+                    } catch (SQLException sqle) {
+                        out.println(sqle.getMessage());
+                    } catch (Exception e) {
+                        out.println(e.getMessage());
                     }
-                %>
+                    %>
                 </table>
-
-                <%
-                    // Close the ResultSet
-                    rs.close();
-
-                    // Close the Statement
-                    statement.close();
-
-                    // Close the Connection
-                    conn.close();
-
-                } catch (SQLException sqle) {
-                    out.println(sqle.getMessage());
-                } catch (Exception e) {
-                    out.println(e.getMessage());
-                }
-                %>
             </td>
         </tr>
     </table>
