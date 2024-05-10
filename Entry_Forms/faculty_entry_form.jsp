@@ -23,6 +23,29 @@
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("delete".equals(action)) {
+                            PreparedStatement selectPstmt = conn.prepareStatement(
+                                "SELECT SECTIONID FROM sections WHERE facultyname = ?");
+                            selectPstmt.setString(1, request.getParameter("facultyname"));
+                            ResultSet rs = selectPstmt.executeQuery();
+
+                            PreparedStatement deletePstmt = conn.prepareStatement(
+                                "DELETE FROM course_enrollment WHERE SECTIONID = ?");
+                            while (rs.next()) {
+                                int sectionId = rs.getInt("SECTIONID");
+                                deletePstmt.setInt(1, sectionId);
+                                deletePstmt.executeUpdate();
+                            }
+
+                            PreparedStatement pstmt2 = conn.prepareStatement(
+                                "DELETE FROM sections WHERE facultyname = ?");
+                            pstmt2.setString(1, request.getParameter("facultyname"));
+                            pstmt2.executeUpdate();
+                            conn.commit();
+                            PreparedStatement pstmt1 = conn.prepareStatement(
+                                "DELETE FROM advisors WHERE facultyname = ?");
+                            pstmt1.setString(1, request.getParameter("facultyname"));
+                            pstmt1.executeUpdate();
+                            conn.commit();
                             PreparedStatement pstmt = conn.prepareStatement(
                                 "DELETE FROM Faculty WHERE facultyname = ?");
                             pstmt.setString(1, request.getParameter("facultyname"));
