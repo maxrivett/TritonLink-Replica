@@ -78,12 +78,16 @@
                                 "DELETE FROM course_enrollment WHERE SECTIONID = ?");
                             PreparedStatement deletePstmt2 = conn.prepareStatement(
                                 "DELETE FROM review_session_info WHERE SECTIONID = ?");
+                            PreparedStatement deletePstmt3 = conn.prepareStatement(
+                                "DELETE FROM regular_meeting WHERE SECTIONID = ?");
                             while (rs.next()) {
                                 int sectionId = rs.getInt("SECTIONID");
                                 deletePstmt1.setInt(1, sectionId);
                                 deletePstmt1.executeUpdate();
                                 deletePstmt2.setInt(1, sectionId);
                                 deletePstmt2.executeUpdate();
+                                deletePstmt3.setInt(1, sectionId);
+                                deletePstmt3.executeUpdate();
                             }
 
                             PreparedStatement pstmt2 = conn.prepareStatement(
