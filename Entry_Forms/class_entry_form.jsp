@@ -16,25 +16,25 @@
 
                         if ("update".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE Classes SET title = ? WHERE course_ID = ? AND quarter = ? AND year = ?");
+                                "UPDATE Classes SET title = ? WHERE courseid = ? AND quarter = ? AND year = ?");
                             pstmt.setString(1, request.getParameter("title"));
-                            pstmt.setString(2, request.getParameter("course_ID"));
+                            pstmt.setInt(2, Integer.parseInt(request.getParameter("courseid")));
                             pstmt.setString(3, request.getParameter("quarter"));
                             pstmt.setInt(4, Integer.parseInt(request.getParameter("year")));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("delete".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "DELETE FROM Classes WHERE course_ID = ? AND quarter = ? AND year = ?");
-                            pstmt.setString(1, request.getParameter("course_ID"));
+                                "DELETE FROM Classes WHERE courseid = ? AND quarter = ? AND year = ?");
+                            pstmt.setInt(1, Integer.parseInt(request.getParameter("courseid")));
                             pstmt.setString(2, request.getParameter("quarter"));
                             pstmt.setInt(3, Integer.parseInt(request.getParameter("year")));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("insert".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "INSERT INTO Classes (course_ID, quarter, year, title) VALUES (?, ?, ?, ?)");
-                            pstmt.setString(1, request.getParameter("course_ID"));
+                                "INSERT INTO Classes (courseid, quarter, year, title) VALUES (?, ?, ?, ?)");
+                            pstmt.setInt(1, Integer.parseInt(request.getParameter("courseid")));
                             pstmt.setString(2, request.getParameter("quarter"));
                             pstmt.setInt(3, Integer.parseInt(request.getParameter("year")));
                             pstmt.setString(4, request.getParameter("title"));
@@ -53,7 +53,7 @@
                     </tr>
                     <tr>
                         <form action="class_entry_form.jsp" method="post">
-                            <td><input type="text" name="course_ID" /></td>
+                            <td><input type="text" name="courseid" /></td>
                             <td><input type="text" name="quarter" /></td>
                             <td><input type="text" name="year" /></td>
                             <td><input type="text" name="title" /></td>
@@ -65,7 +65,7 @@
                     %>
                     <tr>
                         <form action="class_entry_form.jsp" method="post">
-                            <td><input type="hidden" name="course_ID" value="<%= rs.getString("course_ID") %>" /><%= rs.getString("course_ID") %></td>
+                            <td><input type="hidden" name="courseid" value="<%= rs.getInt("courseid") %>" /><%= rs.getInt("courseid") %></td>
                             <td><input type="hidden" name="quarter" value="<%= rs.getString("quarter") %>" /><%= rs.getString("quarter") %></td>
                             <td><input type="hidden" name="year" value="<%= rs.getInt("year") %>" /><%= rs.getInt("year") %></td>
                             <td><input type="text" name="title" value="<%= rs.getString("title") %>" /></td>
