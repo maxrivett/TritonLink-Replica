@@ -88,7 +88,6 @@
                         <th>Mandatory</th>
                         <th>Building</th>
                         <th>Room</th>
-                        <th>Actions</th>
                     </tr>
                     <tr>
                         <form action="regular_meeting_form.jsp" method="post">
