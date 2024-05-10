@@ -161,7 +161,7 @@
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID), " +
                             "FOREIGN KEY (COURSEID, QUARTER, YEAR) REFERENCES classes(COURSEID, QUARTER, YEAR))");
                         create_strings.add("CREATE TABLE advisors (STUDENTID integer, FACULTYNAME varchar(255), " + 
-                            "PRIMARY KEY(STUDENTID, FACULTYNAME), " + 
+                            "PRIMARY KEY(STUDENTID), " + 
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID), " +
                             "FOREIGN KEY (FACULTYNAME) REFERENCES Faculty(FACULTYNAME))");
                         create_strings.add("CREATE TABLE thesis_committee (STUDENTID integer, FACULTYNAME varchar(255), " + 
