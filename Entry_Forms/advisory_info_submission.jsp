@@ -42,7 +42,17 @@
                         conn.commit();
                         conn.setAutoCommit(true);
                     }
+                    if (action != null && action.equals("update")) {
+                        conn.setAutoCommit(false);
+                        PreparedStatement pstmt = conn.prepareStatement(
+                                "UPDATE advisors SET facultyname = ? WHERE STUDENTID = ?");
+                        pstmt.setString(1, request.getParameter("facultyname"));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
+                        int rowCount = pstmt.executeUpdate();
 
+                        conn.setAutoCommit(false);
+                        conn.setAutoCommit(true);
+                    }
                     // Check if a delete is requested
                     if (action != null && action.equals("delete")) {
 
