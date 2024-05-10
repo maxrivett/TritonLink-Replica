@@ -16,31 +16,31 @@
 
                         if ("update".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE probation_info SET REASON = ? WHERE STUDENTID = ? AND STARTQUARTER = ? AND ENDQUARTER = ? AND STARTYEAR = ? AND ENDYEAR = ?");
+                                "UPDATE probation_info SET REASON = ? WHERE STUDENTID = ? AND STARTQTR = ? AND ENDQTR = ? AND STARTYEAR = ? AND ENDYEAR = ?");
                             pstmt.setString(1, request.getParameter("REASON"));
-                            pstmt.setString(2, request.getParameter("STUDENTID"));
-                            pstmt.setString(3, request.getParameter("STARTQUARTER"));
-                            pstmt.setString(4, request.getParameter("ENDQUARTER"));
+                            pstmt.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
+                            pstmt.setString(3, request.getParameter("STARTQTR"));
+                            pstmt.setString(4, request.getParameter("ENDQTR"));
                             pstmt.setInt(5, Integer.parseInt(request.getParameter("STARTYEAR")));
                             pstmt.setInt(6, Integer.parseInt(request.getParameter("ENDYEAR")));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("delete".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "DELETE FROM probation_info WHERE STUDENTID = ? AND STARTQUARTER = ? AND ENDQUARTER = ? AND STARTYEAR = ? AND ENDYEAR = ?");
-                            pstmt.setString(1, request.getParameter("STUDENTID"));
-                            pstmt.setString(2, request.getParameter("STARTQUARTER"));
-                            pstmt.setString(3, request.getParameter("ENDQUARTER"));
+                                "DELETE FROM probation_info WHERE STUDENTID = ? AND STARTQTR = ? AND ENDQTR = ? AND STARTYEAR = ? AND ENDYEAR = ?");
+                            pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+                            pstmt.setString(2, request.getParameter("STARTQTR"));
+                            pstmt.setString(3, request.getParameter("ENDQTR"));
                             pstmt.setInt(4, Integer.parseInt(request.getParameter("STARTYEAR")));
                             pstmt.setInt(5, Integer.parseInt(request.getParameter("ENDYEAR")));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("insert".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "INSERT INTO probation_info (STUDENTID, STARTQUARTER, ENDQUARTER, STARTYEAR, ENDYEAR, REASON) VALUES (?, ?, ?, ?, ?, ?)");
-                            pstmt.setString(1, request.getParameter("STUDENTID"));
-                            pstmt.setString(2, request.getParameter("STARTQUARTER"));
-                            pstmt.setString(3, request.getParameter("ENDQUARTER"));
+                                "INSERT INTO probation_info (STUDENTID, STARTQTR, ENDQTR, STARTYEAR, ENDYEAR, REASON) VALUES (?, ?, ?, ?, ?, ?)");
+                            pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+                            pstmt.setString(2, request.getParameter("STARTQTR"));
+                            pstmt.setString(3, request.getParameter("ENDQTR"));
                             pstmt.setInt(4, Integer.parseInt(request.getParameter("STARTYEAR")));
                             pstmt.setInt(5, Integer.parseInt(request.getParameter("ENDYEAR")));
                             pstmt.setString(6, request.getParameter("REASON"));
@@ -62,8 +62,8 @@
                     <tr>
                         <form action="probation_info_submission.jsp" method="post">
                             <td><input type="text" name="STUDENTID" /></td>
-                            <td><input type="text" name="STARTQUARTER" /></td>
-                            <td><input type="text" name="ENDQUARTER" /></td>
+                            <td><input type="text" name="STARTQTR" /></td>
+                            <td><input type="text" name="ENDQTR" /></td>
                             <td><input type="text" name="STARTYEAR" /></td>
                             <td><input type="text" name="ENDYEAR" /></td>
                             <td><input type="text" name="REASON" /></td>
@@ -75,9 +75,9 @@
                     %>
                     <tr>
                         <form action="probation_info_submission.jsp" method="post">
-                            <td><input type="hidden" name="STUDENTID" value="<%= rs.getString("STUDENTID") %>" /><%= rs.getString("STUDENTID") %></td>
-                            <td><input type="hidden" name="STARTQUARTER" value="<%= rs.getString("STARTQUARTER") %>" /><%= rs.getString("STARTQUARTER") %></td>
-                            <td><input type="hidden" name="ENDQUARTER" value="<%= rs.getString("ENDQUARTER") %>" /><%= rs.getString("ENDQUARTER") %></td>
+                            <td><input type="hidden" name="STUDENTID" value="<%= rs.getInt("STUDENTID") %>" /><%= rs.getInt("STUDENTID") %></td>
+                            <td><input type="hidden" name="STARTQTR" value="<%= rs.getString("STARTQTR") %>" /><%= rs.getString("STARTQTR") %></td>
+                            <td><input type="hidden" name="ENDQTR" value="<%= rs.getString("ENDQTR") %>" /><%= rs.getString("ENDQTR") %></td>
                             <td><input type="hidden" name="STARTYEAR" value="<%= rs.getInt("STARTYEAR") %>" /><%= rs.getInt("STARTYEAR") %></td>
                             <td><input type="hidden" name="ENDYEAR" value="<%= rs.getInt("ENDYEAR") %>" /><%= rs.getInt("ENDYEAR") %></td>
                             <td><input type="text" name="REASON" value="<%= rs.getString("REASON") %>" /></td>
