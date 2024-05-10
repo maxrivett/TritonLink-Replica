@@ -117,7 +117,7 @@
                             "PRIMARY KEY (SECTIONID), FOREIGN KEY (FACULTYNAME) REFERENCES Faculty(FACULTYNAME))");
                         create_strings.add("CREATE TABLE course_enrollment (STUDENTID integer, " +
                             "COURSEID integer, QUARTER varchar(255), YEAR integer, " +
-                            "SECTIONID integer, GRADE varchar(2), " +
+                            "SECTIONID integer, NUMUNITS integer, " +
                             "PRIMARY KEY (STUDENTID, SECTIONID), " +
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID), " +
                             "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID))");
