@@ -50,7 +50,6 @@
                         <th>Quarter</th>
                         <th>Year</th>
                         <th>Title</th>
-                        <th>Actions</th>
                     </tr>
                     <tr>
                         <form action="class_entry_form.jsp" method="post">

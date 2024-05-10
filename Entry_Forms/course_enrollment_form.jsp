@@ -58,7 +58,6 @@
                         <th>Year</th>
                         <th>Section</th>
                         <th>Number of Units</th>
-                        <th>Actions</th>
                     </tr>
                     <tr>
                         <form action="course_enrollment_form.jsp" method="post">
