@@ -53,7 +53,7 @@
                         // Create prepared statement to UPDATE classes_taken
                         // attributes in the classes_taken table
                         PreparedStatement pstatement = conn.prepareStatement(
-                        "UPDATE classes_taken SET GRADE = ?, WHERE STUDENTID = ? AND " +
+                        "UPDATE classes_taken SET GRADE = ? WHERE STUDENTID = ? AND " +
                         "COURSEID = ? AND QUARTER = ? AND YEAR = ?");
 
                         pstatement.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
