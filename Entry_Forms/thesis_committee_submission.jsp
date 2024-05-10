@@ -40,7 +40,7 @@
 
                             for (int i = 0; i < professors.length; i++) {
                                 pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                                pstmt.setInt(2, professors[i]);
+                                pstmt.setString(2, professors[i]);
 
                                 pstmt.executeUpdate();
                             }
@@ -50,43 +50,89 @@
                         conn.setAutoCommit(true);
                     }
 
-                    // Check if an update is requested
-                    if (action != null && action.equals("update")) {
+                    // Check if an addition is requested
+                    if (action != null && action.equals("add")) {
                         conn.setAutoCommit(false);
+                        
+                        // Create the prepared statement and use it to 
+                        // add the thesis_committee attrs INTO the thesis_committee table
 
-                        // Create prepared statement to UPDATE classes_taken
-                        // attributes in the classes_taken table
+                        PreparedStatement numProfsStatement = conn.prepareStatement(
+                        "SELECT COUNT(*) as NUMPROFS FROM thesis_committee WHERE STUDENTID = ?");
+
+                        numProfsStatement.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+
+                        ResultSet numProfsSet = numProfsStatement.executeQuery();
+
+                        numProfsSet.next();
+
+                        int numProfs = numProfsSet.getInt("NUMPROFS");
+
+                        int rowCount = 0;
 
                         String[] professors = request.getParameter("PROFESSORS").split(",");
 
-                        if (professors.length >= 4) {
+                        if (numProfs >= 4) {
+                            PreparedStatement pstmt = conn.prepareStatement(
+                            ("INSERT INTO thesis_committee VALUES (?, ?)"));
 
+                            for (int i = 0; i < professors.length; i++) {
+                                pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+                                pstmt.setString(2, professors[i]);
+
+                                pstmt.executeUpdate();
+                            }
+                        }
+
+                        conn.commit();
+                        conn.setAutoCommit(true);
+                    }
+
+                    // Check if a delete is requested
+                    if (action != null && action.equals("deleteProf")) {
+
+                        conn.setAutoCommit(false);
+
+                        // Create the prepared statement and use it to
+                        // DELETE the committee FROM the thesis_committee table.
+
+                        PreparedStatement numProfsStatement = conn.prepareStatement(
+                        "SELECT COUNT(*) as NUMPROFS FROM thesis_committee WHERE STUDENTID = ?");
+
+                        numProfsStatement.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+
+                        ResultSet numProfsSet = numProfsStatement.executeQuery();
+
+                        numProfsSet.next();
+
+                        int numProfs = numProfsSet.getInt("NUMPROFS");
+
+                        int rowCount = 0;
+
+                        if (numProfs > 4) {
+                            PreparedStatement pstmt = conn.prepareStatement(
+                            "DELETE FROM thesis_committee WHERE STUDENTID = ? AND FACULTYNAME = ?");
+
+                            pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+                            pstmt.setString(2, request.getParameter("FACULTYNAME"));
+
+                            rowCount = pstmt.executeUpdate();
+                        }
+                        else {
                             PreparedStatement pstmt = conn.prepareStatement(
                             "DELETE FROM thesis_committee WHERE STUDENTID = ?");
 
                             pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
 
-                            pstmt.executeUpdate();
-
-
-                            PreparedStatement pstmt2 = conn.prepareStatement(
-                            ("INSERT INTO thesis_committee VALUES (?, ?)"));
-
-                            for (int i = 0; i < professors.length; i++) {
-                                pstmt2.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                                pstmt2.setInt(2, professors[i]);
-
-                                pstmt2.executeUpdate();
-                            }
+                            rowCount = pstmt.executeUpdate();
                         }
-
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
                     }
 
                     // Check if a delete is requested
-                    if (action != null && action.equals("delete")) {
+                    if (action != null && action.equals("deleteStudent")) {
 
                         conn.setAutoCommit(false);
 
@@ -128,22 +174,32 @@
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
+                    <tr>
+                        <form action="thesis_committee_submission.jsp" method="get">
+                            <input type="hidden" value="add" name="action">
+                            <th><input value="" name="STUDENTID" size="10"></th>
+                            <th><input value="" name="PROFESSORS" size="10"></th>
+                            <th><input type="submit" value="Add"></th>
+                        </form>
+                    </tr>
                 <%
                     // Iterate over the ResultSet
                     while ( rs.next() ) {
                 %>
                 <tr>
                     <form action="thesis_committee_submission.jsp" method="get">
-                        <input type="hidden" value="update" name="action">
-                        <th><input value="<%= rs.getInt("STUDENTID") %>" name="STUDENTID"></th>
-                        <th><input value="<%= rs.getBoolean("PROFESSORS") %>" name="PROFESSORS"></th>
-                        <th><input type="submit" value="Update"></th>
+                        <input type="hidden" value="deleteProf" name="action">
+                        <td><input value="<%= rs.getInt("STUDENTID") %>"
+                            name="STUDENTID"></td>
+                        <td><input value="<%= rs.getString("FACULTYNAME") %>"
+                            name="FACULTYNAME"></td>
+                        <td><input type="submit" value="Delete Professor"></td>
                     </form>
                     <form action="thesis_committee_submission.jsp" method="get">
-                        <input type="hidden" value="delete" name="action">
+                        <input type="hidden" value="deleteStudent" name="action">
                         <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
                             name="STUDENTID">
-                        <td><input type="submit" value="Delete"></td>
+                        <td><input type="submit" value="Delete Student"></td>
                     </form>
                 </tr>
                 <%
