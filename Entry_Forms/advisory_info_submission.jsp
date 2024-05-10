@@ -35,7 +35,7 @@
                         ("INSERT INTO advisors VALUES (?, ?)"));
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setString(2, request.getParameter("faculty_name"));
+                        pstmt.setString(2, request.getParameter("facultyname"));
 
                         pstmt.executeUpdate();
 
@@ -53,10 +53,10 @@
 
                         PreparedStatement pstmt = conn.prepareStatement(
                         "DELETE FROM advisors WHERE STUDENTID = ? AND " +
-                        "faculty_name = ?");
+                        "facultyname = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setString(2, request.getParameter("faculty_name"));
+                        pstmt.setString(2, request.getParameter("facultyname"));
 
 
                         int rowCount = pstmt.executeUpdate();
@@ -77,35 +77,40 @@
                 %>
                 <table>
                     <tr>
-                        <th>Student_ID</th>
+                        <th>Student ID</th>
                         <th>Faculty Name</th>
                     </tr>
                     <tr>
                         <form action="advisory_info_submission.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
-                            <th><input value="" name="STUDENTID" size="10"></th>
-                            <th><input value="" name="faculty_name" size="10"></th>
+                            <th><input type="text" name="STUDENTID" size="10"></th>
+                            <th><input type="text" name="facultyname" size="30"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
-                <%
-                    // Iterate over the ResultSet
-                    while ( rs.next() ) {
-                %>
-                <tr>
-                    <form action="advisory_info_submission.jsp" method="get">
-                        <input type="hidden" value="delete" name="action">
-                        <input type="hidden" value="<%= rs.getInt("STUDENTID") %>"
-                            name="STUDENTID">
-                        <input type="hidden" value="<%= rs.getString("faculty_name") %>"
-                            name="faculty_name">
-                        <td><input type="submit" value="Delete"></td>
-                    </form>
-                </tr>
-                <%
-                    }
-                %>
+                    <%
+                        // Iterate over the ResultSet
+                        while (rs.next()) {
+                    %>
+                    <tr>
+                        <form action="advisory_info_submission.jsp" method="get">
+                            <input type="hidden" value="update" name="action">
+                            <th><input type="text" value="<%= rs.getInt("STUDENTID") %>" name="STUDENTID"></th>
+                            <th><input type="text" value="<%= rs.getString("facultyname") %>" name="facultyname"></th>
+                            <th><input type="submit" value="Update"></th>
+                        </form>
+                        <form action="advisory_info_submission.jsp" method="get">
+                            <input type="hidden" value="delete" name="action">
+                            <th><input type="hidden" value="<%= rs.getInt("STUDENTID") %>" name="STUDENTID"></th>
+                            <th><input type="hidden" value="<%= rs.getString("facultyname") %>" name="facultyname"></th>
+                            <th><input type="submit" value="Delete"></th>
+                        </form>
+                    </tr>
+                    <%
+                        }
+                    %>
                 </table>
+                
 
                 <%
                     // Close the ResultSet
