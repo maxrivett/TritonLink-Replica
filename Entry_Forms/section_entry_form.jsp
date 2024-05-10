@@ -55,7 +55,7 @@
                             <td><input type="text" name="NUMENROLLED" /></td>
                             <td><input type="text" name="SECTIONID" /></td>
                             <td><input type="text" name="FACULTYNAME" /></td>
-                            <td><input type="text" name="ENROLLMENTLIMIT" /></td>
+                            <td><input type="text" name="ENROLLLIMIT" /></td>
                             <td><input type="submit" name="action" value="insert" /></td>
                         </form>
                     </tr>
