@@ -149,7 +149,7 @@
                             name="COURSEID">
                         <input type="hidden" value="<%= rs.getInt("SECTIONID") %>"
                             name="SECTIONID">
-                        <input type="hidden" value="<%= rs.getInt("QUARTER") %>"
+                        <input type="hidden" value="<%= rs.getString("QUARTER") %>"
                             name="QUARTER">
                         <input type="hidden" value="<%= rs.getInt("YEAR") %>"
                             name="YEAR">

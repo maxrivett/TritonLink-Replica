@@ -44,7 +44,6 @@
                         del_strings.add("DROP TABLE IF EXISTS Course CASCADE");
                         del_strings.add("DROP TABLE IF EXISTS Prerequisites");
                         del_strings.add("DROP TABLE IF EXISTS Corequisites");
-                        del_strings.add("DROP TABLE IF EXISTS class_courses");
                         del_strings.add("DROP TABLE IF EXISTS classes CASCADE");
                         del_strings.add("DROP TABLE IF EXISTS course_enrollment");
                         del_strings.add("DROP TABLE IF EXISTS sections CASCADE");

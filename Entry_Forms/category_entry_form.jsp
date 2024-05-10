@@ -76,6 +76,14 @@
 
                         conn.setAutoCommit(false);
 
+                        PreparedStatement pstmt2 = conn.prepareStatement(
+                        "DELETE FROM category_courses WHERE DEPARTMENT = ? AND CATNAME = ?");
+
+                        pstmt2.setString(1, request.getParameter("DEPARTMENT"));
+                        pstmt2.setString(2, request.getParameter("CATNAME"));
+
+                        pstmt2.executeUpdate();
+
                         // Create the prepared statement and use it to
                         // DELETE the category FROM the categories table.
 
@@ -87,14 +95,6 @@
 
 
                         int rowCount = pstmt.executeUpdate();
-
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM category_courses WHERE DEPARTMENT = ? AND CATNAME = ?");
-
-                        pstmt2.setString(1, request.getParameter("DEPARTMENT"));
-                        pstmt2.setString(2, request.getParameter("CATNAME"));
-
-                        pstmt2.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);

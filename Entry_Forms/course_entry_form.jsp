@@ -79,6 +79,55 @@
 
                         conn.setAutoCommit(false);
 
+                        PreparedStatement selectPstmt = conn.prepareStatement(
+                            "SELECT SECTIONID FROM class_section WHERE COURSEID = ?");
+                        selectPstmt.setInt(1, Integer.parseInt(request.getParameter("COURSEID")));
+                        ResultSet rs = selectPstmt.executeQuery();
+
+                        PreparedStatement deletePstmt1 = conn.prepareStatement(
+                            "DELETE FROM course_enrollment WHERE SECTIONID = ?");
+                        PreparedStatement deletePstmt2 = conn.prepareStatement(
+                            "DELETE FROM review_session_info WHERE SECTIONID = ?");
+                        PreparedStatement deletePstmt3 = conn.prepareStatement(
+                            "DELETE FROM regular_meeting WHERE SECTIONID = ?");
+                        while (rs.next()) {
+                            int sectionId = rs.getInt("SECTIONID");
+                            deletePstmt1.setInt(1, sectionId);
+                            deletePstmt1.executeUpdate();
+                            deletePstmt2.setInt(1, sectionId);
+                            deletePstmt2.executeUpdate();
+                            deletePstmt3.setInt(1, sectionId);
+                            deletePstmt3.executeUpdate();
+                        }
+
+                        
+
+                        PreparedStatement pstmt5 = conn.prepareStatement(
+                        "DELETE FROM category_courses WHERE COURSEID = ?");
+
+                        pstmt5.setInt(1,
+                            Integer.parseInt(request.getParameter("COURSEID")));
+
+                        pstmt5.executeUpdate();
+
+                        PreparedStatement pstmt6 = conn.prepareStatement(
+                        "DELETE FROM concentration_courses WHERE COURSEID = ?");
+
+                        pstmt6.setInt(1,
+                            Integer.parseInt(request.getParameter("COURSEID")));
+
+                        pstmt6.executeUpdate();
+
+                        
+                        PreparedStatement pstmt7 = conn.prepareStatement(
+                        "DELETE FROM class_section WHERE COURSEID = ?");
+
+                        pstmt7.setInt(1,
+                            Integer.parseInt(request.getParameter("COURSEID")));
+
+                        pstmt7.executeUpdate();
+
+
                         PreparedStatement pstmt2 = conn.prepareStatement(
                         "DELETE FROM Prerequisites WHERE BASECOURSE = ? OR PREREQUISITE = ?");
 
