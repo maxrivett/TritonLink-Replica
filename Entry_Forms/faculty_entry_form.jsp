@@ -1,109 +1,87 @@
-<!-- Faculty = (faculty_name, title, department) -->
-<%@ page import="java.sql.*, javax.sql.*" %>
-
-<!-- BACK END -->
-<%
-String action = request.getParameter("action");
-Connection conn = null;
-PreparedStatement pstmt = null;
-ResultSet rs = null;
-
-try {
-    DataSource ds = (DataSource) getServletContext().getAttribute("DBCPool");
-    conn = ds.getConnection();
-    conn.setAutoCommit(false);
-    
-    if (action == null) {
-        <!-- throw error if action is null -->
-        throw new IllegalArgumentException("No action specified.");
-    } else if (action.equals("update")) {
-        pstmt = conn.prepareStatement(
-            "UPDATE Faculty SET title = ? AND department = ? WHERE faculty_name = ?");
-        pstmt.setString(1, request.getParameter("title"));
-        pstmt.setString(2, request.getParameter("department"));
-        pstmt.setString(3, request.getParameter("faculty_name"));
-        pstmt.executeUpdate();
-        conn.commit();
-    } else if ("delete".equals(action)) {
-        pstmt = conn.prepareStatement("DELETE FROM Faculty WHERE faculty_name = ?");
-        pstmt.setString(1, request.getParameter("faculty_name"));
-        pstmt.executeUpdate();
-
-        pstmt2 = conn.prepareStatement("DELETE FROM advisor WHERE faculty_name = ?");
-        pstmt2.setString(1, request.getParameter("faculty_name"));
-        pstmt2.executeUpdate();
-
-        Statement studentQuery = conn.prepareStatement("SELECT STUDENTID FROM thesis_committee WHERE faculty_name = ?");
-        studentQuery.setString(1, request.getParameter("faculty_name"));
-        ResultSet studentSet = studentQuery.executeQuery();
-        Integer phd_student_id = studentSet.getInt("STUDENTID");
-
-        Statement profCountQuery = conn.prepareStatement("SELECT count(*) as profCount FROM thesis_committee WHERE STUDENTID = ?");
-        profCountQuery.setInt(1, request.getParameter("STUDENTID"));
-        ResultSet profCountSet = profCountQuery.executeQuery();
-        Integer profCount = profCountSet.getInt("profCount");
-
-        if (profCount > 4) {
-            pstmt3 = conn.prepareStatement("DELETE FROM thesis_committee WHERE faculty_name = ?");
-            pstmt3.setString(1, request.getParameter("faculty_name"));
-            pstmt3.executeUpdate();
-        }
-        else {
-            pstmt3 = conn.prepareStatement("DELETE FROM thesis_committee WHERE STUDENTID = ?");
-            pstmt3.setInt(1, phd_student_id);
-            pstmt3.executeUpdate();
-        }
-
-        conn.commit();
-    }
-
-     <!-- get current faculty after any updates/deletes -->
-    pstmt = conn.prepareStatement("SELECT * FROM Faculty");
-    rs = pstmt.executeQuery();
-} catch (SQLException e) {
-    if (conn != null) conn.rollback();
-    e.printStackTrace();
-} finally {
-    if (conn != null) {
-        conn.setAutoCommit(true);
-        conn.close();
-    }
-}
-%>
-
-<!-- FRONT END -->
-<!DOCTYPE html>
+<%@ page language="java" import="java.sql.*" %>
 <html>
-<head>
-    <title>Faculty Entry Management</title>
-</head>
 <body>
-<h1>Faculty Management</h1>
-<table border="1">
-    <tr>
-        <th>Faculty Name</th>
-        <th>Title</th>
-        <th>Department</th>
-        <th>Update</th>
-        <th>Delete</th>
-    </tr>
-    <%
-    while (rs != null && rs.next()) {
-    %>
-    <tr>
-        <form action="faculty_entry_form.jsp" method="post">
-            <td><%= rs.getString("faculty_name") %><input type="hidden" name="faculty_name" value="<%= rs.getString("faculty_name") %>"></td>
-            <td><input type="text" name="title" value="<%= rs.getString("title") %>"></td>
-            <td><input type="text" name="department" value="<%= rs.getString("department") %>"></td>
-            <td><input type="submit" name="action" value="update"></td>
-        </form>
-        <form action="faculty_entry_form.jsp" method="post">
-            <td><input type="submit" name="action" value="delete"></td>
-        </form>
-    </tr>
-    <%
-    }
-    %>
-</table>
+    <table>
+        <tr>
+            <td>
+                <jsp:include page="menu.html" />
+            </td>
+            <td>
+                <%
+                    try {
+                        String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres&password=HPost1QGres!&ssl=false";
+                        Connection conn = DriverManager.getConnection(url);
+                        conn.setAutoCommit(false);
+                        String action = request.getParameter("action");
+
+                        if ("update".equals(action)) {
+                            PreparedStatement pstmt = conn.prepareStatement(
+                                "UPDATE Faculty SET title = ?, department = ? WHERE faculty_name = ?");
+                            pstmt.setString(1, request.getParameter("title"));
+                            pstmt.setString(2, request.getParameter("department"));
+                            pstmt.setString(3, request.getParameter("faculty_name"));
+                            pstmt.executeUpdate();
+                            conn.commit();
+                        } else if ("delete".equals(action)) {
+                            PreparedStatement pstmt = conn.prepareStatement(
+                                "DELETE FROM Faculty WHERE faculty_name = ?");
+                            pstmt.setString(1, request.getParameter("faculty_name"));
+                            pstmt.executeUpdate();
+                            conn.commit();
+                        } else if ("insert".equals(action)) {
+                            PreparedStatement pstmt = conn.prepareStatement(
+                                "INSERT INTO Faculty (faculty_name, title, department) VALUES (?, ?, ?)");
+                            pstmt.setString(1, request.getParameter("faculty_name"));
+                            pstmt.setString(2, request.getParameter("title"));
+                            pstmt.setString(3, request.getParameter("department"));
+                            pstmt.executeUpdate();
+                            conn.commit();
+                        }
+
+                        ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM Faculty");
+                %>
+                <table>
+                    <tr>
+                        <th>Faculty Name</th>
+                        <th>Title</th>
+                        <th>Department</th>
+                    </tr>
+                    <tr>
+                        <form action="faculty_entry_form.jsp" method="post">
+                            <td><input type="text" name="faculty_name" /></td>
+                            <td><input type="text" name="title" /></td>
+                            <td><input type="text" name="department" /></td>
+                            <td><input type="submit" name="action" value="insert" /></td>
+                        </form>
+                    </tr>
+                    <%
+                        while (rs.next()) {
+                    %>
+                    <tr>
+                        <form action="faculty_entry_form.jsp" method="post">
+                            <td><input type="hidden" name="faculty_name" value="<%= rs.getString("faculty_name") %>" /><%= rs.getString("faculty_name") %></td>
+                            <td><input type="text" name="title" value="<%= rs.getString("title") %>" /></td>
+                            <td><input type="text" name="department" value="<%= rs.getString("department") %>" /></td>
+                            <td>
+                                <input type="submit" name="action" value="update" />
+                                <input type="submit" name="action" value="delete" />
+                            </td>
+                        </form>
+                    </tr>
+                    <%
+                        }
+                        rs.close();
+                        conn.setAutoCommit(true);
+                        conn.close();
+                    } catch (SQLException sqle) {
+                        out.println("SQL Error: " + sqle.getMessage());
+                    } catch (Exception e) {
+                        out.println(e.getMessage());
+                    }
+                    %>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
