@@ -16,22 +16,22 @@
 
                         if ("update".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE Faculty SET title = ?, department = ? WHERE faculty_name = ?");
+                                "UPDATE Faculty SET title = ?, department = ? WHERE facultyname = ?");
                             pstmt.setString(1, request.getParameter("title"));
                             pstmt.setString(2, request.getParameter("department"));
-                            pstmt.setString(3, request.getParameter("faculty_name"));
+                            pstmt.setString(3, request.getParameter("facultyname"));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("delete".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "DELETE FROM Faculty WHERE faculty_name = ?");
-                            pstmt.setString(1, request.getParameter("faculty_name"));
+                                "DELETE FROM Faculty WHERE facultyname = ?");
+                            pstmt.setString(1, request.getParameter("facultyname"));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("insert".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "INSERT INTO Faculty (faculty_name, title, department) VALUES (?, ?, ?)");
-                            pstmt.setString(1, request.getParameter("faculty_name"));
+                                "INSERT INTO Faculty (facultyname, title, department) VALUES (?, ?, ?)");
+                            pstmt.setString(1, request.getParameter("facultyname"));
                             pstmt.setString(2, request.getParameter("title"));
                             pstmt.setString(3, request.getParameter("department"));
                             pstmt.executeUpdate();
@@ -48,7 +48,7 @@
                     </tr>
                     <tr>
                         <form action="faculty_entry_form.jsp" method="post">
-                            <td><input type="text" name="faculty_name" /></td>
+                            <td><input type="text" name="facultyname" /></td>
                             <td><input type="text" name="title" /></td>
                             <td><input type="text" name="department" /></td>
                             <td><input type="submit" name="action" value="insert" /></td>
@@ -59,7 +59,7 @@
                     %>
                     <tr>
                         <form action="faculty_entry_form.jsp" method="post">
-                            <td><input type="hidden" name="faculty_name" value="<%= rs.getString("faculty_name") %>" /><%= rs.getString("faculty_name") %></td>
+                            <td><input type="hidden" name="facultyname" value="<%= rs.getString("facultyname") %>" /><%= rs.getString("facultyname") %></td>
                             <td><input type="text" name="title" value="<%= rs.getString("title") %>" /></td>
                             <td><input type="text" name="department" value="<%= rs.getString("department") %>" /></td>
                             <td>
