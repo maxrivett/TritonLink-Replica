@@ -29,8 +29,9 @@
                             selectTCPstmt.setString(1, request.getParameter("facultyname"));
                             ResultSet studentsSet = selectTCPstmt.executeQuery();
 
-                            while (rs.next()) {
-                                int student_ID = rs.getInt("STUDENTID");
+                            while (studentsSet.next()) {
+                                conn.setAutoCommit(false);
+                                int student_ID = studentsSet.getInt("STUDENTID");
 
                                 PreparedStatement numProfsStatement = conn.prepareStatement(
                                     "SELECT COUNT(*) as NUMPROFS FROM thesis_committee WHERE STUDENTID = ?");
@@ -46,11 +47,12 @@
                                 int rowCount = 0;
 
                                 if (numProfs > 4) {
+                                    conn.setAutoCommit(false);
                                     PreparedStatement pstmt = conn.prepareStatement(
                                     "DELETE FROM thesis_committee WHERE STUDENTID = ? AND FACULTYNAME = ?");
 
-                                    pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                                    pstmt.setString(2, request.getParameter("FACULTYNAME"));
+                                    pstmt.setInt(1, student_ID);
+                                    pstmt.setString(2, request.getParameter("facultyname"));
 
                                     rowCount = pstmt.executeUpdate();
                                 }
@@ -58,7 +60,7 @@
                                     PreparedStatement pstmt = conn.prepareStatement(
                                     "DELETE FROM thesis_committee WHERE STUDENTID = ?");
 
-                                    pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
+                                    pstmt.setInt(1, student_ID);
 
                                     rowCount = pstmt.executeUpdate();
                                 }
