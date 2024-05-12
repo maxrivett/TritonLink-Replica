@@ -100,61 +100,6 @@
                             deletePstmt3.executeUpdate();
                         }
 
-                        
-
-                        PreparedStatement pstmt5 = conn.prepareStatement(
-                        "DELETE FROM category_courses WHERE COURSEID = ?");
-
-                        pstmt5.setInt(1,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt5.executeUpdate();
-
-                        PreparedStatement pstmt6 = conn.prepareStatement(
-                        "DELETE FROM concentration_courses WHERE COURSEID = ?");
-
-                        pstmt6.setInt(1,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt6.executeUpdate();
-
-                        
-                        PreparedStatement pstmt7 = conn.prepareStatement(
-                        "DELETE FROM class_section WHERE COURSEID = ?");
-
-                        pstmt7.setInt(1,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt7.executeUpdate();
-
-
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM Prerequisites WHERE BASECOURSE = ? OR PREREQUISITE = ?");
-
-                        pstmt2.setInt(1,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-                        pstmt2.setInt(2,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt2.executeUpdate();
-
-                        PreparedStatement pstmt3 = conn.prepareStatement(
-                        "DELETE FROM Corequisites WHERE BASECOURSE = ? OR COREQUISITE = ?");
-
-                        pstmt3.setInt(1,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-                        pstmt3.setInt(2,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt3.executeUpdate();
-
-                        PreparedStatement pstmt4 = conn.prepareStatement(
-                        "DELETE FROM classes WHERE COURSEID = ?");
-
-                        pstmt4.setInt(1,
-                            Integer.parseInt(request.getParameter("COURSEID")));
-
-                        pstmt4.executeUpdate();
 
                         // Create the prepared statement and use it to
                         // DELETE the course FROM the Course table.

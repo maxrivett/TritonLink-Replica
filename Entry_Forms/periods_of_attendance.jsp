@@ -41,10 +41,10 @@
                 <table>
                     <tr>
                         <th>Student ID</th>
-                        <th>Probation Start Quarter</th>
-                        <th>Probation End Quarter</th>
-                        <th>Probation Start Year</th>
-                        <th>Probation End Year</th>
+                        <th>Attendance Start Quarter</th>
+                        <th>Attendance End Quarter</th>
+                        <th>Attendance Start Year</th>
+                        <th>Attendance End Year</th>
                     </tr>
                     <tr>
                         <form action="periods_of_attendance.jsp" method="post">

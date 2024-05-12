@@ -30,7 +30,6 @@
                             ResultSet studentsSet = selectTCPstmt.executeQuery();
 
                             while (studentsSet.next()) {
-                                conn.setAutoCommit(false);
                                 int student_ID = studentsSet.getInt("STUDENTID");
 
                                 PreparedStatement numProfsStatement = conn.prepareStatement(
@@ -64,9 +63,6 @@
 
                                     rowCount = pstmt.executeUpdate();
                                 }
-
-                                conn.setAutoCommit(false);
-                                conn.setAutoCommit(true);
                             }
 
                             PreparedStatement selectPstmt = conn.prepareStatement(
@@ -90,16 +86,6 @@
                                 deletePstmt3.executeUpdate();
                             }
 
-                            PreparedStatement pstmt2 = conn.prepareStatement(
-                                "DELETE FROM sections WHERE facultyname = ?");
-                            pstmt2.setString(1, request.getParameter("facultyname"));
-                            pstmt2.executeUpdate();
-                            conn.commit();
-                            PreparedStatement pstmt1 = conn.prepareStatement(
-                                "DELETE FROM advisors WHERE facultyname = ?");
-                            pstmt1.setString(1, request.getParameter("facultyname"));
-                            pstmt1.executeUpdate();
-                            conn.commit();
                             PreparedStatement pstmt = conn.prepareStatement(
                                 "DELETE FROM Faculty WHERE facultyname = ?");
                             pstmt.setString(1, request.getParameter("facultyname"));

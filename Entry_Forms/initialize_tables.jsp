@@ -46,6 +46,7 @@
                         del_strings.add("DROP TABLE IF EXISTS Corequisites");
                         del_strings.add("DROP TABLE IF EXISTS classes CASCADE");
                         del_strings.add("DROP TABLE IF EXISTS course_enrollment");
+                        del_strings.add("DROP TABLE IF EXISTS course_waitlist");
                         del_strings.add("DROP TABLE IF EXISTS sections CASCADE");
                         del_strings.add("DROP TABLE IF EXISTS regular_meeting");
                         del_strings.add("DROP TABLE IF EXISTS review_session_info");
@@ -72,25 +73,25 @@
                         create_strings.add("CREATE TABLE probation_info (STUDENTID integer, STARTQTR varchar(255), " +
                             "STARTYEAR integer, ENDQTR varchar(255), ENDYEAR integer, " + 
                             "REASON varchar(255), PRIMARY KEY (STUDENTID, STARTQTR, STARTYEAR, ENDQTR, ENDYEAR), " + 
-                            "FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID))");
+                            "FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE previous_degrees (STUDENTID integer, PREVUNI varchar(255), " +
                             "PREVDEG varchar(255), PRIMARY KEY (STUDENTID, PREVUNI, PREVDEG), " + 
-                            "FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID))");
+                            "FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE periods_of_attendance (STUDENTID integer, STARTQTR varchar(255), " +
                             "STARTYEAR integer, ENDQTR varchar(255), ENDYEAR integer, " + 
                             "PRIMARY KEY (STUDENTID, STARTQTR, STARTYEAR, ENDQTR, ENDYEAR), " + 
-                            "FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID))");
+                            "FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE undergrad (STUDENTID integer, MAJOR varchar(255), " +
                             "MINOR varchar(255), COLLEGE varchar(255), BSMS boolean, " + 
-                            "PRIMARY KEY (STUDENTID), FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID))");
+                            "PRIMARY KEY (STUDENTID), FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE graduate (STUDENTID integer, " +
                             "DEPARTMENT varchar(255), GRADTYPE varchar(255), " + 
-                            "PRIMARY KEY (STUDENTID), FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID))");
+                            "PRIMARY KEY (STUDENTID), FOREIGN KEY (STUDENTID) REFERENCES student (STUDENTID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE phd (STUDENTID integer, " +
                             "PHDTYPE varchar(255), " + 
-                            "PRIMARY KEY (STUDENTID), FOREIGN KEY (STUDENTID) REFERENCES graduate (STUDENTID))");
+                            "PRIMARY KEY (STUDENTID), FOREIGN KEY (STUDENTID) REFERENCES graduate (STUDENTID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE candidates (STUDENTID integer, " +
-                            "PRIMARY KEY (STUDENTID), FOREIGN KEY (STUDENTID) REFERENCES phd (STUDENTID))");
+                            "PRIMARY KEY (STUDENTID), FOREIGN KEY (STUDENTID) REFERENCES phd (STUDENTID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE Faculty (FACULTYNAME varchar(255), TITLE varchar(255), " +
                             "DEPARTMENT varchar(255), PRIMARY KEY (FACULTYNAME))");
                         create_strings.add("CREATE TABLE course (COURSEID integer, LABREQ boolean, " +
@@ -99,27 +100,33 @@
                             "PRIMARY KEY (COURSEID))");
                         create_strings.add("CREATE TABLE Prerequisites (BASECOURSE integer, " +
                             "PREREQUISITE integer, PRIMARY KEY (BASECOURSE, PREREQUISITE), " +
-                            "FOREIGN KEY (BASECOURSE) REFERENCES course(COURSEID), " +
-                            "FOREIGN KEY (PREREQUISITE) REFERENCES course(COURSEID))");
+                            "FOREIGN KEY (BASECOURSE) REFERENCES course(COURSEID) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (PREREQUISITE) REFERENCES course(COURSEID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE Corequisites (BASECOURSE integer, " +
                             "COREQUISITE integer, PRIMARY KEY (BASECOURSE, COREQUISITE), " +
-                            "FOREIGN KEY (BASECOURSE) REFERENCES course(COURSEID), " +
-                            "FOREIGN KEY (COREQUISITE) REFERENCES course(COURSEID))");
+                            "FOREIGN KEY (BASECOURSE) REFERENCES course(COURSEID) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (COREQUISITE) REFERENCES course(COURSEID) ON DELETE CASCADE)");
                         
                         create_strings.add("CREATE TABLE classes (COURSEID integer, " +
                             "QUARTER varchar(255), YEAR integer, TITLE varchar(255), " + 
                             "PRIMARY KEY (COURSEID, QUARTER, YEAR), " +
-                            "FOREIGN KEY (COURSEID) REFERENCES course(COURSEID))");
+                            "FOREIGN KEY (COURSEID) REFERENCES course(COURSEID) ON DELETE CASCADE)");
                         
                         create_strings.add("CREATE TABLE sections (SECTIONID integer, " + 
                             "FACULTYNAME varchar(255), ENROLLLIMIT integer, NUMENROLLED integer, " + 
-                            "PRIMARY KEY (SECTIONID), FOREIGN KEY (FACULTYNAME) REFERENCES Faculty(FACULTYNAME))");
+                            "PRIMARY KEY (SECTIONID), FOREIGN KEY (FACULTYNAME) REFERENCES Faculty(FACULTYNAME) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE course_enrollment (STUDENTID integer, " +
                             "COURSEID integer, QUARTER varchar(255), YEAR integer, " +
                             "SECTIONID integer, NUMUNITS integer, " +
                             "PRIMARY KEY (STUDENTID, SECTIONID), " +
-                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID), " +
-                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID))");
+                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE)");
+                        create_strings.add("CREATE TABLE course_waitlist (STUDENTID integer, " +
+                            "COURSEID integer, QUARTER varchar(255), YEAR integer, " +
+                            "SECTIONID integer, NUMUNITS integer, " +
+                            "PRIMARY KEY (STUDENTID, SECTIONID), " +
+                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE)");
                         
                         
                         create_strings.add("CREATE TABLE regular_meeting (SECTIONID integer, " + 
@@ -127,61 +134,61 @@
                             "WEEKDAY varchar(255), TYPE varchar(255), MANDATORY boolean, " + 
                             "BUILDING varchar(255), ROOM varchar(255), " + 
                             "PRIMARY KEY (SECTIONID, STARTHOUR, STARTMINUTE, ENDHOUR, ENDMINUTE, WEEKDAY), " + 
-                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID))");
+                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE review_session_info (SECTIONID integer, " + 
                             "STARTHOUR integer, STARTMINUTE integer, ENDHOUR integer, ENDMINUTE integer, " + 
                             "MONTH integer, DAY integer, TYPE varchar(255), MANDATORY boolean, " + 
                             "BUILDING varchar(255), ROOM varchar(255), " + 
                             "PRIMARY KEY (SECTIONID, STARTHOUR, STARTMINUTE, ENDHOUR, ENDMINUTE, MONTH, DAY), " + 
-                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID))");
+                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE degree (DEPARTMENT varchar(255), DEGTYPE varchar(255), " +
                             "TOTALUNITS integer, PRIMARY KEY (DEPARTMENT))");
                         create_strings.add("CREATE TABLE masters_deg (DEPARTMENT varchar(255), " +
-                            "PRIMARY KEY (DEPARTMENT), FOREIGN KEY (DEPARTMENT) REFERENCES degree(DEPARTMENT))");
+                            "PRIMARY KEY (DEPARTMENT), FOREIGN KEY (DEPARTMENT) REFERENCES degree(DEPARTMENT) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE categories (DEPARTMENT varchar(255), CATNAME varchar(255), " +
                             "CATGPA numeric(3,2), CATUNITS integer, PRIMARY KEY (DEPARTMENT, CATNAME), " +
-                            "FOREIGN KEY (DEPARTMENT) REFERENCES degree(DEPARTMENT))");
+                            "FOREIGN KEY (DEPARTMENT) REFERENCES degree(DEPARTMENT) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE concentrations (DEPARTMENT varchar(255), CONNAME varchar(255), " +
                             "CONGPA numeric(3,2), CONUNITS integer, PRIMARY KEY (DEPARTMENT, CONNAME), " +
-                            "FOREIGN KEY (DEPARTMENT) REFERENCES masters_deg(DEPARTMENT))");
+                            "FOREIGN KEY (DEPARTMENT) REFERENCES masters_deg(DEPARTMENT) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE finaid (AIDNAME varchar(255), YEAR integer, " +
                             "TYPE varchar(255), REQUIREMENTS varchar(255), AMOUNT numeric(10,2), " + 
                             "PRIMARY KEY (AIDNAME, YEAR))");
                         create_strings.add("CREATE TABLE payment (STUDENTID integer, PAYNUM integer, " +
                             "AMOUNT numeric(10,2), PRIMARY KEY (STUDENTID, PAYNUM), " + 
-                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID))");
+                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE aid_awarded (STUDENTID integer, AIDNAME varchar(255), " + 
                             "YEAR integer, PRIMARY KEY(STUDENTID, AIDNAME, YEAR), " + 
-                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID), " +
-                            "FOREIGN KEY (AIDNAME, YEAR) REFERENCES finaid(AIDNAME, YEAR))");
+                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (AIDNAME, YEAR) REFERENCES finaid(AIDNAME, YEAR) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE classes_taken (STUDENTID integer, COURSEID integer, " + 
                             "SECTIONID integer, QUARTER varchar(255), YEAR integer, GRADE varchar(2), " + 
                             "PRIMARY KEY(STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR), " + 
-                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID), " +
-                            "FOREIGN KEY (COURSEID, QUARTER, YEAR) REFERENCES classes(COURSEID, QUARTER, YEAR))");
+                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (COURSEID, QUARTER, YEAR) REFERENCES classes(COURSEID, QUARTER, YEAR) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE advisors (STUDENTID integer, FACULTYNAME varchar(255), " + 
                             "PRIMARY KEY(STUDENTID), " + 
-                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID), " +
-                            "FOREIGN KEY (FACULTYNAME) REFERENCES Faculty(FACULTYNAME))");
+                            "FOREIGN KEY (STUDENTID) REFERENCES candidates(STUDENTID) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (FACULTYNAME) REFERENCES Faculty(FACULTYNAME) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE thesis_committee (STUDENTID integer, FACULTYNAME varchar(255), " + 
                             "PRIMARY KEY(STUDENTID, FACULTYNAME), " + 
-                            "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID), " +
+                            "FOREIGN KEY (STUDENTID) REFERENCES candidates(STUDENTID) ON DELETE CASCADE, " +
                             "FOREIGN KEY (FACULTYNAME) REFERENCES Faculty(FACULTYNAME))");
                         create_strings.add("CREATE TABLE class_section (SECTIONID integer, COURSEID integer, " + 
                             "QUARTER varchar(255), YEAR integer, " + 
                             "PRIMARY KEY(SECTIONID, COURSEID, QUARTER, YEAR), " + 
-                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID), " +
-                            "FOREIGN KEY (COURSEID, QUARTER, YEAR) REFERENCES classes(COURSEID, QUARTER, YEAR))");
+                            "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE, " +
+                            "FOREIGN KEY (COURSEID, QUARTER, YEAR) REFERENCES classes(COURSEID, QUARTER, YEAR) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE category_courses (DEPARTMENT varchar(255), " +
                             "CATNAME varchar(255), COURSEID integer, " + 
                             "PRIMARY KEY (DEPARTMENT, CATNAME, COURSEID), " +
-                            "FOREIGN KEY (DEPARTMENT, CATNAME) references categories(DEPARTMENT, CATNAME), " + 
-                            "FOREIGN KEY (COURSEID) references course(COURSEID))");
+                            "FOREIGN KEY (DEPARTMENT, CATNAME) references categories(DEPARTMENT, CATNAME) ON DELETE CASCADE, " + 
+                            "FOREIGN KEY (COURSEID) references course(COURSEID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE concentration_courses (DEPARTMENT varchar(255), " +
                             "CONNAME varchar(255), COURSEID integer, " + 
                             "PRIMARY KEY (DEPARTMENT, CONNAME, COURSEID), " +
-                            "FOREIGN KEY (DEPARTMENT, CONNAME) references concentrations(DEPARTMENT, CONNAME), " + 
-                            "FOREIGN KEY (COURSEID) references course(COURSEID))");
+                            "FOREIGN KEY (DEPARTMENT, CONNAME) references concentrations(DEPARTMENT, CONNAME) ON DELETE CASCADE, " + 
+                            "FOREIGN KEY (COURSEID) references course(COURSEID) ON DELETE CASCADE)");
                         
                         
                         // Create the prepared statement and use it to 

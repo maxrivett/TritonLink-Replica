@@ -69,27 +69,6 @@
 
                         conn.setAutoCommit(false);
 
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM categories WHERE DEPARTMENT = ?");
-
-                        pstmt2.setString(1, request.getParameter("DEPARTMENT"));
-
-                        pstmt2.executeUpdate();
-
-                        PreparedStatement pstmt4 = conn.prepareStatement(
-                        "DELETE FROM concentrations WHERE DEPARTMENT = ?");
-
-                        pstmt4.setString(1, request.getParameter("DEPARTMENT"));
-
-                        pstmt4.executeUpdate();
-
-                        PreparedStatement pstmt3 = conn.prepareStatement(
-                        "DELETE FROM masters_deg WHERE DEPARTMENT = ?");
-
-                        pstmt3.setString(1, request.getParameter("DEPARTMENT"));
-
-                        pstmt3.executeUpdate();
-
                         // Create the prepared statement and use it to
                         // DELETE the degree FROM the degree table.
 

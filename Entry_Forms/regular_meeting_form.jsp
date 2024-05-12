@@ -110,17 +110,16 @@
                     %>
                     <tr>
                         <form action="regular_meeting_form.jsp" method="get">
-                            <input type="hidden" value="update" name="action">
-                            <td><input type="text" value="<%= rs.getInt("SECTIONID") %>" name="SECTIONID"></td>
-                            <td><input type="text" value="<%= rs.getInt("STARTHOUR") %>" name="STARTHOUR"></td>
-                            <td><input type="text" value="<%= rs.getInt("STARTMINUTE") %>" name="STARTMINUTE"></td>
-                            <td><input type="text" value="<%= rs.getInt("ENDHOUR") %>" name="ENDHOUR"></td>
-                            <td><input type="text" value="<%= rs.getInt("ENDMINUTE") %>" name="ENDMINUTE"></td>
-                            <td><input type="text" value="<%= rs.getString("WEEKDAY") %>" name="WEEKDAY"></td>
-                            <td><input type="text" value="<%= rs.getString("TYPE") %>" name="TYPE"></td>
-                            <td><input type="checkbox" name="MANDATORY" <%= rs.getBoolean("MANDATORY") ? "checked" : "" %>></td>
-                            <td><input type="text" value="<%= rs.getString("BUILDING") %>" name="BUILDING"></td>
-                            <td><input type="text" value="<%= rs.getString("ROOM") %>" name="ROOM"></td>
+                            <td><input type="hidden" name="SECTIONID" value="<%= rs.getInt("SECTIONID") %>" /><%= rs.getInt("sectionid") %></td>
+                            <td><input type="text" name="STARTHOUR" value="<%= rs.getInt("STARTHOUR") %>" /></td>
+                            <td><input type="text" name="STARTMINUTE" value="<%= rs.getInt("STARTMINUTE") %>" /></td>
+                            <td><input type="text" name="ENDHOUR" value="<%= rs.getInt("ENDHOUR") %>" /></td>
+                            <td><input type="text" name="ENDMINUTE" value="<%= rs.getInt("ENDMINUTE") %>" /></td>
+                            <td><input type="text" name="WEEKDAY" value="<%= rs.getString("WEEKDAY") %>" /></td>
+                            <td><input type="text" name="TYPE" value="<%= rs.getString("TYPE") %>" /></td>
+                            <td><input type="checkbox" name="MANDATORY" <%= rs.getBoolean("MANDATORY") ? "checked" : "" %> /></td>
+                            <td><input type="text" name="BUILDING" value="<%= rs.getString("BUILDING") %>" /></td>
+                            <td><input type="text" name="ROOM" value="<%= rs.getString("ROOM") %>" /></td>
                             <td>
                                 <input type="submit" name="action" value="update" />
                                 <input type="submit" name="action" value="delete" />

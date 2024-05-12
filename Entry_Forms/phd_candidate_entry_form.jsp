@@ -109,55 +109,6 @@
 
                         conn.setAutoCommit(false);
 
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM thesis_committee WHERE STUDENTID = ?");
-
-                        pstmt2.setInt(1,
-                            Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt2.executeUpdate();
-
-                        PreparedStatement pstmt3 = conn.prepareStatement(
-                        "DELETE FROM aid_awarded WHERE STUDENTID = ?");
-
-                        pstmt3.setInt(1,
-                            Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt3.executeUpdate();
-
-                        PreparedStatement pstmt4 = conn.prepareStatement(
-                        "DELETE FROM payment WHERE STUDENTID = ?");
-
-                        pstmt4.setInt(1,
-                            Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt4.executeUpdate();
-
-                        PreparedStatement pstmt8 = conn.prepareStatement(
-                        "DELETE FROM advisors WHERE STUDENTID = ?");
-
-                        pstmt8.setInt(1,
-                            Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt8.executeUpdate();
-
-                        PreparedStatement pstmt7 = conn.prepareStatement(
-                        "DELETE FROM candidates WHERE STUDENTID = ?");
-
-                        pstmt7.setInt(1,
-                            Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt7.executeUpdate();
-
-                        PreparedStatement pstmt6 = conn.prepareStatement(
-                        "DELETE FROM phd WHERE STUDENTID = ?");
-
-                        pstmt6.setInt(1,
-                            Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt6.executeUpdate();
-
-                        PreparedStatement pstmt5 = conn.prepareStatement(
-                        "DELETE FROM graduate WHERE STUDENTID = ?");
-
-                        pstmt5.setInt(1,
-                            Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt5.executeUpdate();
-
                         // Create the prepared statement and use it to
                         // DELETE the student FROM the student table.
 

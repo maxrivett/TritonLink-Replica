@@ -73,14 +73,6 @@
 
                         conn.setAutoCommit(false);
 
-                        PreparedStatement pstmt2 = conn.prepareStatement(
-                        "DELETE FROM concentration_courses WHERE DEPARTMENT = ? AND CONNAME = ?");
-
-                        pstmt2.setString(1, request.getParameter("DEPARTMENT"));
-                        pstmt2.setString(2, request.getParameter("CONNAME"));
-
-                        pstmt2.executeUpdate();
-
                         // Create the prepared statement and use it to
                         // DELETE the concentration FROM the concentrations table.
 
