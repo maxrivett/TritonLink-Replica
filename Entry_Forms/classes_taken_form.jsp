@@ -26,48 +26,56 @@
                 <%
                     // Check if an insertion is requested
                     String action = request.getParameter("action");
-                    if (action != null && action.equals("insert")) {
+                    if ("insert".equals(action) || "update".equals(action)) {
                         conn.setAutoCommit(false);
-                        
-                        // Create the prepared statement and use it to 
-                        // INSERT the classes_taken attrs INTO the classes_taken table
-                        PreparedStatement pstmt = conn.prepareStatement(
-                        ("INSERT INTO classes_taken VALUES (?, ?, ?, ?, ?, ?)"));
+                        int studentId = Integer.parseInt(request.getParameter("STUDENTID"));
+                        int courseId = Integer.parseInt(request.getParameter("COURSEID"));
+                        int sectionId = Integer.parseInt(request.getParameter("SECTIONID"));
+                        String quarter = request.getParameter("QUARTER");
+                        int year = Integer.parseInt(request.getParameter("YEAR"));
+                        String grade = request.getParameter("GRADE");
 
-                        pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("COURSEID")));
-                        pstmt.setInt(3, Integer.parseInt(request.getParameter("SECTIONID")));
-                        pstmt.setString(4, request.getParameter("QUARTER"));
-                        pstmt.setInt(5, Integer.parseInt(request.getParameter("YEAR")));
-                        pstmt.setString(6, request.getParameter("GRADE"));
-
-                        pstmt.executeUpdate();
-
-                        conn.commit();
-                        conn.setAutoCommit(true);
-                    }
-
-                    // Check if an update is requested
-                    if (action != null && action.equals("update")) {
+                        PreparedStatement validationStmt = conn.prepareStatement(
+                            "SELECT COUNT(*) FROM classes WHERE COURSEID = ? AND QUARTER = ? AND YEAR = ?");
+                        validationStmt.setInt(1, courseId);
+                        validationStmt.setString(2, quarter);
+                        validationStmt.setInt(3, year);
+                        ResultSet rs = validationStmt.executeQuery();
+                        rs.next();
+                        int count = rs.getInt(1);
+                        rs.close();
+                        validationStmt.close();
                         conn.setAutoCommit(false);
-
-                        // Create prepared statement to UPDATE classes_taken
-                        // attributes in the classes_taken table
-                        PreparedStatement pstatement = conn.prepareStatement(
-                        "UPDATE classes_taken SET GRADE = ? WHERE STUDENTID = ? AND " +
-                        "COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
-
-                        pstatement.setInt(2, Integer.parseInt(request.getParameter("STUDENTID")));
-                        pstatement.setInt(3, Integer.parseInt(request.getParameter("COURSEID")));
-                        pstatement.setInt(4, Integer.parseInt(request.getParameter("SECTIONID")));
-                        pstatement.setString(5, request.getParameter("QUARTER"));
-                        pstatement.setInt(6, Integer.parseInt(request.getParameter("YEAR")));
-                        pstatement.setString(1, request.getParameter("GRADE"));
-
-                        int rowCount = pstatement.executeUpdate();
-
-                        conn.setAutoCommit(false);
-                        conn.setAutoCommit(true);
+                        if (count == 0) {
+                            out.println("<p>Invalid course, quarter, or year combination. No action performed.</p>");
+                        } else {
+                            if ("insert".equals(action)) {
+                                PreparedStatement pstmt = conn.prepareStatement(
+                                    "INSERT INTO classes_taken (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, GRADE) VALUES (?, ?, ?, ?, ?, ?)");
+                                pstmt.setInt(1, studentId);
+                                pstmt.setInt(2, courseId);
+                                pstmt.setInt(3, sectionId);
+                                pstmt.setString(4, quarter);
+                                pstmt.setInt(5, year);
+                                pstmt.setString(6, grade);
+                                pstmt.executeUpdate();
+                                pstmt.close();
+                                conn.setAutoCommit(false);
+                            } else if ("update".equals(action)) {
+                                PreparedStatement pstmt = conn.prepareStatement(
+                                    "UPDATE classes_taken SET GRADE = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
+                                pstmt.setString(1, grade);
+                                pstmt.setInt(2, studentId);
+                                pstmt.setInt(3, courseId);
+                                pstmt.setInt(4, sectionId);
+                                pstmt.setString(5, quarter);
+                                pstmt.setInt(6, year);
+                                pstmt.executeUpdate();
+                                pstmt.close();
+                                conn.setAutoCommit(false);
+                            }
+                            conn.commit();
+                        }
                     }
 
                     // Check if a delete is requested
