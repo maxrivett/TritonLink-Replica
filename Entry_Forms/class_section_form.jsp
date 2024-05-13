@@ -61,9 +61,6 @@
 
                         int rowCount = pstmt1.executeUpdate();
 
-                        conn.setAutoCommit(false);
-                        conn.setAutoCommit(true);
-
                         PreparedStatement pstmt2 = conn.prepareStatement(
                         "DELETE FROM classes_taken WHERE SECTIONID = ? AND " +
                         "COURSEID = ? AND QUARTER = ? AND YEAR = ?");
@@ -75,8 +72,16 @@
 
                         rowCount = pstmt2.executeUpdate();
 
-                        conn.setAutoCommit(false);
-                        conn.setAutoCommit(true);
+                        PreparedStatement pstmt3 = conn.prepareStatement(
+                            "DELETE FROM course_waitlist WHERE SECTIONID = ? AND " +
+                            "COURSEID = ? AND QUARTER = ? AND YEAR = ?");
+    
+                        pstmt3.setInt(1, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt3.setInt(2, Integer.parseInt(request.getParameter("COURSEID")));
+                        pstmt3.setString(3, request.getParameter("QUARTER"));
+                        pstmt3.setInt(4, Integer.parseInt(request.getParameter("YEAR")));
+
+                        rowCount = pstmt3.executeUpdate();
 
                         // Create the prepared statement and use it to
                         // DELETE the class taken FROM the class_section table.
