@@ -15,28 +15,36 @@
                         String action = request.getParameter("action");
 
                         if ("update".equals(action)) {
+                            boolean mandatory = "on".equals(request.getParameter("mandatory"));
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE review_session_info SET starthour = ?, startminute = ?, endhour = ?, endminute = ?, month = ?, day = ?, type = ?, mandatory = ?, building = ?, room = ? WHERE sectionid = ?");
-                            pstmt.setInt(1, Integer.parseInt(request.getParameter("starthour")));
-                            pstmt.setInt(2, Integer.parseInt(request.getParameter("startminute")));
-                            pstmt.setInt(3, Integer.parseInt(request.getParameter("endhour")));
-                            pstmt.setInt(4, Integer.parseInt(request.getParameter("endminute")));
-                            pstmt.setInt(5, Integer.parseInt(request.getParameter("month")));
-                            pstmt.setInt(6, Integer.parseInt(request.getParameter("day")));
-                            pstmt.setString(7, request.getParameter("type"));
-                            pstmt.setBoolean(8, Boolean.parseBoolean(request.getParameter("mandatory")));
-                            pstmt.setString(9, request.getParameter("building"));
-                            pstmt.setString(10, request.getParameter("room"));
-                            pstmt.setInt(11, Integer.parseInt(request.getParameter("sectionid")));
+                                "UPDATE review_session_info SET type = ?, mandatory = ?, building = ?, room = ? WHERE sectionid = ? AND starthour = ? AND startminute = ? AND endhour = ? AND endminute = ? AND month = ? AND day = ?");                            
+                            pstmt.setString(1, request.getParameter("type"));
+                            pstmt.setBoolean(2, mandatory);
+                            pstmt.setString(3, request.getParameter("building"));
+                            pstmt.setString(4, request.getParameter("room"));
+                            pstmt.setInt(5, Integer.parseInt(request.getParameter("sectionid")));
+                            pstmt.setInt(6, Integer.parseInt(request.getParameter("starthour")));
+                            pstmt.setInt(7, Integer.parseInt(request.getParameter("startminute")));
+                            pstmt.setInt(8, Integer.parseInt(request.getParameter("endhour")));
+                            pstmt.setInt(9, Integer.parseInt(request.getParameter("endminute")));
+                            pstmt.setInt(10, Integer.parseInt(request.getParameter("month")));
+                            pstmt.setInt(11, Integer.parseInt(request.getParameter("day")));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("delete".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "DELETE FROM review_session_info WHERE sectionid = ?");
+                                "DELETE FROM review_session_info WHERE sectionid = ? AND starthour = ? AND startminute = ? AND endhour = ? AND endminute = ? AND month = ? AND day = ?");
                             pstmt.setInt(1, Integer.parseInt(request.getParameter("sectionid")));
+                            pstmt.setInt(2, Integer.parseInt(request.getParameter("starthour")));
+                            pstmt.setInt(3, Integer.parseInt(request.getParameter("startminute")));
+                            pstmt.setInt(4, Integer.parseInt(request.getParameter("endhour")));
+                            pstmt.setInt(5, Integer.parseInt(request.getParameter("endminute")));
+                            pstmt.setInt(6, Integer.parseInt(request.getParameter("month")));
+                            pstmt.setInt(7, Integer.parseInt(request.getParameter("day")));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("insert".equals(action)) {
+                            boolean mandatory = "on".equals(request.getParameter("mandatory"));
                             PreparedStatement pstmt = conn.prepareStatement(
                                 "INSERT INTO review_session_info (sectionid, starthour, startminute, endhour, endminute, month, day, type, mandatory, building, room) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                             pstmt.setInt(1, Integer.parseInt(request.getParameter("sectionid")));
@@ -47,7 +55,7 @@
                             pstmt.setInt(6, Integer.parseInt(request.getParameter("month")));
                             pstmt.setInt(7, Integer.parseInt(request.getParameter("day")));
                             pstmt.setString(8, request.getParameter("type"));
-                            pstmt.setBoolean(9, Boolean.parseBoolean(request.getParameter("mandatory")));
+                            pstmt.setBoolean(9, mandatory);
                             pstmt.setString(10, request.getParameter("building"));
                             pstmt.setString(11, request.getParameter("room"));
                             pstmt.executeUpdate();
@@ -69,7 +77,6 @@
                         <th>Mandatory</th>
                         <th>Building</th>
                         <th>Room</th>
-                        <th>Actions</th>
                     </tr>
                     <tr>
                         <form action="review_session_info_submission.jsp" method="post">
@@ -91,14 +98,14 @@
                         while (rs.next()) {
                     %>
                     <tr>
-                        <form action="review_session_info_submission.jsp" method="post">
+                        <form action="review_session_info_submission.jsp" method="get">
                             <td><input type="hidden" name="sectionid" value="<%= rs.getInt("sectionid") %>" /><%= rs.getInt("sectionid") %></td>
-                            <td><input type="text" name="starthour" value="<%= rs.getInt("starthour") %>" /></td>
-                            <td><input type="text" name="startminute" value="<%= rs.getInt("startminute") %>" /></td>
-                            <td><input type="text" name="endhour" value="<%= rs.getInt("endhour") %>" /></td>
-                            <td><input type="text" name="endminute" value="<%= rs.getInt("endminute") %>" /></td>
-                            <td><input type="text" name="month" value="<%= rs.getInt("month") %>" /></td>
-                            <td><input type="text" name="day" value="<%= rs.getInt("day") %>" /></td>
+                            <td><input type="hidden" name="starthour" value="<%= rs.getInt("starthour") %>" /><%= rs.getInt("starthour") %></td>
+                            <td><input type="hidden" name="startminute" value="<%= rs.getInt("startminute") %>" /><%= rs.getInt("startminute") %></td>
+                            <td><input type="hidden" name="endhour" value="<%= rs.getInt("endhour") %>" /><%= rs.getInt("endhour") %></td>
+                            <td><input type="hidden" name="endminute" value="<%= rs.getInt("endminute") %>" /><%= rs.getInt("endminute") %></td>
+                            <td><input type="hidden" name="month" value="<%= rs.getInt("month") %>" /><%= rs.getInt("month") %></td>
+                            <td><input type="hidden" name="day" value="<%= rs.getInt("day") %>" /><%= rs.getInt("day") %></td>
                             <td><input type="text" name="type" value="<%= rs.getString("type") %>" /></td>
                             <td><input type="checkbox" name="mandatory" <%= rs.getBoolean("mandatory") ? "checked" : "" %> /></td>
                             <td><input type="text" name="building" value="<%= rs.getString("building") %>" /></td>
