@@ -31,12 +31,27 @@
                         
                         // Create the prepared statement and use it to 
                         // INSERT the corequisite attrs INTO the Corequisites table
-                        
+
                         PreparedStatement pstmt = conn.prepareStatement(
-                            ("INSERT INTO Corequisites VALUES (?, ?)"));
-                        pstmt.setInt(1, Integer.parseInt(request.getParameter("BASECOURSE")));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("COREQUISITE")));
-                        pstmt.executeUpdate();
+                            "SELECT COUNT(*) AS duplicates FROM Corequisites WHERE " + 
+                            "BASECOURSE = ? AND COREQUISITE = ?");
+                        pstmt.setInt(1, Integer.parseInt(request.getParameter("COREQUISITE")));
+                        pstmt.setInt(2, Integer.parseInt(request.getParameter("BASECOURSE")));
+                        ResultSet rs = pstmt.executeQuery();
+                        int rowCount = 0;
+
+                        if (rs.next()) {
+                            rowCount = rs.getInt("duplicates");
+                        }
+
+                        if (rowCount <= 0) {
+                            PreparedStatement pstmt2 = conn.prepareStatement(
+                                ("INSERT INTO Corequisites VALUES (?, ?)"));
+                            pstmt2.setInt(1, Integer.parseInt(request.getParameter("BASECOURSE")));
+                            pstmt2.setInt(2, Integer.parseInt(request.getParameter("COREQUISITE")));
+                            pstmt2.executeUpdate();
+                        }
+                    
 
                         conn.commit();
                         conn.setAutoCommit(true);
