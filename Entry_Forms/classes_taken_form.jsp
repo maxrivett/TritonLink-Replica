@@ -36,21 +36,23 @@
                         String grade = request.getParameter("GRADE");
 
                         PreparedStatement validationStmt = conn.prepareStatement(
-                            "SELECT COUNT(*) FROM classes WHERE COURSEID = ? AND QUARTER = ? AND YEAR = ?");
+                            "SELECT COUNT(*) FROM class_section WHERE COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
                         validationStmt.setInt(1, courseId);
-                        validationStmt.setString(2, quarter);
-                        validationStmt.setInt(3, year);
+                        validationStmt.setInt(2, sectionId);
+                        validationStmt.setString(3, quarter);
+                        validationStmt.setInt(4, year);
                         ResultSet rs = validationStmt.executeQuery();
                         rs.next();
                         int count = rs.getInt(1);
                         rs.close();
                         validationStmt.close();
-                        conn.setAutoCommit(false);
+
                         if (count == 0) {
-                            out.println("<p>Invalid course, quarter, or year combination. No action performed.</p>");
+                            out.println("<p>Invalid course-section-quarter-year combination. No action performed.</p>");
                         } else {
+                            PreparedStatement pstmt = null;
                             if ("insert".equals(action)) {
-                                PreparedStatement pstmt = conn.prepareStatement(
+                                pstmt = conn.prepareStatement(
                                     "INSERT INTO classes_taken (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, GRADE) VALUES (?, ?, ?, ?, ?, ?)");
                                 pstmt.setInt(1, studentId);
                                 pstmt.setInt(2, courseId);
@@ -58,11 +60,8 @@
                                 pstmt.setString(4, quarter);
                                 pstmt.setInt(5, year);
                                 pstmt.setString(6, grade);
-                                pstmt.executeUpdate();
-                                pstmt.close();
-                                conn.setAutoCommit(false);
                             } else if ("update".equals(action)) {
-                                PreparedStatement pstmt = conn.prepareStatement(
+                                pstmt = conn.prepareStatement(
                                     "UPDATE classes_taken SET GRADE = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
                                 pstmt.setString(1, grade);
                                 pstmt.setInt(2, studentId);
@@ -70,12 +69,13 @@
                                 pstmt.setInt(4, sectionId);
                                 pstmt.setString(5, quarter);
                                 pstmt.setInt(6, year);
-                                pstmt.executeUpdate();
-                                pstmt.close();
-                                conn.setAutoCommit(false);
                             }
+                            pstmt.executeUpdate();
+                            pstmt.close();
+                            conn.setAutoCommit(false);
                             conn.commit();
                         }
+                        conn.setAutoCommit(true);
                     }
 
                     // Check if a delete is requested

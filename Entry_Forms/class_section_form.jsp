@@ -50,6 +50,34 @@
 
                         conn.setAutoCommit(false);
 
+                        PreparedStatement pstmt1 = conn.prepareStatement(
+                        "DELETE FROM course_enrollment WHERE SECTIONID = ? AND " +
+                        "COURSEID = ? AND QUARTER = ? AND YEAR = ?");
+
+                        pstmt1.setInt(1, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt1.setInt(2, Integer.parseInt(request.getParameter("COURSEID")));
+                        pstmt1.setString(3, request.getParameter("QUARTER"));
+                        pstmt1.setInt(4, Integer.parseInt(request.getParameter("YEAR")));
+
+                        int rowCount = pstmt1.executeUpdate();
+
+                        conn.setAutoCommit(false);
+                        conn.setAutoCommit(true);
+
+                        PreparedStatement pstmt2 = conn.prepareStatement(
+                        "DELETE FROM classes_taken WHERE SECTIONID = ? AND " +
+                        "COURSEID = ? AND QUARTER = ? AND YEAR = ?");
+
+                        pstmt2.setInt(1, Integer.parseInt(request.getParameter("SECTIONID")));
+                        pstmt2.setInt(2, Integer.parseInt(request.getParameter("COURSEID")));
+                        pstmt2.setString(3, request.getParameter("QUARTER"));
+                        pstmt2.setInt(4, Integer.parseInt(request.getParameter("YEAR")));
+
+                        rowCount = pstmt2.executeUpdate();
+
+                        conn.setAutoCommit(false);
+                        conn.setAutoCommit(true);
+
                         // Create the prepared statement and use it to
                         // DELETE the class taken FROM the class_section table.
 
@@ -62,7 +90,7 @@
                         pstmt.setString(3, request.getParameter("QUARTER"));
                         pstmt.setInt(4, Integer.parseInt(request.getParameter("YEAR")));
 
-                        int rowCount = pstmt.executeUpdate();
+                        rowCount = pstmt.executeUpdate();
 
                         conn.setAutoCommit(false);
                         conn.setAutoCommit(true);
