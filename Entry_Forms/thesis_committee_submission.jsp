@@ -64,9 +64,13 @@
 
                         ResultSet numProfsSet = numProfsStatement.executeQuery();
 
-                        numProfsSet.next();
+                        
 
-                        int numProfs = numProfsSet.getInt("NUMPROFS");
+                        int numProfs = 0;
+
+                        if (numProfsSet.next()) {
+                            numProfs = numProfsSet.getInt("NUMPROFS");
+                        }
 
                         int rowCount = 0;
 
