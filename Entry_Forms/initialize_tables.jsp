@@ -162,8 +162,8 @@
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
                             "FOREIGN KEY (AIDNAME, YEAR) REFERENCES finaid(AIDNAME, YEAR) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE classes_taken (STUDENTID integer, COURSEID integer, " + 
-                            "SECTIONID integer, QUARTER varchar(255), YEAR integer, GRADE varchar(2), " + 
-                            "PRIMARY KEY(STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR), " + 
+                            "SECTIONID integer, QUARTER varchar(255), YEAR integer, NUMUNITS integer, GRADE varchar(2), " + 
+                            "PRIMARY KEY(STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS), " + 
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
                             "FOREIGN KEY (COURSEID, QUARTER, YEAR) REFERENCES classes(COURSEID, QUARTER, YEAR) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE advisors (STUDENTID integer, FACULTYNAME varchar(255), " + 

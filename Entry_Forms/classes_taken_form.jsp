@@ -33,14 +33,16 @@
                         int sectionId = Integer.parseInt(request.getParameter("SECTIONID"));
                         String quarter = request.getParameter("QUARTER");
                         int year = Integer.parseInt(request.getParameter("YEAR"));
+                        int numunits = Integer.parseInt(request.getParameter("NUMUNITS"));
                         String grade = request.getParameter("GRADE");
 
                         PreparedStatement validationStmt = conn.prepareStatement(
-                            "SELECT COUNT(*) FROM class_section WHERE COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
+                            "SELECT COUNT(*) FROM class_section WHERE COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ? AND NUMUNITS = ?");
                         validationStmt.setInt(1, courseId);
                         validationStmt.setInt(2, sectionId);
                         validationStmt.setString(3, quarter);
                         validationStmt.setInt(4, year);
+                        validationStmt.setInt(5, numunits);
                         ResultSet rs = validationStmt.executeQuery();
                         rs.next();
                         int count = rs.getInt(1);
@@ -53,22 +55,24 @@
                             PreparedStatement pstmt = null;
                             if ("insert".equals(action)) {
                                 pstmt = conn.prepareStatement(
-                                    "INSERT INTO classes_taken (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, GRADE) VALUES (?, ?, ?, ?, ?, ?)");
+                                    "INSERT INTO classes_taken (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS, GRADE) VALUES (?, ?, ?, ?, ?, ?, ?)");
                                 pstmt.setInt(1, studentId);
                                 pstmt.setInt(2, courseId);
                                 pstmt.setInt(3, sectionId);
                                 pstmt.setString(4, quarter);
                                 pstmt.setInt(5, year);
-                                pstmt.setString(6, grade);
+                                pstmt.setInt(6, numunits);
+                                pstmt.setString(7, grade);
                             } else if ("update".equals(action)) {
                                 pstmt = conn.prepareStatement(
-                                    "UPDATE classes_taken SET GRADE = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
+                                    "UPDATE classes_taken SET GRADE = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ? AND NUMUNITS = ?");
                                 pstmt.setString(1, grade);
                                 pstmt.setInt(2, studentId);
                                 pstmt.setInt(3, courseId);
                                 pstmt.setInt(4, sectionId);
                                 pstmt.setString(5, quarter);
                                 pstmt.setInt(6, year);
+                                pstmt.setInt(7, numunits);
                             }
                             pstmt.executeUpdate();
                             pstmt.close();
@@ -88,13 +92,14 @@
 
                         PreparedStatement pstmt = conn.prepareStatement(
                         "DELETE FROM classes_taken WHERE STUDENTID = ? AND " +
-                        "COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
+                        "COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ? AND NUMUNITS = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("COURSEID")));
                         pstmt.setInt(3, Integer.parseInt(request.getParameter("SECTIONID")));
                         pstmt.setString(4, request.getParameter("QUARTER"));
                         pstmt.setInt(5, Integer.parseInt(request.getParameter("YEAR")));
+                        pstmt.setInt(6, Integer.parseInt(request.getParameter("NUMUNITS")));
 
 
                         int rowCount = pstmt.executeUpdate();
@@ -120,6 +125,7 @@
                         <th>Section_ID</th>
                         <th>Quarter</th>
                         <th>Year</th>
+                        <th>Number of Units</th>
                         <th>Grade</th>
                     </tr>
                     <tr>
@@ -130,6 +136,7 @@
                             <th><input value="" name="SECTIONID" size="10"></th>
                             <th><input value="" name="QUARTER" size="10"></th>
                             <th><input value="" name="YEAR" size="10"></th>
+                            <th><input value="" name="NUMUNITS" size="1"></th>
                             <th><input value="" name="GRADE" size="10"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
@@ -146,6 +153,7 @@
                         <th><input value="<%= rs.getInt("SECTIONID") %>" name="SECTIONID"></th>
                         <th><input value="<%= rs.getString("QUARTER") %>" name="QUARTER"></th>
                         <th><input value="<%= rs.getInt("YEAR") %>" name="YEAR"></th>
+                        <th><input value="<%= rs.getInt("NUMUNITS") %>" name="NUMUNITS"></th>
                         <th><input value="<%= rs.getString("GRADE") %>" name="GRADE"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
@@ -161,6 +169,8 @@
                             name="QUARTER">
                         <input type="hidden" value="<%= rs.getInt("YEAR") %>"
                             name="YEAR">
+                        <input type="hidden" value="<%= rs.getInt("NUMUNITS") %>"
+                            name="NUMUNITS">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>
