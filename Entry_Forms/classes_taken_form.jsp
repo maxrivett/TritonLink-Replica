@@ -37,12 +37,11 @@
                         String grade = request.getParameter("GRADE");
 
                         PreparedStatement validationStmt = conn.prepareStatement(
-                            "SELECT COUNT(*) FROM class_section WHERE COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ? AND NUMUNITS = ?");
+                            "SELECT COUNT(*) FROM class_section WHERE COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
                         validationStmt.setInt(1, courseId);
                         validationStmt.setInt(2, sectionId);
                         validationStmt.setString(3, quarter);
                         validationStmt.setInt(4, year);
-                        validationStmt.setInt(5, numunits);
                         ResultSet rs = validationStmt.executeQuery();
                         rs.next();
                         int count = rs.getInt(1);
