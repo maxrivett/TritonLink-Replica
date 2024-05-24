@@ -2,8 +2,6 @@
 <body>
     <table>
         <tr>
-            grade point float
-            gpa count int
             <td>
                 <jsp:include page="menu.html" />
             </td>
@@ -36,6 +34,7 @@
                         String quarter = request.getParameter("QUARTER");
                         int year = Integer.parseInt(request.getParameter("YEAR"));
                         int numunits = Integer.parseInt(request.getParameter("NUMUNITS"));
+                        String grade = request.getParameter("GRADE");
                         String gradingoption = request.getParameter("GRADINGOPTION");
                         float gradepoints = Float.parseFloat(request.getParameter("GRADEPOINTS"));
                         int countgpa = Integer.parseInt(request.getParameter("COUNTGPA"));
