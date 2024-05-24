@@ -17,18 +17,19 @@
                         if ("update".equals(action)) {
                             boolean mandatory = "on".equals(request.getParameter("mandatory"));
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE review_session_info SET type = ?, mandatory = ?, building = ?, room = ? WHERE sectionid = ? AND starthour = ? AND startminute = ? AND endhour = ? AND endminute = ? AND month = ? AND day = ?");                            
+                                "UPDATE review_session_info SET type = ?, mandatory = ?, building = ?, room = ?, WEEKDAY = ? WHERE sectionid = ? AND starthour = ? AND startminute = ? AND endhour = ? AND endminute = ? AND month = ? AND day = ?");                            
                             pstmt.setString(1, request.getParameter("type"));
                             pstmt.setBoolean(2, mandatory);
                             pstmt.setString(3, request.getParameter("building"));
                             pstmt.setString(4, request.getParameter("room"));
-                            pstmt.setInt(5, Integer.parseInt(request.getParameter("sectionid")));
-                            pstmt.setInt(6, Integer.parseInt(request.getParameter("starthour")));
-                            pstmt.setInt(7, Integer.parseInt(request.getParameter("startminute")));
-                            pstmt.setInt(8, Integer.parseInt(request.getParameter("endhour")));
-                            pstmt.setInt(9, Integer.parseInt(request.getParameter("endminute")));
-                            pstmt.setInt(10, Integer.parseInt(request.getParameter("month")));
-                            pstmt.setInt(11, Integer.parseInt(request.getParameter("day")));
+                            pstmt.setString(5, request.getParameter("WEEKDAY"));
+                            pstmt.setInt(6, Integer.parseInt(request.getParameter("sectionid")));
+                            pstmt.setInt(7, Integer.parseInt(request.getParameter("starthour")));
+                            pstmt.setInt(8, Integer.parseInt(request.getParameter("startminute")));
+                            pstmt.setInt(9, Integer.parseInt(request.getParameter("endhour")));
+                            pstmt.setInt(10, Integer.parseInt(request.getParameter("endminute")));
+                            pstmt.setInt(11, Integer.parseInt(request.getParameter("month")));
+                            pstmt.setInt(12, Integer.parseInt(request.getParameter("day")));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("delete".equals(action)) {
@@ -46,7 +47,7 @@
                         } else if ("insert".equals(action)) {
                             boolean mandatory = "on".equals(request.getParameter("mandatory"));
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "INSERT INTO review_session_info (sectionid, starthour, startminute, endhour, endminute, month, day, type, mandatory, building, room) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                                "INSERT INTO review_session_info (sectionid, starthour, startminute, endhour, endminute, month, day, type, mandatory, building, room, WEEKDAY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                             pstmt.setInt(1, Integer.parseInt(request.getParameter("sectionid")));
                             pstmt.setInt(2, Integer.parseInt(request.getParameter("starthour")));
                             pstmt.setInt(3, Integer.parseInt(request.getParameter("startminute")));
@@ -58,6 +59,7 @@
                             pstmt.setBoolean(9, mandatory);
                             pstmt.setString(10, request.getParameter("building"));
                             pstmt.setString(11, request.getParameter("room"));
+                            pstmt.setString(12, request.getParameter("WEEKDAY"));
                             pstmt.executeUpdate();
                             conn.commit();
                         }
@@ -77,6 +79,7 @@
                         <th>Mandatory</th>
                         <th>Building</th>
                         <th>Room</th>
+                        <th>Weekday</th>
                     </tr>
                     <tr>
                         <form action="review_session_info_submission.jsp" method="post">
@@ -91,6 +94,7 @@
                             <td><input type="checkbox" name="mandatory" /></td>
                             <td><input type="text" name="building" /></td>
                             <td><input type="text" name="room" /></td>
+                            <td><input type="text" name="WEEKDAY" /></td>
                             <td><input type="submit" name="action" value="insert" /></td>
                         </form>
                     </tr>
@@ -110,6 +114,7 @@
                             <td><input type="checkbox" name="mandatory" <%= rs.getBoolean("mandatory") ? "checked" : "" %> /></td>
                             <td><input type="text" name="building" value="<%= rs.getString("building") %>" /></td>
                             <td><input type="text" name="room" value="<%= rs.getString("room") %>" /></td>
+                            <td><input type="text" name="WEEKDAY" value="<%= rs.getString("WEEKDAY") %>" /></td>
                             <td>
                                 <input type="submit" name="action" value="update" />
                                 <input type="submit" name="action" value="delete" />

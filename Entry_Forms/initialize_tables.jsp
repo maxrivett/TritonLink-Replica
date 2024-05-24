@@ -138,7 +138,7 @@
                         create_strings.add("CREATE TABLE review_session_info (SECTIONID integer, " + 
                             "STARTHOUR integer, STARTMINUTE integer, ENDHOUR integer, ENDMINUTE integer, " + 
                             "MONTH integer, DAY integer, TYPE varchar(255), MANDATORY boolean, " + 
-                            "BUILDING varchar(255), ROOM varchar(255), " + 
+                            "BUILDING varchar(255), ROOM varchar(255), WEEKDAY varchar(255), " + 
                             "PRIMARY KEY (SECTIONID, STARTHOUR, STARTMINUTE, ENDHOUR, ENDMINUTE, MONTH, DAY), " + 
                             "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE degree (DEPARTMENT varchar(255), DEGTYPE varchar(255), " +
