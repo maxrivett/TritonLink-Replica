@@ -137,9 +137,9 @@
                 <table>
                     <tr>
                         <th>Student_ID</th>
-                        <th>First</th>
-                        <th>Middle</th>
-                        <th>Last</th>
+                        <th>First Name</th>
+                        <th>Middle Name</th>
+                        <th>Last Name</th>
                         <th>Enrolled</th>
                         <th>SSN</th>
                         <th>Residency</th>

@@ -18,8 +18,11 @@
                         conn = DriverManager.getConnection(url);
 
                         // Fetch all classes for the dropdown
-                        String classQuery = "SELECT DISTINCT TITLE, QUARTER, YEAR FROM classes ORDER BY YEAR DESC, QUARTER, TITLE";
+                        String classQuery = "SELECT DISTINCT TITLE, QUARTER, YEAR FROM classes  WHERE QUARTER = ? AND " + 
+                        "YEAR = ? ORDER BY YEAR DESC, QUARTER, TITLE";
                         pstmt = conn.prepareStatement(classQuery);
+                        pstmt.setString(1, "Spring");
+                        pstmt.setInt(2, 2018);
                         rs = pstmt.executeQuery();
                 %>
                 <form method="get">
@@ -58,9 +61,14 @@
                 %>
                 <table border="1">
                     <tr>
-                        <th>Student ID</th>
+                        <th>Student_ID</th>
                         <th>First Name</th>
+                        <th>Middle Name</th>
                         <th>Last Name</th>
+                        <th>Enrolled</th>
+                        <th>SSN</th>
+                        <th>Residency</th>
+                        <th>Account_Balance</th>
                         <th>Units</th>
                         <th>Grade Option</th>
                     </tr>
@@ -70,7 +78,12 @@
                     <tr>
                         <td><%= rs.getInt("STUDENTID") %></td>
                         <td><%= rs.getString("FIRSTNAME") %></td>
+                        <td><%= rs.getString("MIDDLENAME") %></td>
                         <td><%= rs.getString("LASTNAME") %></td>
+                        <td><%= rs.getBoolean("ENROLLED") %></td>
+                        <td><%= rs.getInt("SSN") %></td>
+                        <td><%= rs.getString("RESIDENCY") %></td>
+                        <td><%= rs.getFloat("ACCOUNTBALANCE") %></td>
                         <td><%= rs.getInt("NUMUNITS") %></td>
                         <td><%= rs.getString("GRADINGOPTION") %></td>
                     </tr>

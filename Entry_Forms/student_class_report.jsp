@@ -30,7 +30,7 @@
                     // Use the statement to SELECT the student attributes
                     // FROM the student table
                     ResultSet student_rs = statement.executeQuery
-                        ("SELECT * FROM student");
+                        ("SELECT * FROM student WHERE ENROLLED = true");
                 %>
 
                 <form action="student_class_report.jsp" method="get">
@@ -67,7 +67,8 @@
                             // Create the prepared statement and use it to 
                             // INSERT the advisor attrs INTO the advisors table
                             PreparedStatement pstmt = conn.prepareStatement(
-                            ("SELECT * FROM course_enrollment WHERE STUDENTID = ?"));
+                            ("SELECT * FROM course_enrollment, Sections WHERE course_enrollment.STUDENTID = ? AND " + 
+                            "course_enrollment.SECTIONID = Sections.SECTIONID"));
 
                             int curr_id = Integer.parseInt(request.getParameter("STUDENTID"));
 
@@ -119,10 +120,13 @@
                     <tr>
                         <th>Student ID</th>
                         <th>Course ID</th>
-                        <th>Section ID</th>
                         <th>Quarter</th>
                         <th>Year</th>
                         <th>Number of Units</th>
+                        <th>Section ID</th>
+                        <th>Number of Students Enrolled</th>
+                        <th>Faculty Name</th>
+                        <th>Enrollment Limit</th>
                     </tr>
 
                     <%
@@ -132,10 +136,13 @@
                         <form>
                             <td><input type="text" value="<%= classes_rs.getInt("STUDENTID") %>" name="STUDENTID"></td>
                             <td><input type="text" value="<%= classes_rs.getInt("COURSEID") %>" name="COURSEID"></td>
-                            <td><input type="text" value="<%= classes_rs.getInt("SECTIONID") %>" name="SECTIONID"></td>
                             <td><input type="text" value="<%= classes_rs.getString("QUARTER") %>" name="QUARTER"></td>
                             <td><input type="text" value="<%= classes_rs.getInt("YEAR") %>" name="YEAR"></td>
                             <td><input type="text" value="<%= classes_rs.getInt("NUMUNITS") %>" name="NUMUNITS"></td>
+                            <td><input type="text" value="<%= classes_rs.getInt("SECTIONID") %>" name="SECTIONID"></td>
+                            <td><input type="text" value="<%= classes_rs.getInt("NUMENROLLED") %>" name="NUMENROLLED"></td>
+                            <td><input type="text" value="<%= classes_rs.getString("FACULTYNAME") %>" name="FACULTYNAME"></td>
+                            <td><input type="text" value="<%= classes_rs.getInt("ENROLLLIMIT") %>" name="ENROLLLIMIT"></td>
                         </form>
                     </tr>
                 
