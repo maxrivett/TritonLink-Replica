@@ -21,6 +21,7 @@
                             String quarter = request.getParameter("QUARTER");
                             int year = Integer.parseInt(request.getParameter("YEAR"));
                             int numUnits = Integer.parseInt(request.getParameter("NUMUNITS"));
+                            String gradingoption = request.getParameter("GRADINGOPTION");
 
                             PreparedStatement validationStmt = conn.prepareStatement(
                                 "SELECT COUNT(*) FROM class_section WHERE COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
@@ -41,22 +42,24 @@
                                 PreparedStatement pstmt = null;
                                 if ("insert".equals(action)) {
                                     pstmt = conn.prepareStatement(
-                                        "INSERT INTO course_enrollment (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS) VALUES (?, ?, ?, ?, ?, ?)");
+                                        "INSERT INTO course_enrollment (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS, GRADINGOPTION) VALUES (?, ?, ?, ?, ?, ?, ?)");
                                     pstmt.setInt(1, studentId);
                                     pstmt.setInt(2, courseId);
                                     pstmt.setInt(3, sectionId);
                                     pstmt.setString(4, quarter);
                                     pstmt.setInt(5, year);
                                     pstmt.setInt(6, numUnits);
+                                    pstmt.setString(7, gradingoption);
                                 } else if ("update".equals(action)) {
                                     pstmt = conn.prepareStatement(
-                                        "UPDATE course_enrollment SET NUMUNITS = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
+                                        "UPDATE course_enrollment SET NUMUNITS = ?, GRADINGOPTION = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
                                     pstmt.setInt(1, numUnits);
-                                    pstmt.setInt(2, studentId);
-                                    pstmt.setInt(3, courseId);
-                                    pstmt.setInt(4, sectionId);
-                                    pstmt.setString(5, quarter);
-                                    pstmt.setInt(6, year);
+                                    pstmt.setString(2, gradingoption);
+                                    pstmt.setInt(3, studentId);
+                                    pstmt.setInt(4, courseId);
+                                    pstmt.setInt(5, sectionId);
+                                    pstmt.setString(6, quarter);
+                                    pstmt.setInt(7, year);
                                 }
                                 pstmt.executeUpdate();
                                 pstmt.close();
@@ -87,6 +90,7 @@
                         <th>Year</th>
                         <th>Section ID</th>
                         <th>Number of Units</th>
+                        <th>Grading Option</th>
                     </tr>
                     <tr>
                         <form action="course_enrollment_form.jsp" method="post">
@@ -96,6 +100,7 @@
                             <td><input type="text" name="YEAR" /></td>
                             <td><input type="text" name="SECTIONID" /></td>
                             <td><input type="text" name="NUMUNITS" /></td>
+                            <td><input type="text" name="GRADINGOPTION" /></td>
                             <td><input type="submit" name="action" value="insert" /></td>
                         </form>
                     </tr>
@@ -110,6 +115,7 @@
                             <td><input type="hidden" name="YEAR" value="<%= rs.getInt("YEAR") %>" /><%= rs.getInt("YEAR") %></td>
                             <td><input type="hidden" name="SECTIONID" value="<%= rs.getInt("SECTIONID") %>" /><%= rs.getInt("SECTIONID") %></td>
                             <td><input type="text" name="NUMUNITS" value="<%= rs.getInt("NUMUNITS") %>" /></td>
+                            <td><input type="text" name="GRADINGOPTION" value="<%= rs.getString("GRADINGOPTION") %>" /></td>
                             <td>
                                 <input type="submit" name="action" value="update" />
                                 <input type="submit" name="action" value="delete" />

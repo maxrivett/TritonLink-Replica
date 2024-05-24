@@ -117,7 +117,7 @@
                             "PRIMARY KEY (SECTIONID), FOREIGN KEY (FACULTYNAME) REFERENCES Faculty(FACULTYNAME) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE course_enrollment (STUDENTID integer, " +
                             "COURSEID integer, QUARTER varchar(255), YEAR integer, " +
-                            "SECTIONID integer, NUMUNITS integer, " +
+                            "SECTIONID integer, NUMUNITS integer, GRADINGOPTION varchar(255), " +
                             "PRIMARY KEY (STUDENTID, SECTIONID), " +
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
                             "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE)");
