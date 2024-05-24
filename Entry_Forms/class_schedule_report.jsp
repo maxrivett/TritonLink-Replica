@@ -67,7 +67,8 @@
                             // Create the prepared statement and use it to 
                             // INSERT the advisor attrs INTO the advisors table
                             PreparedStatement pstmt = conn.prepareStatement(
-                            ("SELECT * FROM classes, class_section WHERE classes.YEAR = ? AND classes.QUARTER = ? " + 
+                            ("SELECT DISTINCT classes.* FROM classes, class_section WHERE " + 
+                            "classes.YEAR = ? AND classes.QUARTER = ? " + 
                             "AND classes.YEAR = class_section.YEAR AND classes.QUARTER = class_section.QUARTER " + 
                             "AND classes.COURSEID = class_section.COURSEID " +
                             "AND (classes.COURSEID, classes.QUARTER, classes.YEAR) IN " + 
@@ -164,7 +165,8 @@
 
                         <%
                             PreparedStatement pstmt_bad_classes = conn.prepareStatement(
-                                ("SELECT * FROM classes, class_section WHERE classes.YEAR = ? AND classes.QUARTER = ? " + 
+                                ("SELECT DISTINCT classes.* FROM classes, class_section WHERE " + 
+                                "classes.YEAR = ? AND classes.QUARTER = ? " + 
                                 "AND classes.YEAR = class_section.YEAR AND classes.QUARTER = class_section.QUARTER " + 
                                 "AND classes.COURSEID = class_section.COURSEID " +
                                 "AND (classes.COURSEID, classes.QUARTER, classes.YEAR) IN " + 
@@ -175,7 +177,6 @@
                                 "class_section section1, class_section section2, regular_meeting rm1, " + 
                                 "regular_meeting rm2 WHERE " + 
                                 "section1.QUARTER = ? AND section1.YEAR = ? AND " + 
-                                "section1.SECTIONID = ? AND " + 
                                 "section1.COURSEID = ? AND " + 
                                 "course_enrollment.SECTIONID = section2.SECTIONID AND " + 
                                 "course_enrollment.COURSEID = section2.COURSEID AND " + 
@@ -195,9 +196,8 @@
                             pstmt_bad_classes.setString(2, "Spring");
                             pstmt_bad_classes.setString(3, "Spring");
                             pstmt_bad_classes.setInt(4, 2018);
-                            pstmt_bad_classes.setInt(5, classes_rs.getInt("SECTIONID"));
-                            pstmt_bad_classes.setInt(6, classes_rs.getInt("COURSEID"));
-                            pstmt_bad_classes.setInt(7, curr_id);
+                            pstmt_bad_classes.setInt(5, classes_rs.getInt("COURSEID"));
+                            pstmt_bad_classes.setInt(6, curr_id);
 
                             ResultSet bad_classes_rs = pstmt_bad_classes.executeQuery();
 
