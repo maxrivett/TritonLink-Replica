@@ -2,6 +2,8 @@
 <body>
     <table>
         <tr>
+            grade point float
+            gpa count int
             <td>
                 <jsp:include page="menu.html" />
             </td>
@@ -34,7 +36,9 @@
                         String quarter = request.getParameter("QUARTER");
                         int year = Integer.parseInt(request.getParameter("YEAR"));
                         int numunits = Integer.parseInt(request.getParameter("NUMUNITS"));
-                        String grade = request.getParameter("GRADE");
+                        String gradingoption = request.getParameter("GRADINGOPTION");
+                        float gradepoints = Float.parseFloat(request.getParameter("GRADEPOINTS"));
+                        int countgpa = Integer.parseInt(request.getParameter("COUNTGPA"));
 
                         PreparedStatement validationStmt = conn.prepareStatement(
                             "SELECT COUNT(*) FROM class_section WHERE COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
@@ -54,7 +58,7 @@
                             PreparedStatement pstmt = null;
                             if ("insert".equals(action)) {
                                 pstmt = conn.prepareStatement(
-                                    "INSERT INTO classes_taken (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS, GRADE) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                                    "INSERT INTO classes_taken (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS, GRADE, GRADINGOPTION, GRADEPOINTS, COUNTGPA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                                 pstmt.setInt(1, studentId);
                                 pstmt.setInt(2, courseId);
                                 pstmt.setInt(3, sectionId);
@@ -62,16 +66,22 @@
                                 pstmt.setInt(5, year);
                                 pstmt.setInt(6, numunits);
                                 pstmt.setString(7, grade);
+                                pstmt.setString(8, gradingoption);
+                                pstmt.setFloat(9, gradepoints);
+                                pstmt.setInt(10, countgpa);
                             } else if ("update".equals(action)) {
                                 pstmt = conn.prepareStatement(
-                                    "UPDATE classes_taken SET GRADE = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ? AND NUMUNITS = ?");
+                                    "UPDATE classes_taken SET GRADE = ?, GRADINGOPTION = ?, GRADEPOINTS = ?, COUNTGPA = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ? AND NUMUNITS = ?");
                                 pstmt.setString(1, grade);
-                                pstmt.setInt(2, studentId);
-                                pstmt.setInt(3, courseId);
-                                pstmt.setInt(4, sectionId);
-                                pstmt.setString(5, quarter);
-                                pstmt.setInt(6, year);
-                                pstmt.setInt(7, numunits);
+                                pstmt.setString(2, gradingoption);
+                                pstmt.setFloat(3, gradepoints);
+                                pstmt.setInt(4, countgpa);
+                                pstmt.setInt(5, studentId);
+                                pstmt.setInt(6, courseId);
+                                pstmt.setInt(7, sectionId);
+                                pstmt.setString(8, quarter);
+                                pstmt.setInt(9, year);
+                                pstmt.setInt(10, numunits);
                             }
                             pstmt.executeUpdate();
                             pstmt.close();
@@ -126,6 +136,9 @@
                         <th>Year</th>
                         <th>Number of Units</th>
                         <th>Grade</th>
+                        <th>Grading Option</th>
+                        <th>Grade Points</th>
+                        <th>Count GPA?</th>
                     </tr>
                     <tr>
                         <form action="classes_taken_form.jsp" method="get">
@@ -137,6 +150,9 @@
                             <th><input value="" name="YEAR" size="10"></th>
                             <th><input value="" name="NUMUNITS" size="1"></th>
                             <th><input value="" name="GRADE" size="10"></th>
+                            <th><input value="" name="GRADINGOPTION" size="10"></th>
+                            <th><input value="" name="GRADEPOINTS" size="3"></th>
+                            <th><input value="" name="COUNTGPA" size="1"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>
@@ -154,6 +170,9 @@
                         <th><input value="<%= rs.getInt("YEAR") %>" name="YEAR"></th>
                         <th><input value="<%= rs.getInt("NUMUNITS") %>" name="NUMUNITS"></th>
                         <th><input value="<%= rs.getString("GRADE") %>" name="GRADE"></th>
+                        <th><input value="<%= rs.getString("GRADINGOPTION") %>" name="GRADINGOPTION"></th>
+                        <th><input value="<%= rs.getFloat("GRADEPOINTS") %>" name="GRADEPOINTS"></th>
+                        <th><input value="<%= rs.getInt("COUNTGPA") %>" name="COUNTGPA"></th>
                         <th><input type="submit" value="Update"></th>
                     </form>
                     <form action="classes_taken_form.jsp" method="get">
@@ -170,6 +189,12 @@
                             name="YEAR">
                         <input type="hidden" value="<%= rs.getInt("NUMUNITS") %>"
                             name="NUMUNITS">
+                        <input type="hidden" value="<%= rs.getString("GRADINGOPTION") %>"
+                            name="GRADINGOPTION">
+                        <input type="hidden" value="<%= rs.getFloat("GRADEPOINTS") %>"
+                            name="GRADEPOINTS">
+                        <input type="hidden" value="<%= rs.getInt("COUNTGPA") %>"
+                            name="COUNTGPA">
                         <td><input type="submit" value="Delete"></td>
                     </form>
                 </tr>
