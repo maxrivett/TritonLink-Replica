@@ -39,9 +39,16 @@
                     <select name="STUDENTID" id="STUDENTID">
                         <%
                             while (student_rs.next()) {
+                                String student_opt = "";
+                                student_opt = student_opt + "ID: " + student_rs.getInt("STUDENTID") + ", ";
+                                student_opt = student_opt + "Name: " + student_rs.getString("FIRSTNAME") + " ";
+                                student_opt = student_opt + student_rs.getString("MIDDLENAME") + " ";
+                                student_opt = student_opt + student_rs.getString("LASTNAME") + ", ";
+                                student_opt = student_opt + "SSN: " + student_rs.getInt("SSN");
+                                
                         %>
                         <option value="<%= student_rs.getInt("STUDENTID") %>">
-                            <%= student_rs.getInt("STUDENTID") %>
+                            <%= student_opt %>
                         </option>
                         <% } %>
                     </select>

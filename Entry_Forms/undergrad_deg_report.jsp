@@ -30,7 +30,8 @@
                     // Use the statement to SELECT the student attributes
                     // FROM the student table
                     ResultSet student_rs = student_statement.executeQuery
-                        ("SELECT * FROM undergrad");
+                        ("SELECT * FROM student WHERE STUDENTID IN " + 
+                        "(SELECT STUDENTID FROM undergrad)");
                 %>
 
                 <%
@@ -51,18 +52,27 @@
                     <select name="STUDENTID" id="STUDENTID">
                         <%
                             while (student_rs.next()) {
+                                String student_opt = "";
+                                student_opt = student_opt + "ID: " + student_rs.getInt("STUDENTID") + ", ";
+                                student_opt = student_opt + "Name: " + student_rs.getString("FIRSTNAME") + " ";
+                                student_opt = student_opt + student_rs.getString("MIDDLENAME") + " ";
+                                student_opt = student_opt + student_rs.getString("LASTNAME") + ", ";
+                                student_opt = student_opt + "SSN: " + student_rs.getInt("SSN");
                         %>
                         <option value="<%= student_rs.getInt("STUDENTID") %>">
-                            <%= student_rs.getInt("STUDENTID") %>
+                            <%= student_opt %>
                         </option>
                         <% } %>
                     </select>
                     <select name="DEPARTMENT" id="DEPARTMENT">
                         <%
                             while (department_rs.next()) {
+                                String dept_opt = "";
+                                dept_opt = dept_opt + "Department: " + department_rs.getString("DEPARTMENT") + ", ";
+                                dept_opt = dept_opt + "Degree Type: " + department_rs.getString("DEGTYPE");
                         %>
                         <option value="<%= department_rs.getString("DEPARTMENT") %>">
-                            <%= department_rs.getString("DEPARTMENT") %>
+                            <%= dept_opt %>
                         </option>
                         <% } %>
                     </select>
