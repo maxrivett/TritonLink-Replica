@@ -60,6 +60,11 @@
 
                         String[] concentrations = {"Upper", "Specialty"};
 
+                        String[] letter_grades = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", 
+                            "D", "IN"};
+                                                
+                        int grade_idx = 0;
+
                         int sid = 1;
 
                         float account_bal = (float) 40.99;
@@ -325,6 +330,25 @@
                             pstmt5.setString(10, "115");
 
                             pstmt5.executeUpdate();
+
+                            for (int j = 0; j < 8; j++) {
+                                PreparedStatement pstmt6 = conn.prepareStatement(
+                                ("INSERT INTO classes_taken VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
+
+                                grade_idx = (grade_idx + 7) % 11;
+
+                                pstmt6.setInt(1, j + 1);
+                                pstmt6.setInt(2, cid);
+                                pstmt6.setInt(3, cid);
+                                pstmt6.setString(4, quarter);
+                                pstmt6.setInt(5, year);
+                                pstmt6.setInt(6, 4);
+                                pstmt6.setString(7, letter_grades[grade_idx]);
+                                pstmt6.setString(8, "Letter");
+
+                                pstmt6.executeUpdate();
+                                
+                            }
                             
                         }
 

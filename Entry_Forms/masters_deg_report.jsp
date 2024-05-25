@@ -289,9 +289,9 @@
                                 }
 
                                 PreparedStatement pstmt_con_gpa = conn.prepareStatement(
-                                ("SELECT SUM(GRADEPOINTS) AS CONGPA FROM classes_taken WHERE STUDENTID = ? " + 
+                                ("SELECT SUM(GPA) AS CONGPA FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
                                 "AND COURSEID IN (SELECT COURSEID FROM concentration_courses WHERE CONNAME = ? " + 
-                                "AND DEPARTMENT = ?)"));
+                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE"));
 
 
                                 pstmt_con_gpa.setInt(1, curr_id);
@@ -301,9 +301,9 @@
                                 ResultSet curr_con_gpa_rs = pstmt_con_gpa.executeQuery();
 
                                 PreparedStatement pstmt_con_gpa_courses = conn.prepareStatement(
-                                ("SELECT SUM(COUNTGPA) AS CONGPACOUNT FROM classes_taken WHERE STUDENTID = ? " + 
+                                ("SELECT SUM(GPACOUNT) AS CONGPACOUNT FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
                                 "AND COURSEID IN (SELECT COURSEID FROM concentration_courses WHERE CONNAME = ? " + 
-                                "AND DEPARTMENT = ?)"));
+                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE"));
 
                                 pstmt_con_gpa_courses.setInt(1, curr_id);
                                 pstmt_con_gpa_courses.setString(2, curr_con_name);
@@ -338,6 +338,10 @@
                                 }
 
                                 if (temp < epsilon) {
+                                    good_enough = true;
+                                }
+
+                                if (curr_con_gpa > min_con_gpa) {
                                     good_enough = true;
                                 }
 

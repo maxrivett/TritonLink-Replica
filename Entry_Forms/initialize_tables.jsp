@@ -64,6 +64,7 @@
                         del_strings.add("DROP TABLE IF EXISTS category_courses");
                         del_strings.add("DROP TABLE IF EXISTS concentration_courses");
                         del_strings.add("DROP TABLE IF EXISTS review_slots");
+                        del_strings.add("DROP TABLE IF EXISTS grade_conversion");
                         
 
                         
@@ -163,8 +164,8 @@
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
                             "FOREIGN KEY (AIDNAME, YEAR) REFERENCES finaid(AIDNAME, YEAR) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE classes_taken (STUDENTID integer, COURSEID integer, " + 
-                            "SECTIONID integer, QUARTER varchar(255), YEAR integer, NUMUNITS integer, GRADE varchar(2), " +
-                            "GRADINGOPTION varchar(255), GRADEPOINTS numeric(3,2), COUNTGPA integer, " + 
+                            "SECTIONID integer, QUARTER varchar(255), YEAR integer, NUMUNITS integer, GRADE char(2), " +
+                            "GRADINGOPTION varchar(255), " + 
                             "PRIMARY KEY(STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS), " + 
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
                             "FOREIGN KEY (COURSEID, QUARTER, YEAR) REFERENCES classes(COURSEID, QUARTER, YEAR) ON DELETE CASCADE)");
@@ -194,6 +195,8 @@
                         create_strings.add("CREATE TABLE review_slots (MONTH integer, DAY integer, WEEKDAY varchar(255), " + 
                             "STARTHOUR integer, ENDHOUR integer, " + 
                             "PRIMARY KEY (MONTH, DAY, STARTHOUR, ENDHOUR))");
+                        create_strings.add("CREATE TABLE grade_conversion (GRADE char(2), " + 
+                            "GPA numeric(2,1), GPACOUNT integer, GRADECLASS varchar(10))");
                         
                         
                         // Create the prepared statement and use it to 
@@ -233,6 +236,44 @@
                                 weekday_idx = (weekday_idx + 1) % weekdays.length;
                             }
                         }
+
+                        String[] letter_grades = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", 
+                            "D", "SU", "U", "IN"};
+
+                        String[] grade_classes = {"A", "B", "C", "D", "Other"};
+                        
+                        double[] grade_points = {4.3, 4, 3.7, 3.4, 3.1, 2.8, 2.5, 2.2, 1.9, 1.6, 
+                            0, 0, 0};
+
+                        for (int i = 0; i < letter_grades.length; i++) {
+                            PreparedStatement pstmt_grade = conn.prepareStatement(
+                                ("INSERT INTO grade_conversion VALUES (?, ?, ?, ?)"));
+                            
+                                int gpa_count = 0;
+                                if (grade_points[i] > 0) {
+                                    gpa_count = 1;
+                                }
+
+                                String curr_class = "Other";
+
+                                if (i < 9) {
+                                    curr_class = grade_classes[i / 3];
+                                }
+                                if (i == 9) {
+                                    curr_class = grade_classes[3];
+                                }
+
+                                pstmt_grade.setString(1, letter_grades[i]);
+                                pstmt_grade.setFloat(2, (float) grade_points[i]);
+                                pstmt_grade.setInt(3, gpa_count);
+                                pstmt_grade.setString(4, curr_class);
+
+                                pstmt_grade.executeUpdate();
+                        }
+
+
+
+                        
 
                         conn.commit();
                         conn.setAutoCommit(true);
