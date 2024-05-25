@@ -169,6 +169,10 @@
                         }
 
                         int remaining_general_units = curr_dep_rs.getInt("TOTALUNITS") - total_units_taken;
+
+                        if (remaining_general_units < 0) {
+                            remaining_general_units = 0;
+                        }
                     %>
                         <tr>
                             <td>Number of units taken, total: </td>
@@ -211,6 +215,10 @@
                             }
 
                             int remaining_cat_units = categories_rs.getInt("CATUNITS") - curr_cat_units_taken;
+
+                            if (remaining_cat_units < 0) {
+                                remaining_cat_units = 0;
+                            }
                     %>
                         <tr>
                             <form>

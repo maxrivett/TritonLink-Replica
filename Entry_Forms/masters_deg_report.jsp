@@ -460,7 +460,7 @@
                                             min_qtr = next_class_qtr;
                                             min_year = next_class_year;
                                         }
-                                        else if (next_class_qtr.compareTo(min_qtr) < 0 && 
+                                        else if (next_class_qtr.compareTo(min_qtr) > 0 && 
                                                 next_class_year == min_year) {
                                             min_qtr = next_class_qtr;
                                             min_year = next_class_year;

@@ -63,6 +63,7 @@
                         del_strings.add("DROP TABLE IF EXISTS class_section");
                         del_strings.add("DROP TABLE IF EXISTS category_courses");
                         del_strings.add("DROP TABLE IF EXISTS concentration_courses");
+                        del_strings.add("DROP TABLE IF EXISTS review_slots");
                         
 
                         
@@ -190,6 +191,9 @@
                             "PRIMARY KEY (DEPARTMENT, CONNAME, COURSEID), " +
                             "FOREIGN KEY (DEPARTMENT, CONNAME) references concentrations(DEPARTMENT, CONNAME) ON DELETE CASCADE, " + 
                             "FOREIGN KEY (COURSEID) references course(COURSEID) ON DELETE CASCADE)");
+                        create_strings.add("CREATE TABLE review_slots (MONTH integer, DAY integer, WEEKDAY varchar(255), " + 
+                            "STARTHOUR integer, ENDHOUR integer, " + 
+                            "PRIMARY KEY (MONTH, DAY, STARTHOUR, ENDHOUR))");
                         
                         
                         // Create the prepared statement and use it to 
@@ -203,6 +207,31 @@
                         for (String create_stmt : create_strings) {
                             PreparedStatement cstmt = conn.prepareStatement(create_stmt);
                             cstmt.executeUpdate();
+                        }
+
+                        int[] month_days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+                        String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
+                            "Saturday", "Sunday"};
+                        
+                        int weekday_idx = 0;
+                        int min_start_hour = 8;
+                        int max_end_hour = 20;
+
+                        for (int i = 0; i < month_days.length; i++) {
+                            for (int j = 0; j < month_days[i]; j++) {
+                                for (int k = min_start_hour; k < max_end_hour; k++) {
+                                    PreparedStatement pstmt_slot = conn.prepareStatement(
+                                        ("INSERT INTO review_slots VALUES (?, ?, ?, ?, ?)"));
+                                    pstmt_slot.setInt(1, i + 1);
+                                    pstmt_slot.setInt(2, j + 1);
+                                    pstmt_slot.setString(3, weekdays[weekday_idx]);
+                                    pstmt_slot.setInt(4, k);
+                                    pstmt_slot.setInt(5, k + 1);
+
+                                    pstmt_slot.executeUpdate();
+                                }
+                                weekday_idx = (weekday_idx + 1) % weekdays.length;
+                            }
                         }
 
                         conn.commit();

@@ -50,6 +50,8 @@
 
                         int[] years = {2016, 2017, 2018};
 
+                        String[] weekdays = {"Monday", "Tuesday", "Wednesday"};
+
                         String[] bs_deg = {"MATH", "MUS"};
 
                         String[] ms_deg = {"CSE", "ECE"};
@@ -260,8 +262,11 @@
                         for (int i = 0; i < 5; i++) {
 
                             String course_name = course_names[i];
-                            String quarter = quarters[i % 3];
-                            int year = years[i % 3];
+                            // String quarter = quarters[i % 3];
+                            // int year = years[i % 3];
+                            String quarter = "Spring";
+                            int year = 2018;
+                            String weekday = weekdays[i % 3];
 
                             int cid = i + 1;
 
@@ -304,6 +309,23 @@
                             pstmt4.setInt(4, year);
 
                             pstmt4.executeUpdate();
+
+                            PreparedStatement pstmt5 = conn.prepareStatement(
+                            ("INSERT INTO regular_meeting VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+
+                            pstmt5.setInt(1, cid);
+                            pstmt5.setInt(2, 15);
+                            pstmt5.setInt(3, 0);
+                            pstmt5.setInt(4, 16);
+                            pstmt5.setInt(5, 20);
+                            pstmt5.setString(6, weekday);
+                            pstmt5.setString(7, "Lecture");
+                            pstmt5.setBoolean(8, true);
+                            pstmt5.setString(9, "CENTR");
+                            pstmt5.setString(10, "115");
+
+                            pstmt5.executeUpdate();
+                            
                         }
 
 
