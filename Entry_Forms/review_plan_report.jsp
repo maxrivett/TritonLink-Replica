@@ -200,7 +200,7 @@
                                 ("SELECT * FROM review_slots WHERE ((MONTH > ? AND MONTH < ?) OR " + 
                                 "((? < ?) AND ((MONTH = ? AND DAY >= ?) OR (MONTH = ? AND DAY <= ?))) OR " + 
                                 "((? = ?) AND ((MONTH = ? AND DAY >= ? AND DAY <= ?)))) AND " + 
-                                "(MONTH, DAY, STARTHOUR, ENDHOUR) IN (SELECT rev.MONTH, rev.DAY, rev.STARTHOUR, " + 
+                                "(MONTH, DAY, STARTHOUR, ENDHOUR) NOT IN ((SELECT rev.MONTH, rev.DAY, rev.STARTHOUR, " + 
                                 "rev.ENDHOUR FROM review_slots rev, regular_meeting rm, course_enrollment ce1, " + 
                                 "course_enrollment ce2 WHERE ce1.SECTIONID = ? AND ce1.COURSEID = ? AND ce1.QUARTER = ? " + 
                                 "AND ce1.YEAR = ? AND ce1.STUDENTID = ce2.STUDENTID AND ce2.SECTIONID = rm.SECTIONID AND " + 
@@ -208,7 +208,17 @@
                                 "(((rev.STARTHOUR * 60 >= rm.STARTHOUR * 60 + rm.STARTMINUTE) AND " + 
                                 "(rev.STARTHOUR * 60 <= rm.ENDHOUR * 60 + rm.ENDMINUTE)) OR " + 
                                 "((rev.ENDHOUR * 60 >= rm.STARTHOUR * 60 + rm.STARTMINUTE) AND " + 
-                                "(rev.ENDHOUR * 60 <= rm.ENDHOUR * 60 + rm.ENDMINUTE)))) ORDER BY MONTH, DAY, STARTHOUR"));
+                                "(rev.ENDHOUR * 60 <= rm.ENDHOUR * 60 + rm.ENDMINUTE)))) " + 
+                                "UNION (SELECT rev.MONTH, rev.DAY, rev.STARTHOUR, " + 
+                                "rev.ENDHOUR FROM review_slots rev, review_session_info rm, course_enrollment ce1, " + 
+                                "course_enrollment ce2 WHERE ce1.SECTIONID = ? AND ce1.COURSEID = ? AND ce1.QUARTER = ? " + 
+                                "AND ce1.YEAR = ? AND ce1.STUDENTID = ce2.STUDENTID AND ce2.SECTIONID = rm.SECTIONID AND " + 
+                                "rev.MONTH = rm.MONTH AND rev.DAY = rm.DAY AND " + 
+                                "(((rev.STARTHOUR * 60 >= rm.STARTHOUR * 60 + rm.STARTMINUTE) AND " + 
+                                "(rev.STARTHOUR * 60 <= rm.ENDHOUR * 60 + rm.ENDMINUTE)) OR " + 
+                                "((rev.ENDHOUR * 60 >= rm.STARTHOUR * 60 + rm.STARTMINUTE) AND " + 
+                                "(rev.ENDHOUR * 60 <= rm.ENDHOUR * 60 + rm.ENDMINUTE))))) " +
+                                "ORDER BY MONTH, DAY, STARTHOUR"));
 
                                 pstmt_range.setInt(1, curr_start_mon);
                                 pstmt_range.setInt(2, curr_end_mon);
@@ -229,6 +239,11 @@
                                 pstmt_range.setInt(15, curr_cid);
                                 pstmt_range.setString(16, curr_qtr);
                                 pstmt_range.setInt(17, curr_year);
+
+                                pstmt_range.setInt(18, curr_sid);
+                                pstmt_range.setInt(19, curr_cid);
+                                pstmt_range.setString(20, curr_qtr);
+                                pstmt_range.setInt(21, curr_year);
                                 
 
                                 ResultSet range_rs = pstmt_range.executeQuery();
