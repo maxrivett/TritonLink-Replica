@@ -58,6 +58,9 @@
                             <%= course_opt %>
                         </option>
                         <% } %>
+                        <option value="None">
+                            None
+                        </option>
                     </select>
                     <select name="FACULTYNAME" id="FACULTYNAME">
                         <%
@@ -108,7 +111,8 @@
                         // Iterate over the ResultSet
                         String action = request.getParameter("action");
                         // Check if an insertion is requested
-                        if (action != null && action.equals("submit")) {
+                        if (action != null && action.equals("submit")
+                                && !(request.getParameter("COURSEID").equals("None"))) {
                             conn.setAutoCommit(false);
 
                             int curr_id = Integer.parseInt(request.getParameter("COURSEID"));

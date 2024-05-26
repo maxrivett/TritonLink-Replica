@@ -71,6 +71,9 @@
                             <%= section_opt %>
                         </option>
                         <% } %>
+                        <option>
+                            None
+                        </option>
                     </select>
                     <select name="STARTDATE" id="STARTDATE">
                         <%
@@ -115,7 +118,8 @@
                         // Iterate over the ResultSet
                         String action = request.getParameter("action");
                         // Check if an insertion is requested
-                        if (action != null && action.equals("submit")) {
+                        if (action != null && action.equals("submit")
+                                && !(request.getParameter("SECTIONDATA").equals("None"))) {
                             conn.setAutoCommit(false);
 
                             String section_data_str = request.getParameter("SECTIONDATA");

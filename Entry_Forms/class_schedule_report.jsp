@@ -51,6 +51,9 @@
                             <%= student_opt %>
                         </option>
                         <% } %>
+                        <option value="None">
+                            None
+                        </option>
                     </select>
                     <th><input type="submit" value="Submit"></th>
                 </form>
@@ -61,7 +64,8 @@
                         // Iterate over the ResultSet
                         String action = request.getParameter("action");
                         // Check if an insertion is requested
-                        if (action != null && action.equals("submit")) {
+                        if (action != null && action.equals("submit")
+                                && !(request.getParameter("STUDENTID").equals("None"))) {
                             conn.setAutoCommit(false);
                             
                             // Create the prepared statement and use it to 
