@@ -249,7 +249,7 @@
                             int gpa_count = 1;
 
                             PreparedStatement pstmt_course_prof_gpa_total = conn.prepareStatement(
-                            ("SELECT SUM(GPA) AS GPATOTAL, SUM(GPACOUNT) AS GPACOUNT FROM grade_conversion RIGHT JOIN " + 
+                            ("SELECT SUM(GPA * NUMUNITS) AS GPATOTAL, SUM(GPACOUNT * NUMUNITS) AS GPACOUNT FROM grade_conversion RIGHT JOIN " + 
                             "(SELECT * FROM classes_taken WHERE (SECTIONID, COURSEID, QUARTER, YEAR) IN " + 
                             "(SELECT class_section.SECTIONID, class_section.COURSEID, " + 
                             "class_section.QUARTER, class_section.YEAR FROM class_section, Sections " + 

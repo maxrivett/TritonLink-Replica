@@ -65,6 +65,7 @@
                         del_strings.add("DROP TABLE IF EXISTS concentration_courses");
                         del_strings.add("DROP TABLE IF EXISTS review_slots");
                         del_strings.add("DROP TABLE IF EXISTS grade_conversion");
+                        del_strings.add("DROP TABLE IF EXISTS day_conversion");
                         
 
                         
@@ -166,7 +167,7 @@
                         create_strings.add("CREATE TABLE classes_taken (STUDENTID integer, COURSEID integer, " + 
                             "SECTIONID integer, QUARTER varchar(255), YEAR integer, NUMUNITS integer, GRADE char(2), " +
                             "GRADINGOPTION varchar(255), " + 
-                            "PRIMARY KEY(STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS), " + 
+                            "PRIMARY KEY(STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR), " + 
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
                             "FOREIGN KEY (COURSEID, QUARTER, YEAR) REFERENCES classes(COURSEID, QUARTER, YEAR) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE advisors (STUDENTID integer, FACULTYNAME varchar(255), " + 
@@ -197,6 +198,7 @@
                             "PRIMARY KEY (MONTH, DAY, STARTHOUR, ENDHOUR))");
                         create_strings.add("CREATE TABLE grade_conversion (GRADE char(2), " + 
                             "GPA numeric(2,1), GPACOUNT integer, GRADECLASS varchar(10))");
+                        create_strings.add("CREATE TABLE day_conversion (DAYCODE varchar(255), DAY varchar(255))");
                         
                         
                         // Create the prepared statement and use it to 
@@ -213,8 +215,8 @@
                         }
 
                         int[] month_days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-                        String[] weekdays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", 
-                            "Saturday", "Sunday"};
+                        String[] weekdays = {"M", "Tu", "W", "Th", "F", 
+                            "Sa", "Su"};
                         
                         int weekday_idx = 0;
                         int min_start_hour = 8;
@@ -271,9 +273,26 @@
                                 pstmt_grade.executeUpdate();
                         }
 
+                        String[] codes = {"M", "Tu", "W", "Th", "F", "Sa", "Su", "MW", "MWF", "TuTh"};
+
+                        String[][] code_days = {{"M"}, {"Tu"}, {"W"}, {"Th"}, {"F"}, {"Sa"}, {"Su"},
+                            {"M", "W"}, {"M", "W", "F"}, {"Tu", "Th"}};
 
 
-                        
+                        for (int i = 0; i < codes.length; i++) {
+                            String curr_code = codes[i];
+                            String[] curr_code_days = code_days[i];
+
+                            for (int j = 0; j < curr_code_days.length; j++) {
+                                String curr_day = curr_code_days[j];
+                                PreparedStatement pstmt_weekday = conn.prepareStatement(
+                                    ("INSERT INTO day_conversion VALUES (?, ?)"));
+                                pstmt_weekday.setString(1, curr_code);
+                                pstmt_weekday.setString(2, curr_day);
+
+                                pstmt_weekday.executeUpdate();
+                            }
+                        }
 
                         conn.commit();
                         conn.setAutoCommit(true);

@@ -50,7 +50,7 @@
 
                         int[] years = {2016, 2017, 2018};
 
-                        String[] weekdays = {"Monday", "Tuesday", "Wednesday"};
+                        String[] weekdays = {"M", "Tu", "W", "Th", "MWF"};
 
                         String[] bs_deg = {"MATH", "MUS"};
 
@@ -68,6 +68,9 @@
                         int sid = 1;
 
                         float account_bal = (float) 40.99;
+
+                        int curr_hour = 0;
+                        int hour_offset = 8;
 
                         for (int i = 0; i < 2; i++) {
                             String fname = first_name[fcount];
@@ -267,11 +270,11 @@
                         for (int i = 0; i < 5; i++) {
 
                             String course_name = course_names[i];
-                            // String quarter = quarters[i % 3];
-                            // int year = years[i % 3];
+                            // String quarter = quarters[i % quarters.length];
+                            // int year = years[i % years.length];
                             String quarter = "Spring";
                             int year = 2018;
-                            String weekday = weekdays[i % 3];
+                            String weekday = weekdays[i % weekdays.length];
 
                             int cid = i + 1;
 
@@ -327,10 +330,12 @@
                             PreparedStatement pstmt_regular_meetings = conn.prepareStatement(
                             ("INSERT INTO regular_meeting VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
 
+                            curr_hour = (curr_hour + 9) % 14;
+
                             pstmt_regular_meetings.setInt(1, cid);
-                            pstmt_regular_meetings.setInt(2, 15);
+                            pstmt_regular_meetings.setInt(2, curr_hour + hour_offset);
                             pstmt_regular_meetings.setInt(3, 0);
-                            pstmt_regular_meetings.setInt(4, 16);
+                            pstmt_regular_meetings.setInt(4, curr_hour + hour_offset + 1);
                             pstmt_regular_meetings.setInt(5, 20);
                             pstmt_regular_meetings.setString(6, weekday);
                             pstmt_regular_meetings.setString(7, "Lecture");
@@ -349,7 +354,7 @@
                             pstmt_review_session.setInt(4, 19);
                             pstmt_review_session.setInt(5, 20);
                             pstmt_review_session.setInt(6, 1);
-                            pstmt_review_session.setInt(7, i);
+                            pstmt_review_session.setInt(7, i + 1);
                             pstmt_review_session.setString(8, "Lecture");
                             pstmt_review_session.setBoolean(9, true);
                             pstmt_review_session.setString(10, "CENTR");

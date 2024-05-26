@@ -30,7 +30,7 @@
                     // Use the statement to SELECT the student attributes
                     // FROM the student table
                     ResultSet student_rs = statement.executeQuery
-                        ("SELECT * FROM student WHERE ENROLLED = true");
+                        ("SELECT * FROM student");
                 %>
 
                 <form action="class_schedule_report.jsp" method="get">
@@ -71,17 +71,23 @@
                             // Create the prepared statement and use it to 
                             // INSERT the advisor attrs INTO the advisors table
                             PreparedStatement pstmt = conn.prepareStatement(
-                            ("SELECT DISTINCT classes.* FROM classes, class_section WHERE " + 
-                            "classes.YEAR = ? AND classes.QUARTER = ? " + 
+                            ("SELECT DISTINCT class_top.* FROM classes class_top WHERE " + 
+                            "class_top.QUARTER = ? AND class_top.YEAR = ? AND (class_top.COURSEID, " + 
+                            "class_top.QUARTER, class_top.YEAR) NOT IN " + 
+                            "(SELECT classes.COURSEID, classes.QUARTER, classes.YEAR FROM classes WHERE EXISTS " + 
+                            "(SELECT * FROM class_section WHERE classes.YEAR = ? AND classes.QUARTER = ? " + 
                             "AND classes.YEAR = class_section.YEAR AND classes.QUARTER = class_section.QUARTER " + 
                             "AND classes.COURSEID = class_section.COURSEID " +
-                            "AND (classes.COURSEID, classes.QUARTER, classes.YEAR) IN " + 
-                            "(SELECT COURSEID, QUARTER, YEAR FROM class_section WHERE " + 
-                            "(SECTIONID, COURSEID, QUARTER, YEAR) " + 
-                            "IN ((SELECT section2.SECTIONID, section2.COURSEID, " + 
+                            "AND (class_section.SECTIONID, class_section.COURSEID, " + 
+                            "class_section.QUARTER, class_section.YEAR) " + 
+                            
+                            // selects all sections S2 such that there is a conflict with some regular meeting that it has that conflicts
+                            // with another meeting S1 that student is enrolled in
+                            
+                            "NOT IN ((SELECT DISTINCT section2.SECTIONID, section2.COURSEID, " + 
                             "section2.QUARTER, section2.YEAR FROM course_enrollment, " + 
                             "class_section section1, class_section section2, regular_meeting rm1, " + 
-                            "regular_meeting rm2 WHERE " + 
+                            "regular_meeting rm2, day_conversion dc1, day_conversion dc2 WHERE " + 
                             "course_enrollment.QUARTER = ? AND course_enrollment.YEAR = ? AND " + 
                             "course_enrollment.SECTIONID = section1.SECTIONID AND " + 
                             "course_enrollment.COURSEID = section1.COURSEID AND " + 
@@ -93,17 +99,20 @@
                             "(rm1.STARTHOUR * 60 + rm1.STARTMINUTE <= rm2.ENDHOUR * 60 + rm2.ENDMINUTE)) OR " + 
                             "((rm1.ENDHOUR * 60 + rm1.ENDMINUTE >= rm2.STARTHOUR * 60 + rm2.STARTMINUTE) AND " + 
                             "(rm1.ENDHOUR * 60 + rm1.ENDMINUTE <= rm2.ENDHOUR * 60 + rm2.ENDMINUTE))) " + 
-                            "AND rm1.WEEKDAY = rm2.WEEKDAY AND rm2.SECTIONID = section2.SECTIONID " + 
+                            "AND rm1.WEEKDAY = dc1.DAYCODE AND rm2.WEEKDAY = dc2.DAYCODE " + 
+                            "AND dc1.DAY = dc2.DAY AND rm2.SECTIONID = section2.SECTIONID " + 
                             "AND (section1.COURSEID, section1.QUARTER, section1.YEAR) <> " + 
-                            "(section2.COURSEID, section2.QUARTER, section2.YEAR))))"));
+                            "(section2.COURSEID, section2.QUARTER, section2.YEAR)))))"));
 
                             int curr_id = Integer.parseInt(request.getParameter("STUDENTID"));
 
-                            pstmt.setInt(1, 2018);
-                            pstmt.setString(2, "Spring");
-                            pstmt.setString(3, "Spring");
-                            pstmt.setInt(4, 2018);
-                            pstmt.setInt(5, curr_id);
+                            pstmt.setString(1, "Spring");
+                            pstmt.setInt(2, 2018);
+                            pstmt.setInt(3, 2018);
+                            pstmt.setString(4, "Spring");
+                            pstmt.setString(5, "Spring");
+                            pstmt.setInt(6, 2018);
+                            pstmt.setInt(7, curr_id);
 
                             ResultSet classes_rs = pstmt.executeQuery();
 
@@ -179,7 +188,7 @@
                                 "IN ((SELECT section2.SECTIONID, section2.COURSEID, " + 
                                 "section2.QUARTER, section2.YEAR FROM course_enrollment, " + 
                                 "class_section section1, class_section section2, regular_meeting rm1, " + 
-                                "regular_meeting rm2 WHERE " + 
+                                "regular_meeting rm2, day_conversion dc1, day_conversion dc2 WHERE " + 
                                 "section1.QUARTER = ? AND section1.YEAR = ? AND " + 
                                 "section1.COURSEID = ? AND " + 
                                 "course_enrollment.SECTIONID = section2.SECTIONID AND " + 
@@ -192,7 +201,8 @@
                                 "(rm1.STARTHOUR * 60 + rm1.STARTMINUTE <= rm2.ENDHOUR * 60 + rm2.ENDMINUTE)) OR " + 
                                 "((rm1.ENDHOUR * 60 + rm1.ENDMINUTE >= rm2.STARTHOUR * 60 + rm2.STARTMINUTE) AND " + 
                                 "(rm1.ENDHOUR * 60 + rm1.ENDMINUTE <= rm2.ENDHOUR * 60 + rm2.ENDMINUTE))) " + 
-                                "AND rm1.WEEKDAY = rm2.WEEKDAY AND rm2.SECTIONID = section2.SECTIONID " + 
+                                "AND rm1.WEEKDAY = dc1.DAYCODE AND rm2.WEEKDAY = dc2.DAYCODE " + 
+                                "AND dc1.DAY = dc2.DAY AND rm2.SECTIONID = section2.SECTIONID " + 
                                 "AND (section1.COURSEID, section1.QUARTER, section1.YEAR) <> " + 
                                 "(section2.COURSEID, section2.QUARTER, section2.YEAR))))"));
 

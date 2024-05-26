@@ -164,9 +164,11 @@
                     
                         <%
                             PreparedStatement pstmt_classes_taken = conn.prepareStatement(
-                            ("SELECT SUM(NUMUNITS) AS UNITCOUNT FROM classes_taken WHERE STUDENTID = ?"));
+                            ("SELECT SUM(NUMUNITS) AS UNITCOUNT FROM classes_taken WHERE STUDENTID = ? AND GRADE <> ? AND GRADE <> ?"));
 
                             pstmt_classes_taken.setInt(1, curr_id);
+                            pstmt_classes_taken.setString(2, "IN");
+                            pstmt_classes_taken.setString(3, "U");
 
                             ResultSet total_units_rs = pstmt_classes_taken.executeQuery();
 
@@ -215,11 +217,13 @@
 
                                 PreparedStatement pstmt_cat_classes_taken = conn.prepareStatement(
                                 ("SELECT SUM(NUMUNITS) AS CATUNITS FROM classes_taken WHERE STUDENTID = ? " + 
-                                "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ? AND DEPARTMENT = ?)"));
+                                "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ? AND DEPARTMENT = ? AND GRADE <> ? AND GRADE <> ?)"));
 
                                 pstmt_cat_classes_taken.setInt(1, curr_id);
                                 pstmt_cat_classes_taken.setString(2, curr_cat_name);
                                 pstmt_cat_classes_taken.setString(3, curr_dep_rs.getString("DEPARTMENT"));
+                                pstmt_cat_classes_taken.setString(4, "IN");
+                                pstmt_cat_classes_taken.setString(5, "U");
 
                                 ResultSet curr_cat_units_rs = pstmt_cat_classes_taken.executeQuery();
                                 
@@ -284,11 +288,13 @@
                                 PreparedStatement pstmt_con_units_taken = conn.prepareStatement(
                                 ("SELECT SUM(NUMUNITS) AS CONUNITS FROM classes_taken WHERE STUDENTID = ? " + 
                                 "AND COURSEID IN (SELECT COURSEID FROM concentration_courses WHERE CONNAME = ? " + 
-                                "AND DEPARTMENT = ?)"));
+                                "AND DEPARTMENT = ? AND classes_taken.GRADE <> ? AND classes_taken.GRADE <> ?)"));
 
                                 pstmt_con_units_taken.setInt(1, curr_id);
                                 pstmt_con_units_taken.setString(2, curr_con_name);
                                 pstmt_con_units_taken.setString(3, curr_dep_rs.getString("DEPARTMENT"));
+                                pstmt_con_units_taken.setString(4, "IN");
+                                pstmt_con_units_taken.setString(5, "U");
 
                                 ResultSet curr_con_units_rs = pstmt_con_units_taken.executeQuery();
                                 
@@ -297,25 +303,29 @@
                                 }
 
                                 PreparedStatement pstmt_con_gpa = conn.prepareStatement(
-                                ("SELECT SUM(GPA) AS CONGPA FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
+                                ("SELECT SUM(GPA * NUMUNITS) AS CONGPA FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
                                 "AND COURSEID IN (SELECT COURSEID FROM concentration_courses WHERE CONNAME = ? " + 
-                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE"));
+                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE AND classes_taken.GRADE <> ? AND classes_taken.GRADE <> ?"));
 
 
                                 pstmt_con_gpa.setInt(1, curr_id);
                                 pstmt_con_gpa.setString(2, curr_con_name);
                                 pstmt_con_gpa.setString(3, curr_dep_rs.getString("DEPARTMENT"));
+                                pstmt_con_gpa.setString(4, "IN");
+                                pstmt_con_gpa.setString(5, "U");
 
                                 ResultSet curr_con_gpa_rs = pstmt_con_gpa.executeQuery();
 
                                 PreparedStatement pstmt_con_gpa_courses = conn.prepareStatement(
-                                ("SELECT SUM(GPACOUNT) AS CONGPACOUNT FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
+                                ("SELECT SUM(GPACOUNT * NUMUNITS) AS CONGPACOUNT FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
                                 "AND COURSEID IN (SELECT COURSEID FROM concentration_courses WHERE CONNAME = ? " + 
-                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE"));
+                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE AND classes_taken.GRADE <> ? AND classes_taken.GRADE <> ?"));
 
                                 pstmt_con_gpa_courses.setInt(1, curr_id);
                                 pstmt_con_gpa_courses.setString(2, curr_con_name);
                                 pstmt_con_gpa_courses.setString(3, curr_dep_rs.getString("DEPARTMENT"));
+                                pstmt_con_gpa_courses.setString(4, "IN");
+                                pstmt_con_gpa_courses.setString(5, "U");
 
                                 ResultSet curr_con_gpa_count_rs = pstmt_con_gpa_courses.executeQuery();
                                 
@@ -429,11 +439,13 @@
                                 PreparedStatement pstmt_unf_courses = conn.prepareStatement(
                                 ("SELECT * FROM Course WHERE COURSEID IN (SELECT COURSEID FROM " +
                                 "concentration_courses WHERE DEPARTMENT = ? AND CONNAME = ?) AND COURSEID " + 
-                                "NOT IN (SELECT COURSEID FROM classes_taken WHERE STUDENTID = ?)"));
+                                "NOT IN (SELECT COURSEID FROM classes_taken WHERE STUDENTID = ? AND GRADE <> ? AND GRADE <> ?)"));
 
                                 pstmt_unf_courses.setString(1, curr_dep_rs.getString("DEPARTMENT"));
                                 pstmt_unf_courses.setString(2, curr_con_name);
                                 pstmt_unf_courses.setInt(3, curr_id);
+                                pstmt_unf_courses.setString(4, "IN");
+                                pstmt_unf_courses.setString(5, "U");
 
                                 ResultSet unf_courses_rs = pstmt_unf_courses.executeQuery();
 

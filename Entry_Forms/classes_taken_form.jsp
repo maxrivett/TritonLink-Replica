@@ -66,15 +66,16 @@
                                 pstmt.setString(8, gradingoption);
                             } else if ("update".equals(action)) {
                                 pstmt = conn.prepareStatement(
-                                    "UPDATE classes_taken SET GRADE = ?, GRADINGOPTION = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ? AND NUMUNITS = ?");
-                                pstmt.setString(1, grade);
-                                pstmt.setString(2, gradingoption);
-                                pstmt.setInt(3, studentId);
-                                pstmt.setInt(4, courseId);
-                                pstmt.setInt(5, sectionId);
-                                pstmt.setString(6, quarter);
-                                pstmt.setInt(7, year);
-                                pstmt.setInt(8, numunits);
+                                    "UPDATE classes_taken SET NUMUNITS = ?, GRADE = ?, GRADINGOPTION = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
+                                
+                                pstmt.setInt(1, numunits);
+                                pstmt.setString(2, grade);
+                                pstmt.setString(3, gradingoption);
+                                pstmt.setInt(4, studentId);
+                                pstmt.setInt(5, courseId);
+                                pstmt.setInt(6, sectionId);
+                                pstmt.setString(7, quarter);
+                                pstmt.setInt(8, year);
                             }
                             pstmt.executeUpdate();
                             pstmt.close();
@@ -94,14 +95,13 @@
 
                         PreparedStatement pstmt = conn.prepareStatement(
                         "DELETE FROM classes_taken WHERE STUDENTID = ? AND " +
-                        "COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ? AND NUMUNITS = ?");
+                        "COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENTID")));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("COURSEID")));
                         pstmt.setInt(3, Integer.parseInt(request.getParameter("SECTIONID")));
                         pstmt.setString(4, request.getParameter("QUARTER"));
                         pstmt.setInt(5, Integer.parseInt(request.getParameter("YEAR")));
-                        pstmt.setInt(6, Integer.parseInt(request.getParameter("NUMUNITS")));
 
 
                         int rowCount = pstmt.executeUpdate();

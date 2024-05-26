@@ -26,10 +26,10 @@
                 <%
                     // Create the statement
                     PreparedStatement pstmt_section = conn.prepareStatement(
-                        ("SELECT * FROM class_section"));
+                        ("SELECT * FROM class_section WHERE QUARTER = ? AND YEAR = ?"));
 
-                    // pstmt_section.setString(1, "Spring");
-                    // pstmt_section.setInt(2, 2018);
+                    pstmt_section.setString(1, "Spring");
+                    pstmt_section.setInt(2, 2018);
 
                     ResultSet section_rs = pstmt_section.executeQuery();
 
@@ -205,10 +205,10 @@
                                 "((? < ?) AND ((MONTH = ? AND DAY >= ?) OR (MONTH = ? AND DAY <= ?))) OR " + 
                                 "((? = ?) AND ((MONTH = ? AND DAY >= ? AND DAY <= ?)))) AND " + 
                                 "(MONTH, DAY, STARTHOUR, ENDHOUR) NOT IN ((SELECT rev.MONTH, rev.DAY, rev.STARTHOUR, " + 
-                                "rev.ENDHOUR FROM review_slots rev, regular_meeting rm, course_enrollment ce1, " + 
+                                "rev.ENDHOUR FROM review_slots rev, day_conversion dc, regular_meeting rm, course_enrollment ce1, " + 
                                 "course_enrollment ce2 WHERE ce1.SECTIONID = ? AND ce1.COURSEID = ? AND ce1.QUARTER = ? " + 
-                                "AND ce1.YEAR = ? AND ce1.STUDENTID = ce2.STUDENTID AND ce2.SECTIONID = rm.SECTIONID AND " + 
-                                "rev.WEEKDAY = rm.WEEKDAY AND " + 
+                                "AND ce1.YEAR = ? AND ce1.STUDENTID = ce2.STUDENTID AND ce2.SECTIONID = rm.SECTIONID " + 
+                                "AND rm.WEEKDAY = dc.DAYCODE AND rev.WEEKDAY = dc.DAY AND " + 
                                 "(((rev.STARTHOUR * 60 >= rm.STARTHOUR * 60 + rm.STARTMINUTE) AND " + 
                                 "(rev.STARTHOUR * 60 <= rm.ENDHOUR * 60 + rm.ENDMINUTE)) OR " + 
                                 "((rev.ENDHOUR * 60 >= rm.STARTHOUR * 60 + rm.STARTMINUTE) AND " + 

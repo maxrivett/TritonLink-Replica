@@ -71,8 +71,9 @@
                             // Create the prepared statement and use it to 
                             // INSERT the advisor attrs INTO the advisors table
                             PreparedStatement pstmt = conn.prepareStatement(
-                            ("SELECT * FROM course_enrollment, Sections WHERE course_enrollment.STUDENTID = ? AND " + 
-                            "course_enrollment.SECTIONID = Sections.SECTIONID"));
+                            ("SELECT * FROM course_enrollment, Classes, Sections WHERE course_enrollment.STUDENTID = ? AND " + 
+                            "course_enrollment.SECTIONID = Sections.SECTIONID AND course_enrollment.COURSEID = Classes.COURSEID AND " + 
+                            "course_enrollment.QUARTER = Classes.QUARTER AND course_enrollment.YEAR = Classes.YEAR"));
 
                             int curr_id = Integer.parseInt(request.getParameter("STUDENTID"));
 
@@ -126,6 +127,7 @@
                         <th>Course ID</th>
                         <th>Quarter</th>
                         <th>Year</th>
+                        <th>Title</th>
                         <th>Number of Units</th>
                         <th>Section ID</th>
                         <th>Number of Students Enrolled</th>
@@ -142,6 +144,7 @@
                             <td><input type="text" value="<%= classes_rs.getInt("COURSEID") %>" name="COURSEID"></td>
                             <td><input type="text" value="<%= classes_rs.getString("QUARTER") %>" name="QUARTER"></td>
                             <td><input type="text" value="<%= classes_rs.getInt("YEAR") %>" name="YEAR"></td>
+                            <td><input type="text" value="<%= classes_rs.getString("TITLE") %>" name="TITLE"></td>
                             <td><input type="text" value="<%= classes_rs.getInt("NUMUNITS") %>" name="NUMUNITS"></td>
                             <td><input type="text" value="<%= classes_rs.getInt("SECTIONID") %>" name="SECTIONID"></td>
                             <td><input type="text" value="<%= classes_rs.getInt("NUMENROLLED") %>" name="NUMENROLLED"></td>

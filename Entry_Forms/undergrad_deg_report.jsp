@@ -164,9 +164,12 @@
                     
                     <%
                         PreparedStatement pstmt_classes_taken = conn.prepareStatement(
-                        ("SELECT SUM(NUMUNITS) AS UNITCOUNT FROM classes_taken WHERE STUDENTID = ?"));
+                        ("SELECT SUM(NUMUNITS) AS UNITCOUNT FROM classes_taken WHERE STUDENTID = ? " + 
+                        "AND GRADE <> ? AND GRADE <> ?"));
 
                         pstmt_classes_taken.setInt(1, curr_id);
+                        pstmt_classes_taken.setString(2, "IN");
+                        pstmt_classes_taken.setString(3, "U");
 
                         ResultSet total_units_rs = pstmt_classes_taken.executeQuery();
 
@@ -211,10 +214,13 @@
 
                             PreparedStatement pstmt_cat_classes_taken = conn.prepareStatement(
                             ("SELECT SUM(NUMUNITS) AS CATUNITS FROM classes_taken WHERE STUDENTID = ? " + 
-                            "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ?)"));
+                            "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ?) " + 
+                            "AND GRADE <> ? AND GRADE <> ?"));
 
                             pstmt_cat_classes_taken.setInt(1, curr_id);
                             pstmt_cat_classes_taken.setString(2, curr_cat_name);
+                            pstmt_cat_classes_taken.setString(3, "IN");
+                            pstmt_cat_classes_taken.setString(4, "U");
 
                             ResultSet curr_cat_units_rs = pstmt_cat_classes_taken.executeQuery();
                             
