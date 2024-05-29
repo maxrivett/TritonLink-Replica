@@ -242,7 +242,7 @@
                         String[] letter_grades = {"A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", 
                             "D", "SU", "U", "IN"};
 
-                        String[] grade_classes = {"A", "B", "C", "D", "Other"};
+                        String[] grade_classes = {"A", "B", "C", "D", "Other", "Incomplete"};
                         
                         double[] grade_points = {4.3, 4, 3.7, 3.4, 3.1, 2.8, 2.5, 2.2, 1.9, 1.6, 
                             0, 0, 0};
@@ -261,9 +261,13 @@
                                 if (i < 9) {
                                     curr_class = grade_classes[i / 3];
                                 }
-                                if (i == 9) {
+                                else if (i == 9) {
                                     curr_class = grade_classes[3];
                                 }
+                                else if (i == 12) {
+                                    curr_class = grade_classes[5];
+                                }
+
 
                                 pstmt_grade.setString(1, letter_grades[i]);
                                 pstmt_grade.setFloat(2, (float) grade_points[i]);
