@@ -292,7 +292,7 @@
 
                             pstmt_course.executeUpdate();
 
-                            for (int j = 0; j < 2; j++) {
+                            for (int j = 0; j < 3; j++) {
 
                                 int curr_year = year - j;
                                 int curr_sid = cid + j * 5;
@@ -395,6 +395,22 @@
                                 pstmt_class_taken.setString(8, "Letter");
 
                                 pstmt_class_taken.executeUpdate();
+
+                                PreparedStatement pstmt_class_taken2 = conn.prepareStatement(
+                                ("INSERT INTO classes_taken VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
+
+                                grade_idx = (grade_idx + 7) % 11;
+
+                                pstmt_class_taken2.setInt(1, j + 1);
+                                pstmt_class_taken2.setInt(2, cid);
+                                pstmt_class_taken2.setInt(3, cid + 5);
+                                pstmt_class_taken2.setString(4, quarter);
+                                pstmt_class_taken2.setInt(5, year - 2);
+                                pstmt_class_taken2.setInt(6, 4);
+                                pstmt_class_taken2.setString(7, letter_grades[grade_idx]);
+                                pstmt_class_taken2.setString(8, "Letter");
+
+                                pstmt_class_taken2.executeUpdate();
                                 
                             }
                             

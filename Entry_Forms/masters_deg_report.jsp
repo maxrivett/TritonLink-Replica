@@ -164,7 +164,9 @@
                     
                         <%
                             PreparedStatement pstmt_classes_taken = conn.prepareStatement(
-                            ("SELECT SUM(NUMUNITS) AS UNITCOUNT FROM classes_taken WHERE STUDENTID = ? AND GRADE <> ? AND GRADE <> ?"));
+                            ("SELECT SUM(NUMUNITSMAX) AS UNITCOUNT FROM " + 
+                            "(SELECT MAX(NUMUNITS) AS NUMUNITSMAX FROM classes_taken " + 
+                            "WHERE STUDENTID = ? AND GRADE <> ? AND GRADE <> ? GROUP BY COURSEID)"));
 
                             pstmt_classes_taken.setInt(1, curr_id);
                             pstmt_classes_taken.setString(2, "IN");
@@ -216,8 +218,10 @@
                                 int curr_cat_units_taken = 0;
 
                                 PreparedStatement pstmt_cat_classes_taken = conn.prepareStatement(
-                                ("SELECT SUM(NUMUNITS) AS CATUNITS FROM classes_taken WHERE STUDENTID = ? " + 
-                                "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ? AND DEPARTMENT = ? AND GRADE <> ? AND GRADE <> ?)"));
+                                ("SELECT SUM(NUMUNITSMAX) AS CATUNITS FROM " + 
+                                "(SELECT MAX(NUMUNITS) AS NUMUNITSMAX FROM classes_taken WHERE STUDENTID = ? " + 
+                                "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ? " + 
+                                "AND DEPARTMENT = ? AND GRADE <> ? AND GRADE <> ?) GROUP BY COURSEID)"));
 
                                 pstmt_cat_classes_taken.setInt(1, curr_id);
                                 pstmt_cat_classes_taken.setString(2, curr_cat_name);
@@ -286,9 +290,11 @@
                                 float temp = (float) 0.0;
 
                                 PreparedStatement pstmt_con_units_taken = conn.prepareStatement(
-                                ("SELECT SUM(NUMUNITS) AS CONUNITS FROM classes_taken WHERE STUDENTID = ? " + 
+                                ("SELECT SUM(NUMUNITSMAX) AS CONUNITS FROM " + 
+                                "(SELECT MAX(NUMUNITS) AS NUMUNITSMAX FROM classes_taken WHERE STUDENTID = ? " + 
                                 "AND COURSEID IN (SELECT COURSEID FROM concentration_courses WHERE CONNAME = ? " + 
-                                "AND DEPARTMENT = ? AND classes_taken.GRADE <> ? AND classes_taken.GRADE <> ?)"));
+                                "AND DEPARTMENT = ? AND classes_taken.GRADE <> ? AND classes_taken.GRADE <> ?) " + 
+                                "GROUP BY COURSEID)"));
 
                                 pstmt_con_units_taken.setInt(1, curr_id);
                                 pstmt_con_units_taken.setString(2, curr_con_name);
@@ -303,9 +309,11 @@
                                 }
 
                                 PreparedStatement pstmt_con_gpa = conn.prepareStatement(
-                                ("SELECT SUM(GPA * NUMUNITS) AS CONGPA FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
+                                ("SELECT SUM(GPAMAX) AS CONGPA FROM " + 
+                                "(SELECT MAX(GPA * NUMUNITS) AS GPAMAX FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
                                 "AND COURSEID IN (SELECT COURSEID FROM concentration_courses WHERE CONNAME = ? " + 
-                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE AND classes_taken.GRADE <> ? AND classes_taken.GRADE <> ?"));
+                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE AND " + 
+                                "classes_taken.GRADE <> ? AND classes_taken.GRADE <> ? GROUP BY COURSEID)"));
 
 
                                 pstmt_con_gpa.setInt(1, curr_id);
@@ -317,9 +325,11 @@
                                 ResultSet curr_con_gpa_rs = pstmt_con_gpa.executeQuery();
 
                                 PreparedStatement pstmt_con_gpa_courses = conn.prepareStatement(
-                                ("SELECT SUM(GPACOUNT * NUMUNITS) AS CONGPACOUNT FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
+                                ("SELECT SUM(GPACOUNTMAX) AS CONGPACOUNT FROM " + 
+                                "(SELECT MAX(GPACOUNT * NUMUNITS) AS GPACOUNTMAX FROM classes_taken, grade_conversion WHERE STUDENTID = ? " + 
                                 "AND COURSEID IN (SELECT COURSEID FROM concentration_courses WHERE CONNAME = ? " + 
-                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE AND classes_taken.GRADE <> ? AND classes_taken.GRADE <> ?"));
+                                "AND DEPARTMENT = ?) AND classes_taken.GRADE = grade_conversion.GRADE AND " + 
+                                "classes_taken.GRADE <> ? AND classes_taken.GRADE <> ? GROUP BY COURSEID)"));
 
                                 pstmt_con_gpa_courses.setInt(1, curr_id);
                                 pstmt_con_gpa_courses.setString(2, curr_con_name);

@@ -164,8 +164,9 @@
                     
                     <%
                         PreparedStatement pstmt_classes_taken = conn.prepareStatement(
-                        ("SELECT SUM(NUMUNITS) AS UNITCOUNT FROM classes_taken WHERE STUDENTID = ? " + 
-                        "AND GRADE <> ? AND GRADE <> ?"));
+                        ("SELECT SUM(NUMUNITSMAX) AS UNITCOUNT FROM " + 
+                        "(SELECT MAX(NUMUNITS) AS NUMUNITSMAX FROM classes_taken WHERE STUDENTID = ? " + 
+                        "AND GRADE <> ? AND GRADE <> ? GROUP BY COURSEID)"));
 
                         pstmt_classes_taken.setInt(1, curr_id);
                         pstmt_classes_taken.setString(2, "IN");
@@ -213,9 +214,10 @@
                             int curr_cat_units_taken = 0;
 
                             PreparedStatement pstmt_cat_classes_taken = conn.prepareStatement(
-                            ("SELECT SUM(NUMUNITS) AS CATUNITS FROM classes_taken WHERE STUDENTID = ? " + 
+                            ("SELECT SUM(NUMUNITS) AS CATUNITS FROM " + 
+                            "(SELECT MAX(NUMUNITS) AS NUMUNITSMAX FROM classes_taken WHERE STUDENTID = ? " + 
                             "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ?) " + 
-                            "AND GRADE <> ? AND GRADE <> ?"));
+                            "AND GRADE <> ? AND GRADE <> ? GROUP BY COURSEID)"));
 
                             pstmt_cat_classes_taken.setInt(1, curr_id);
                             pstmt_cat_classes_taken.setString(2, curr_cat_name);
