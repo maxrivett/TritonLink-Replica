@@ -21,6 +21,7 @@
                             String quarter = request.getParameter("QUARTER");
                             int year = Integer.parseInt(request.getParameter("YEAR"));
                             int numUnits = Integer.parseInt(request.getParameter("NUMUNITS"));
+                            int position = Integer.parseInt(request.getParameter("POSITION"));
 
                             PreparedStatement validationStmt = conn.prepareStatement(
                                 "SELECT COUNT(*) FROM class_section WHERE COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
@@ -40,23 +41,43 @@
                             } else {
                                 PreparedStatement pstmt = null;
                                 if ("insert".equals(action)) {
+
+                                    PreparedStatement pstmt_get_count = conn.prepareStatement(
+                                        "SELECT MAX(POSITION) AS MAXCOUNT FROM course_waitlist WHERE COURSEID = ? " + 
+                                        "AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
+                                    
+                                    pstmt_get_count.setInt(1, courseId);
+                                    pstmt_get_count.setInt(2, sectionId);
+                                    pstmt_get_count.setString(3, quarter);
+                                    pstmt_get_count.setInt(4, year);
+                                    
+                                    int max_count = 0;
+                                    
+                                    ResultSet max_count_rs = pstmt_get_count.executeQuery();
+
+                                    if (max_count_rs.next()) {
+                                        max_count = max_count_rs.getInt("MAXCOUNT") + 1;
+                                    }
+
                                     pstmt = conn.prepareStatement(
-                                        "INSERT INTO course_waitlist (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS) VALUES (?, ?, ?, ?, ?, ?)");
+                                        "INSERT INTO course_waitlist (STUDENTID, COURSEID, SECTIONID, QUARTER, YEAR, NUMUNITS, POSITION) VALUES (?, ?, ?, ?, ?, ?, ?)");
                                     pstmt.setInt(1, studentId);
                                     pstmt.setInt(2, courseId);
                                     pstmt.setInt(3, sectionId);
                                     pstmt.setString(4, quarter);
                                     pstmt.setInt(5, year);
                                     pstmt.setInt(6, numUnits);
+                                    pstmt.setInt(7, max_count);
                                 } else if ("update".equals(action)) {
                                     pstmt = conn.prepareStatement(
-                                        "UPDATE course_waitlist SET NUMUNITS = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
+                                        "UPDATE course_waitlist SET NUMUNITS = ?, POSITION = ? WHERE STUDENTID = ? AND COURSEID = ? AND SECTIONID = ? AND QUARTER = ? AND YEAR = ?");
                                     pstmt.setInt(1, numUnits);
-                                    pstmt.setInt(2, studentId);
-                                    pstmt.setInt(3, courseId);
-                                    pstmt.setInt(4, sectionId);
-                                    pstmt.setString(5, quarter);
-                                    pstmt.setInt(6, year);
+                                    pstmt.setInt(2, position);
+                                    pstmt.setInt(3, studentId);
+                                    pstmt.setInt(4, courseId);
+                                    pstmt.setInt(5, sectionId);
+                                    pstmt.setString(6, quarter);
+                                    pstmt.setInt(7, year);
                                 }
                                 pstmt.executeUpdate();
                                 pstmt.close();
@@ -77,7 +98,7 @@
                             conn.commit();
                         } 
 
-                        ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM course_waitlist");
+                        ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM course_waitlist ORDER BY POSITION");
                 %>
                 <table>
                     <tr>
@@ -87,6 +108,7 @@
                         <th>Year</th>
                         <th>Section ID</th>
                         <th>Number of Units</th>
+                        <th>Position</th>
                     </tr>
                     <tr>
                         <form action="course_waitlist_form.jsp" method="post">
@@ -96,6 +118,7 @@
                             <td><input type="text" name="YEAR" /></td>
                             <td><input type="text" name="SECTIONID" /></td>
                             <td><input type="text" name="NUMUNITS" /></td>
+                            <td><input type="text" name="POSITION" /></td>
                             <td><input type="submit" name="action" value="insert" /></td>
                         </form>
                     </tr>
@@ -110,6 +133,7 @@
                             <td><input type="hidden" name="YEAR" value="<%= rs.getInt("YEAR") %>" /><%= rs.getInt("YEAR") %></td>
                             <td><input type="hidden" name="SECTIONID" value="<%= rs.getInt("SECTIONID") %>" /><%= rs.getInt("SECTIONID") %></td>
                             <td><input type="text" name="NUMUNITS" value="<%= rs.getInt("NUMUNITS") %>" /></td>
+                            <td><input type="text" name="POSITION" value="<%= rs.getInt("POSITION") %>" /></td>
                             <td>
                                 <input type="submit" name="action" value="update" />
                                 <input type="submit" name="action" value="delete" />

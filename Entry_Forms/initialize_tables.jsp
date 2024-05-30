@@ -126,7 +126,7 @@
                             "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE course_waitlist (STUDENTID integer, " +
                             "COURSEID integer, QUARTER varchar(255), YEAR integer, " +
-                            "SECTIONID integer, NUMUNITS integer, " +
+                            "SECTIONID integer, NUMUNITS integer, POSITION integer, " +
                             "PRIMARY KEY (STUDENTID, SECTIONID), " +
                             "FOREIGN KEY (STUDENTID) REFERENCES student(STUDENTID) ON DELETE CASCADE, " +
                             "FOREIGN KEY (SECTIONID) REFERENCES sections(SECTIONID) ON DELETE CASCADE)");
