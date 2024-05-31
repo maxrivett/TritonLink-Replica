@@ -403,7 +403,7 @@
 
                                 pstmt_class_taken2.setInt(1, j + 1);
                                 pstmt_class_taken2.setInt(2, cid);
-                                pstmt_class_taken2.setInt(3, cid + 5);
+                                pstmt_class_taken2.setInt(3, cid + 10);
                                 pstmt_class_taken2.setString(4, quarter);
                                 pstmt_class_taken2.setInt(5, year - 2);
                                 pstmt_class_taken2.setInt(6, 4);
