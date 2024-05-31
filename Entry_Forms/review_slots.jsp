@@ -34,6 +34,7 @@
                 %>
                 <table>
                     <tr>
+                        <th>Month Name</th>
                         <th>Month</th>
                         <th>Day</th>
                         <th>Weekday</th>
@@ -48,6 +49,8 @@
                 <tr>
                     <form action="review_slots.jsp" method="get">
                         <input type="hidden" value="view" name="action">
+                        <td><input value="<%= rs.getString("MONSTR") %>"
+                            name="MONTHNAME"></td>
                         <td><input value="<%= rs.getInt("MONTH") %>"
                             name="MONTH"></td>
                         <td><input value="<%= rs.getInt("DAY") %>"

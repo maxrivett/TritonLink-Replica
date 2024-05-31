@@ -189,6 +189,12 @@
                             else if (curr_start_mon == curr_end_mon && curr_start_day > curr_end_day) {
                                 possible_range = false;
                             }
+                            else if (curr_start_mon < 4 || (curr_start_day < 2 && curr_start_mon == 4)) {
+                                possible_range = false;
+                            }
+                            else if ((curr_end_day > 15 && curr_end_mon == 6) || curr_end_mon > 6) {
+                                possible_range = false;
+                            }
 
                             if (!possible_range) {
                         %>
@@ -269,7 +275,7 @@
                         <tr>
                             <form action="review_plan_report.jsp" method="get">
                                 <input type="hidden" value="view" name="action">
-                                <td><input value="<%= range_rs.getInt("MONTH") %>"
+                                <td><input value="<%= range_rs.getString("MONSTR") %>"
                                     name="MONTH"></td>
                                 <td><input value="<%= range_rs.getInt("DAY") %>"
                                     name="DAY"></td>

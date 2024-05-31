@@ -194,7 +194,7 @@
                             "FOREIGN KEY (DEPARTMENT, CONNAME) references concentrations(DEPARTMENT, CONNAME) ON DELETE CASCADE, " + 
                             "FOREIGN KEY (COURSEID) references course(COURSEID) ON DELETE CASCADE)");
                         create_strings.add("CREATE TABLE review_slots (MONTH integer, DAY integer, WEEKDAY varchar(255), " + 
-                            "STARTHOUR integer, ENDHOUR integer, " + 
+                            "STARTHOUR integer, ENDHOUR integer, MONSTR varchar(255), " + 
                             "PRIMARY KEY (MONTH, DAY, STARTHOUR, ENDHOUR))");
                         create_strings.add("CREATE TABLE grade_conversion (GRADE char(2), " + 
                             "GPA numeric(2,1), GPACOUNT integer, GRADECLASS varchar(10))");
@@ -214,7 +214,9 @@
                             cstmt.executeUpdate();
                         }
 
-                        int[] month_days = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+                        int[] month_days = {31, 28, 21, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+                        String[] month_names = {"January", "February", "March", "April", "May", "June",
+                            "July", "August", "September", "October", "November", "December"};
                         String[] weekdays = {"M", "Tu", "W", "Th", "F", 
                             "Sa", "Su"};
                         
@@ -222,16 +224,17 @@
                         int min_start_hour = 8;
                         int max_end_hour = 20;
 
-                        for (int i = 0; i < month_days.length; i++) {
+                        for (int i = 3; i < 6; i++) {
                             for (int j = 0; j < month_days[i]; j++) {
                                 for (int k = min_start_hour; k < max_end_hour; k++) {
                                     PreparedStatement pstmt_slot = conn.prepareStatement(
-                                        ("INSERT INTO review_slots VALUES (?, ?, ?, ?, ?)"));
+                                        ("INSERT INTO review_slots VALUES (?, ?, ?, ?, ?, ?)"));
                                     pstmt_slot.setInt(1, i + 1);
                                     pstmt_slot.setInt(2, j + 1);
                                     pstmt_slot.setString(3, weekdays[weekday_idx]);
                                     pstmt_slot.setInt(4, k);
                                     pstmt_slot.setInt(5, k + 1);
+                                    pstmt_slot.setString(6, month_names[i]);
 
                                     pstmt_slot.executeUpdate();
                                 }

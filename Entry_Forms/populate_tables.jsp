@@ -353,8 +353,8 @@
                             pstmt_review_session.setInt(3, 30);
                             pstmt_review_session.setInt(4, 19);
                             pstmt_review_session.setInt(5, 20);
-                            pstmt_review_session.setInt(6, 1);
-                            pstmt_review_session.setInt(7, i + 1);
+                            pstmt_review_session.setInt(6, 4);
+                            pstmt_review_session.setInt(7, i + 10);
                             pstmt_review_session.setString(8, "Lecture");
                             pstmt_review_session.setBoolean(9, true);
                             pstmt_review_session.setString(10, "CENTR");
