@@ -1,26 +1,4 @@
 <%@ page language="java" import="java.sql.*" %>
-<%!
-    public double getGradePoints(String grade) {
-        switch (grade) {
-            case "A+": return 4.3;
-            case "A": return 4.0;
-            case "A-": return 3.7;
-            case "B+": return 3.4;
-            case "B": return 3.0;
-            case "B-": return 2.7;
-            case "C+": return 2.4;
-            case "C": return 2.0;
-            case "C-": return 1.7;
-            case "D+": return 1.3;
-            case "D": return 1.0;
-            case "D-": return 0.7;
-            case "F":
-            case "IN": 
-                return 0.0;
-            default: return 0.0;
-        }
-    }
-%>
 <html>
 <body>
     <table>
@@ -39,7 +17,6 @@
                         String url = "jdbc:postgresql://localhost:5432/postgres?user=postgres&password=HPost1QGres!&ssl=false";
                         conn = DriverManager.getConnection(url);
 
-                        // Fetch all students ever enrolled
                         String studentQuery = "SELECT SSN, FIRSTNAME, MIDDLENAME, LASTNAME FROM student ORDER BY LASTNAME, FIRSTNAME";
                         pstmt = conn.prepareStatement(studentQuery);
                         rs = pstmt.executeQuery();
@@ -58,11 +35,12 @@
                 <%
                         if (request.getParameter("studentSSN") != null) {
                             int selectedSSN = Integer.parseInt(request.getParameter("studentSSN"));
-                            // Fetch classes taken by the selected student, grouped by quarter
-                            String gradeQuery = "SELECT c.TITLE, ct.COURSEID, ct.QUARTER, ct.YEAR, ct.GRADE, ct.NUMUNITS " +
-                                "FROM classes_taken ct JOIN classes c ON ct.COURSEID = c.COURSEID " +
+                            String gradeQuery = "SELECT c.TITLE, ct.COURSEID, ct.QUARTER, ct.YEAR, ct.GRADE, ct.NUMUNITS, gc.GPA, gc.GPACOUNT " +
+                                "FROM classes_taken ct " +
+                                "JOIN classes c ON ct.COURSEID = c.COURSEID AND ct.QUARTER = c.QUARTER AND ct.YEAR = c.YEAR " +
+                                "JOIN grade_conversion gc ON ct.GRADE = gc.GRADE " +
                                 "WHERE ct.STUDENTID = (SELECT STUDENTID FROM student WHERE SSN = ?) " +
-                                "ORDER BY ct.YEAR DESC, ct.QUARTER DESC";
+                                "ORDER BY ct.YEAR, ct.QUARTER";
                             pstmt = conn.prepareStatement(gradeQuery);
                             pstmt.setInt(1, selectedSSN);
                             rs = pstmt.executeQuery();
@@ -76,6 +54,7 @@
                         <th>Year</th>
                         <th>Grade</th>
                         <th>Units</th>
+                        <th>GPA</th>
                     </tr>
                     <% 
                         String currentQuarter = "";
@@ -90,7 +69,7 @@
                                     double gpa = (totalUnits > 0) ? totalPoints / totalUnits : 0.0;
                 %>
                     <tr>
-                        <td colspan="6"><strong>GPA for <%= currentQuarter %>: <%= String.format("%.2f", gpa) %></strong></td>
+                        <td colspan="7"><strong>GPA for <%= currentQuarter %>: <%= String.format("%.2f", gpa) %></strong></td>
                     </tr>
                 <% 
                                     cumulativePoints += totalPoints;
@@ -100,9 +79,11 @@
                                 }
                                 currentQuarter = quarter;
                             }
-                            double points = getGradePoints(rs.getString("GRADE")) * rs.getInt("NUMUNITS");
-                            totalPoints += points;
-                            totalUnits += rs.getInt("NUMUNITS");
+                            if (rs.getInt("GPACOUNT") > 0) { 
+                                double points = rs.getDouble("GPA") * rs.getInt("NUMUNITS");
+                                totalPoints += points;
+                                totalUnits += rs.getInt("NUMUNITS");
+                            }
                 %>
                     <tr>
                         <td><%= rs.getString("TITLE") %></td>
@@ -111,14 +92,14 @@
                         <td><%= rs.getInt("YEAR") %></td>
                         <td><%= rs.getString("GRADE") %></td>
                         <td><%= rs.getInt("NUMUNITS") %></td>
+                        <td><%= rs.getDouble("GPA") %></td>
                     </tr>
                     <% } 
-                        // Final GPA calculation for the last quarter
-                        if (totalUnits > 0) {
+                        if (!currentQuarter.isEmpty() && totalUnits > 0) {
                             double gpa = totalPoints / totalUnits;
                 %>
                     <tr>
-                        <td colspan="6"><strong>GPA for <%= currentQuarter %>: <%= String.format("%.2f", gpa) %></strong></td>
+                        <td colspan="7"><strong>GPA for <%= currentQuarter %>: <%= String.format("%.2f", gpa) %></strong></td>
                     </tr>
                 <% 
                             cumulativePoints += totalPoints;
@@ -128,7 +109,7 @@
                             double cumulativeGPA = cumulativePoints / cumulativeUnits;
                 %>
                     <tr>
-                        <td colspan="6"><strong>Cumulative GPA: <%= String.format("%.2f", cumulativeGPA) %></strong></td>
+                        <td colspan="7"><strong>Cumulative GPA: <%= String.format("%.2f", cumulativeGPA) %></strong></td>
                     </tr>
                 <% 
                         }
