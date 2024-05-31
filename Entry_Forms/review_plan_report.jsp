@@ -34,7 +34,8 @@
                     ResultSet section_rs = pstmt_section.executeQuery();
 
                     PreparedStatement pstmt_days = conn.prepareStatement(
-                        ("SELECT DISTINCT MONTH, DAY FROM review_slots ORDER BY MONTH, DAY"));
+                        ("SELECT DISTINCT MONTH, DAY FROM review_slots " + 
+                        "WHERE MONTH >= 4 AND MONTH <= 6 ORDER BY MONTH, DAY"));
 
                     // pstmt_section.setString(1, "Spring");
                     // pstmt_section.setInt(2, 2018);
@@ -42,7 +43,8 @@
                     ResultSet start_days_rs = pstmt_days.executeQuery();
 
                     pstmt_days = conn.prepareStatement(
-                        ("SELECT DISTINCT MONTH, DAY FROM review_slots ORDER BY MONTH, DAY"));
+                        ("SELECT DISTINCT MONTH, DAY FROM review_slots " + 
+                        "WHERE MONTH >= 4 AND MONTH <= 6 ORDER BY MONTH, DAY"));
 
                     ResultSet end_days_rs = pstmt_days.executeQuery();
                     

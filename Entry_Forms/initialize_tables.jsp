@@ -224,7 +224,7 @@
                         int min_start_hour = 8;
                         int max_end_hour = 20;
 
-                        for (int i = 3; i < 6; i++) {
+                        for (int i = 0; i < month_days.length; i++) {
                             for (int j = 0; j < month_days[i]; j++) {
                                 for (int k = min_start_hour; k < max_end_hour; k++) {
                                     PreparedStatement pstmt_slot = conn.prepareStatement(
