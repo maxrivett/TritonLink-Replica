@@ -214,15 +214,16 @@
                             int curr_cat_units_taken = 0;
 
                             PreparedStatement pstmt_cat_classes_taken = conn.prepareStatement(
-                            ("SELECT SUM(NUMUNITS) AS CATUNITS FROM " + 
+                            ("SELECT SUM(NUMUNITSMAX) AS CATUNITS FROM " + 
                             "(SELECT MAX(NUMUNITS) AS NUMUNITSMAX FROM classes_taken WHERE STUDENTID = ? " + 
-                            "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ?) " + 
+                            "AND COURSEID IN (SELECT COURSEID FROM category_courses WHERE CATNAME = ? AND DEPARTMENT = ?) " + 
                             "AND GRADE <> ? AND GRADE <> ? GROUP BY COURSEID)"));
 
                             pstmt_cat_classes_taken.setInt(1, curr_id);
                             pstmt_cat_classes_taken.setString(2, curr_cat_name);
-                            pstmt_cat_classes_taken.setString(3, "IN");
-                            pstmt_cat_classes_taken.setString(4, "U");
+                            pstmt_cat_classes_taken.setString(3, curr_dep_rs.getString("DEPARTMENT"));
+                            pstmt_cat_classes_taken.setString(4, "IN");
+                            pstmt_cat_classes_taken.setString(5, "U");
 
                             ResultSet curr_cat_units_rs = pstmt_cat_classes_taken.executeQuery();
                             

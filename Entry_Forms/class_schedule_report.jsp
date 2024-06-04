@@ -102,7 +102,10 @@
                             "AND rm1.WEEKDAY = dc1.DAYCODE AND rm2.WEEKDAY = dc2.DAYCODE " + 
                             "AND dc1.DAY = dc2.DAY AND rm2.SECTIONID = section2.SECTIONID " + 
                             "AND (section1.COURSEID, section1.QUARTER, section1.YEAR) <> " + 
-                            "(section2.COURSEID, section2.QUARTER, section2.YEAR)))))"));
+                            "(section2.COURSEID, section2.QUARTER, section2.YEAR))))) " + 
+                            "AND (class_top.COURSEID, class_top.QUARTER, class_top.YEAR) " + 
+                            "NOT IN (SELECT COURSEID, QUARTER, YEAR FROM course_enrollment WHERE " + 
+                            "STUDENTID = ?)"));
 
                             int curr_id = Integer.parseInt(request.getParameter("STUDENTID"));
 
@@ -113,6 +116,7 @@
                             pstmt.setString(5, "Spring");
                             pstmt.setInt(6, 2018);
                             pstmt.setInt(7, curr_id);
+                            pstmt.setInt(8, curr_id);
 
                             ResultSet classes_rs = pstmt.executeQuery();
 

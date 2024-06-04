@@ -119,167 +119,74 @@
                         int curr_hour = 0;
                         int hour_offset = 8;
 
-                        for (int i = 0; i < 2; i++) {
-                            String fname = first_name[student_count];
-                            String mname = m_initial[student_count];
-                            String lname = last_name[student_count];
+                        for (int i = 0; i < first_name.length; i++) {
+                            if (i == 1) {
+                                String fname = first_name[student_count];
+                                String mname = m_initial[student_count];
+                                String lname = last_name[student_count];
 
-                            PreparedStatement pstmt = conn.prepareStatement(
-                            ("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
+                                PreparedStatement pstmt = conn.prepareStatement(
+                                ("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
 
-                            pstmt.setInt(1, sid);
-                            pstmt.setString(2, fname);
-                            pstmt.setString(3, mname);
-                            pstmt.setString(4, lname);
-                            pstmt.setBoolean(5, true);
-                            pstmt.setInt(6, ssns[student_count]);
-                            pstmt.setString(7, "CA");
-                            pstmt.setFloat(8, account_bal);
+                                pstmt.setInt(1, sid);
+                                pstmt.setString(2, fname);
+                                pstmt.setString(3, mname);
+                                pstmt.setString(4, lname);
+                                pstmt.setBoolean(5, true);
+                                pstmt.setInt(6, ssns[student_count]);
+                                pstmt.setString(7, "CA");
+                                pstmt.setFloat(8, account_bal);
 
-                            pstmt.executeUpdate();
+                                pstmt.executeUpdate();
 
-                            PreparedStatement pstmt2 = conn.prepareStatement(
-                            ("INSERT INTO undergrad VALUES (?, ?, ?, ?, ?)"));
+                                PreparedStatement pstmt2 = conn.prepareStatement(
+                                ("INSERT INTO graduate VALUES (?, ?, ?)"));
 
-                            pstmt2.setInt(1, sid);
-                            pstmt2.setString(2, "CSE");
-                            pstmt2.setString(3, "MUS");
-                            pstmt2.setString(4, "Sixth");
-                            pstmt2.setBoolean(5, false);
-                            
-                            pstmt2.executeUpdate();
+                                pstmt2.setInt(1, sid);
+                                pstmt2.setString(2, "CSE");
+                                pstmt2.setString(3, "Masters");
 
-                            sid++;
+                                pstmt2.executeUpdate();
 
-                            student_count = (student_count + 1) % first_name.length;
+                                sid++;
 
-                        }
+                                student_count = (student_count + 1) % first_name.length;
+                            }
+                            else {
+                                String fname = first_name[student_count];
+                                String mname = m_initial[student_count];
+                                String lname = last_name[student_count];
 
-                        for (int i = 0; i < 2; i++) {
-                            String fname = first_name[student_count];
-                            String mname = m_initial[student_count];
-                            String lname = last_name[student_count];
+                                PreparedStatement pstmt = conn.prepareStatement(
+                                ("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
 
-                            PreparedStatement pstmt = conn.prepareStatement(
-                            ("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
+                                pstmt.setInt(1, sid);
+                                pstmt.setString(2, fname);
+                                pstmt.setString(3, mname);
+                                pstmt.setString(4, lname);
+                                pstmt.setBoolean(5, true);
+                                pstmt.setInt(6, ssns[student_count]);
+                                pstmt.setString(7, "CA");
+                                pstmt.setFloat(8, account_bal);
 
-                            pstmt.setInt(1, sid);
-                            pstmt.setString(2, fname);
-                            pstmt.setString(3, mname);
-                            pstmt.setString(4, lname);
-                            pstmt.setBoolean(5, true);
-                            pstmt.setInt(6, ssns[student_count]);
-                            pstmt.setString(7, "CA");
-                            pstmt.setFloat(8, account_bal);
+                                pstmt.executeUpdate();
 
-                            pstmt.executeUpdate();
+                                PreparedStatement pstmt2 = conn.prepareStatement(
+                                ("INSERT INTO undergrad VALUES (?, ?, ?, ?, ?)"));
 
-                            PreparedStatement pstmt2 = conn.prepareStatement(
-                            ("INSERT INTO graduate VALUES (?, ?, ?)"));
+                                pstmt2.setInt(1, sid);
+                                pstmt2.setString(2, "CSE");
+                                pstmt2.setString(3, "MUS");
+                                pstmt2.setString(4, "Sixth");
+                                pstmt2.setBoolean(5, false);
+                                
+                                pstmt2.executeUpdate();
 
-                            pstmt2.setInt(1, sid);
-                            pstmt2.setString(2, "CSE");
-                            pstmt2.setString(3, "Masters");
+                                sid++;
 
-                            pstmt2.executeUpdate();
-
-                            sid++;
-
-                            student_count = (student_count + 1) % first_name.length;
-
-                        }
-
-                        for (int i = 0; i < 1; i++) {
-                            String fname = first_name[student_count];
-                            String mname = m_initial[student_count];
-                            String lname = last_name[student_count];
-
-                            PreparedStatement pstmt = conn.prepareStatement(
-                            ("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
-
-                            pstmt.setInt(1, sid);
-                            pstmt.setString(2, fname);
-                            pstmt.setString(3, mname);
-                            pstmt.setString(4, lname);
-                            pstmt.setBoolean(5, true);
-                            pstmt.setInt(6, ssns[student_count]);
-                            pstmt.setString(7, "CA");
-                            pstmt.setFloat(8, account_bal);
-
-                            pstmt.executeUpdate();
-
-                            PreparedStatement pstmt2 = conn.prepareStatement(
-                            ("INSERT INTO graduate VALUES (?, ?, ?)"));
-
-                            pstmt2.setInt(1, sid);
-                            pstmt2.setString(2, "CSE");
-                            pstmt2.setString(3, "PhD");
-
-                            pstmt2.executeUpdate();
-
-                            PreparedStatement pstmt3 = conn.prepareStatement(
-                            ("INSERT INTO phd VALUES (?, ?)"));
-
-                            pstmt3.setInt(1, sid);
-                            pstmt3.setString(2, "Precandidate");
-
-                            pstmt3.executeUpdate();
-
-
-                            sid++;
-
-                            student_count = (student_count + 1) % first_name.length;
-
-                        }
-
-                        for (int i = 0; i < 2; i++) {
-                            String fname = first_name[student_count];
-                            String mname = m_initial[student_count];
-                            String lname = last_name[student_count];
-
-                            PreparedStatement pstmt = conn.prepareStatement(
-                            ("INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?)"));
-
-                            pstmt.setInt(1, sid);
-                            pstmt.setString(2, fname);
-                            pstmt.setString(3, mname);
-                            pstmt.setString(4, lname);
-                            pstmt.setBoolean(5, true);
-                            pstmt.setInt(6, ssns[student_count]);
-                            pstmt.setString(7, "CA");
-                            pstmt.setFloat(8, account_bal);
-
-                            pstmt.executeUpdate();
-
-                            PreparedStatement pstmt2 = conn.prepareStatement(
-                            ("INSERT INTO graduate VALUES (?, ?, ?)"));
-
-                            pstmt2.setInt(1, sid);
-                            pstmt2.setString(2, "CSE");
-                            pstmt2.setString(3, "PhD");
-
-                            pstmt2.executeUpdate();
-
-                            PreparedStatement pstmt3 = conn.prepareStatement(
-                            ("INSERT INTO phd VALUES (?, ?)"));
-
-                            pstmt3.setInt(1, sid);
-                            pstmt3.setString(2, "Candidate");
-
-                            pstmt3.executeUpdate();
-
-                            PreparedStatement pstmt4 = conn.prepareStatement(
-                            ("INSERT INTO candidates VALUES (?)"));
-
-                            pstmt4.setInt(1, sid);
-
-                            pstmt4.executeUpdate();
-
-
-                            sid++;
-
-                            student_count = (student_count + 1) % first_name.length;
-
+                                student_count = (student_count + 1) % first_name.length;
+                            }
+                        
                         }
                         
                         for (int i = 0; i < faculty_names.length; i++) {
@@ -337,8 +244,8 @@
 
                             pstmt_section.setInt(1, i+1);
                             pstmt_section.setString(2, section_faculty[i]);
-                            pstmt_section.setInt(3, 20);
-                            pstmt_section.setInt(4, 50);
+                            pstmt_section.setInt(3, 50);
+                            pstmt_section.setInt(4, 20);
 
                             pstmt_section.executeUpdate();
 
@@ -358,8 +265,8 @@
                             pstmt_meeting.setInt(1, i+1);
                             pstmt_meeting.setInt(2, meet_start_hrs[i]);
                             pstmt_meeting.setInt(3, 0);
-                            pstmt_meeting.setInt(4, meet_start_hrs[i] + 1);
-                            pstmt_meeting.setInt(5, 0);
+                            pstmt_meeting.setInt(4, meet_start_hrs[i]);
+                            pstmt_meeting.setInt(5, 50);
                             pstmt_meeting.setString(6, "MWF");
                             pstmt_meeting.setString(7, "Lecture");
                             pstmt_meeting.setBoolean(8, true);
@@ -472,6 +379,18 @@
                                 pstmt_course_cat.setInt(3, i + 1);
 
                                 pstmt_course_cat.executeUpdate();
+                            }
+                            if (i < 5 || i > 9) {
+                                for (int j = 0; j < course_categories[i].length; j++) {
+                                    PreparedStatement pstmt_course_cat = conn.prepareStatement(
+                                    ("INSERT INTO category_courses VALUES (?, ?, ?)"));
+    
+                                    pstmt_course_cat.setString(1, ms_deg[0]);
+                                    pstmt_course_cat.setString(2, course_categories[i][j]);
+                                    pstmt_course_cat.setInt(3, i + 1);
+    
+                                    pstmt_course_cat.executeUpdate();
+                                }
                             }
                         }
 
