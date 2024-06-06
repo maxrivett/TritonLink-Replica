@@ -301,6 +301,28 @@
                             }
                         }
 
+                        /*
+
+                        PreparedStatement pstmt_enroll_fnc = conn.prepareStatement(
+                        ("CREATE OR REPLACE FUNCTION check_enroll() RETURNS trigger AS $check_enroll$ " + 
+                        "BEGIN IF (NEW.SECTIONID IN (SELECT SECTIONID FROM Sections WHERE " + 
+                        "NUMENROLLED = ENROLLLIMIT)) THEN RAISE EXCEPTION 'Section is full'; END IF; " + 
+                        "RETURN NEW; END; $check_enroll$ LANGUAGE 'plpgsql';"));
+
+                        pstmt_enroll_fnc.executeUpdate();
+
+                        
+
+                        PreparedStatement pstmt_enroll_trigger = conn.prepareStatement(
+                        ("CREATE OR REPLACE TRIGGER check_enroll BEFORE INSERT ON course_enrollment " + 
+                        "FOR EACH ROW EXECUTE PROCEDURE check_enroll()"));
+
+                        pstmt_enroll_trigger.executeUpdate();
+
+                        */
+
+                        
+
                         conn.commit();
                         conn.setAutoCommit(true);
                     }

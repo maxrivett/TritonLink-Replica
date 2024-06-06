@@ -16,11 +16,11 @@
 
                         if ("update".equals(action)) {
                             PreparedStatement pstmt = conn.prepareStatement(
-                                "UPDATE Sections SET FACULTYNAME = ?, NUMENROLLED = ? WHERE ENROLLLIMIT = ? AND SECTIONID = ?");
-                            pstmt.setInt(3, Integer.parseInt(request.getParameter("ENROLLLIMIT")));
+                                "UPDATE Sections SET FACULTYNAME = ?, ENROLLLIMIT = ?, NUMENROLLED = ? WHERE SECTIONID = ?");
+                            pstmt.setInt(3, Integer.parseInt(request.getParameter("NUMENROLLED")));
                             pstmt.setInt(4, Integer.parseInt(request.getParameter("SECTIONID")));
                             pstmt.setString(1, request.getParameter("FACULTYNAME"));
-                            pstmt.setInt(2, Integer.parseInt(request.getParameter("NUMENROLLED")));
+                            pstmt.setInt(2, Integer.parseInt(request.getParameter("ENROLLLIMIT")));
                             pstmt.executeUpdate();
                             conn.commit();
                         } else if ("delete".equals(action)) {
@@ -41,20 +41,20 @@
                             conn.commit();
                         }
 
-                        ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM sections");
+                        ResultSet rs = conn.createStatement().executeQuery("SELECT * FROM sections ORDER BY SECTIONID");
                 %>
                 <table>
                     <tr>
-                        <th>Number of Students Enrolled</th>
                         <th>Section ID</th>
                         <th>Faculty Name</th>
+                        <th>Number of Students Enrolled</th>
                         <th>Enrollment Limit</th>
                     </tr>
                     <tr>
                         <form action="section_entry_form.jsp" method="post">
-                            <td><input type="text" name="NUMENROLLED" /></td>
                             <td><input type="text" name="SECTIONID" /></td>
                             <td><input type="text" name="FACULTYNAME" /></td>
+                            <td><input type="text" name="NUMENROLLED" /></td>
                             <td><input type="text" name="ENROLLLIMIT" /></td>
                             <td><input type="submit" name="action" value="insert" /></td>
                         </form>
@@ -64,9 +64,9 @@
                     %>
                     <tr>
                         <form action="section_entry_form.jsp" method="post">
-                            <td><input type="hidden" name="NUMENROLLED" value="<%= rs.getInt("NUMENROLLED") %>" /><%= rs.getInt("NUMENROLLED") %></td>
                             <td><input type="hidden" name="SECTIONID" value="<%= rs.getInt("SECTIONID") %>" /><%= rs.getInt("SECTIONID") %></td>
                             <td><input type="text" name="FACULTYNAME" value="<%= rs.getString("FACULTYNAME") %>" /></td>
+                            <td><input type="TEXT" name="NUMENROLLED" value="<%= rs.getInt("NUMENROLLED") %>" /></td>
                             <td><input type="text" name="ENROLLLIMIT" value="<%= rs.getInt("ENROLLLIMIT") %>" /></td>
                             <td>
                                 <input type="submit" name="action" value="update" />
