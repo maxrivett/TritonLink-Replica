@@ -40,7 +40,7 @@
                         int[] ssns = {123456789, 987654321, 567891234, 234567890, 345678901, 456789012, 567890123};
 
                         String[] course_names = {"CSE132A", "CSE291", "CSE101", "CSE132B", "CSE232A", "MATH101", "PHYS101", "BIO101", 
-                            "CHEM101", "STAT101", "CSE132B", "CSE291B"};
+                            "CHEM101", "STAT101", "CSE132C", "CSE291B"};
                         boolean[] course_labs = {true, false, true, true, true, false, true, true, true, false, false, false};
 
                         String[] class_names = {"DB System Principles", "Advanced Topics in CS", "Introduction to Programming", 

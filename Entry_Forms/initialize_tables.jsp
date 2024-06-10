@@ -301,12 +301,11 @@
                             }
                         }
 
-                        /*
-
                         PreparedStatement pstmt_enroll_fnc = conn.prepareStatement(
                         ("CREATE OR REPLACE FUNCTION check_enroll() RETURNS trigger AS $check_enroll$ " + 
                         "BEGIN IF (NEW.SECTIONID IN (SELECT SECTIONID FROM Sections WHERE " + 
-                        "NUMENROLLED = ENROLLLIMIT)) THEN RAISE EXCEPTION 'Section is full'; END IF; " + 
+                        "NUMENROLLED >= ENROLLLIMIT)) THEN RAISE EXCEPTION " + 
+                        "'The enrollment limit of this section has been reached, additional enrollment rejected\n'; END IF; " + 
                         "RETURN NEW; END; $check_enroll$ LANGUAGE 'plpgsql';"));
 
                         pstmt_enroll_fnc.executeUpdate();
@@ -319,7 +318,51 @@
 
                         pstmt_enroll_trigger.executeUpdate();
 
+                        PreparedStatement pstmt_add_meeting_fnc = conn.prepareStatement(
+                        ("CREATE OR REPLACE FUNCTION check_meeting() RETURNS trigger AS $check_meeting$ " + 
+                        "BEGIN IF (EXISTS (SELECT * FROM regular_meeting rm, day_conversion dc1, day_conversion dc2 " + 
+                        "WHERE dc1.DAY = dc2.DAY AND dc1.DAYCODE = NEW.WEEKDAY AND rm.WEEKDAY = dc2.DAYCODE " +
+                        "AND (((rm.STARTHOUR * 60 + rm.STARTMINUTE >= NEW.STARTHOUR * 60 + NEW.STARTMINUTE) AND " + 
+                        "(rm.STARTHOUR * 60 + rm.STARTMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE)) OR " + 
+                        "((rm.ENDHOUR * 60 + rm.ENDMINUTE >= NEW.STARTHOUR * 60 + NEW.STARTMINUTE) AND " + 
+                        "(rm.ENDHOUR * 60 + rm.ENDMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE))) " + 
+                        "AND rm.SECTIONID = NEW.SECTIONID)) THEN RAISE EXCEPTION " + 
+                        "'The lectures, discussions and lab meetings of a section should not happen at the same time.\n'; " + 
+                        "ELSIF (EXISTS (SELECT * FROM regular_meeting rm, day_conversion dc1, day_conversion dc2, " + 
+                        "Sections s1, Sections s2, class_section cs1, class_section cs2 " + 
+                        "WHERE dc1.DAY = dc2.DAY AND NEW.WEEKDAY = dc1.DAYCODE AND rm.WEEKDAY = dc2.DAYCODE " +
+                        "AND (((rm.STARTHOUR * 60 + rm.STARTMINUTE >= NEW.STARTHOUR * 60 + NEW.STARTMINUTE) AND " + 
+                        "(rm.STARTHOUR * 60 + rm.STARTMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE)) OR " + 
+                        "((rm.ENDHOUR * 60 + rm.ENDMINUTE >= NEW.STARTHOUR * 60 + NEW.STARTMINUTE) AND " + 
+                        "(rm.ENDHOUR * 60 + rm.ENDMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE))) " + 
+                        "AND NEW.SECTIONID = s1.SECTIONID AND rm.SECTIONID = s2.SECTIONID AND " + 
+                        "s1.FACULTYNAME = s2.FACULTYNAME AND NEW.SECTIONID = cs1.SECTIONID AND rm.SECTIONID = cs2.SECTIONID " + 
+                        "AND cs1.QUARTER = cs2.QUARTER AND cs1.YEAR = cs2.YEAR)) THEN RAISE EXCEPTION " + 
+                        "'A professor should not have multiple sections at the same time.\n'; " + 
+                        "END IF; " + 
+                        "RETURN NEW; END; $check_meeting$ LANGUAGE 'plpgsql';"));
+
+                        /*
+
+                        PreparedStatement pstmt_add_meeting_fnc = conn.prepareStatement(
+                        ("CREATE OR REPLACE FUNCTION check_meeting() RETURNS trigger AS $check_meeting$ " + 
+                        "BEGIN IF (EXISTS (SELECT * FROM regular_meeting rm, day_conversion dc1, day_conversion dc2 " + 
+                        "WHERE dc1.DAY = dc2.DAY AND dc1.DAYCODE = NEW.WEEKDAY AND rm.WEEKDAY = dc2.DAYCODE " +
+                        "AND rm.SECTIONID = NEW.SECTIONID)) THEN RAISE EXCEPTION " + 
+                        "'New meeting conflicts with other meeting of this section'; END IF; " + 
+                        "RETURN NEW; END; $check_meeting$ LANGUAGE 'plpgsql';"));
+
                         */
+
+                        pstmt_add_meeting_fnc.executeUpdate();
+
+                        
+
+                        PreparedStatement pstmt_add_meeting_trigger = conn.prepareStatement(
+                        ("CREATE OR REPLACE TRIGGER check_meeting BEFORE INSERT ON regular_meeting " + 
+                        "FOR EACH ROW EXECUTE PROCEDURE check_meeting()"));
+
+                        pstmt_add_meeting_trigger.executeUpdate();
 
                         
 
