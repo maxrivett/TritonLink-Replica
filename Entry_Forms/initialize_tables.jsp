@@ -66,6 +66,8 @@
                         del_strings.add("DROP TABLE IF EXISTS review_slots");
                         del_strings.add("DROP TABLE IF EXISTS grade_conversion");
                         del_strings.add("DROP TABLE IF EXISTS day_conversion");
+                        del_strings.add("DROP TABLE IF EXISTS CPQG");
+                        del_strings.add("DROP TABLE IF EXISTS CPG");
                         
 
                         
@@ -200,6 +202,12 @@
                             "GPA numeric(2,1), GPACOUNT integer, GRADECLASS varchar(10))");
                         create_strings.add("CREATE TABLE day_conversion (DAYCODE varchar(255), DAY varchar(255))");
                         
+                        // materialized views 
+                        create_strings.add("CREATE TABLE CPQG (COURSEID integer, PROFESSOR varchar(255), QUARTER varchar(255), " +
+                            "YEAR integer, GRADE varchar(2), COUNT integer, " + 
+                            "PRIMARY KEY (COURSEID, PROFESSOR, QUARTER, YEAR, GRADE))");
+                        create_strings.add("CREATE TABLE CPG (COURSEID integer, PROFESSOR varchar(255), GRADE varchar(2), " +
+                            "COUNT integer, PRIMARY KEY (COURSEID, PROFESSOR, GRADE))");
                         
                         // Create the prepared statement and use it to 
                         // delete any existing tables
@@ -364,11 +372,61 @@
 
                         pstmt_add_meeting_trigger.executeUpdate();
 
-                        
+                        String createFunctionCPQG = "CREATE OR REPLACE FUNCTION update_CPQG_func() RETURNS trigger AS $$ " +
+                                "DECLARE " +
+                                "professor_name varchar; " +
+                                "BEGIN " +
+                                "IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN " +
+                                "SELECT facultyname INTO professor_name FROM sections WHERE sectionid = NEW.sectionid; " +
+                                "UPDATE CPQG SET count = count + 1 " +
+                                "WHERE COURSEID = NEW.COURSEID AND PROFESSOR = professor_name AND QUARTER = NEW.QUARTER AND YEAR = NEW.YEAR AND GRADE = NEW.GRADE; " +
+                                "IF NOT FOUND THEN " +
+                                "INSERT INTO CPQG (COURSEID, PROFESSOR, QUARTER, YEAR, GRADE, COUNT) " +
+                                "VALUES (NEW.COURSEID, professor_name, NEW.QUARTER, NEW.YEAR, NEW.GRADE, 1); " +
+                                "END IF; " +
+                                "END IF; " +
+                                "RETURN NEW; " +
+                                "END; " +
+                                "$$ LANGUAGE plpgsql;";
+                        PreparedStatement pstmtFunctionCPQG = conn.prepareStatement(createFunctionCPQG);
+                        pstmtFunctionCPQG.execute();
+
+                        String createFunctionCPG = "CREATE OR REPLACE FUNCTION update_CPG_func() RETURNS trigger AS $$ " +
+                                "DECLARE " +
+                                "professor_name varchar; " +
+                                "BEGIN " +
+                                "IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN " +
+                                "SELECT facultyname INTO professor_name FROM sections WHERE sectionid = NEW.sectionid; " +
+                                "UPDATE CPG SET count = count + 1 " +
+                                "WHERE COURSEID = NEW.courseid AND PROFESSOR = professor_name AND GRADE = NEW.grade; " +
+                                "IF NOT FOUND THEN " +
+                                "INSERT INTO CPG (COURSEID, PROFESSOR, GRADE, COUNT) " +
+                                "VALUES (NEW.courseid, professor_name, NEW.grade, 1); " +
+                                "END IF; " +
+                                "END IF; " +
+                                "RETURN NEW; " +
+                                "END; " +
+                                "$$ LANGUAGE plpgsql;";
+
+                        PreparedStatement pstmtFunctionCPG = conn.prepareStatement(createFunctionCPG);
+                        pstmtFunctionCPG.execute();
+
+
+                        // Creating triggers for the materialized views
+                        String createTriggerCPQG = "CREATE TRIGGER update_CPQG AFTER INSERT OR UPDATE ON classes_taken " +
+                                                "FOR EACH ROW EXECUTE PROCEDURE update_CPQG_func();";
+                        PreparedStatement pstmtTriggerCPQG = conn.prepareStatement(createTriggerCPQG);
+                        pstmtTriggerCPQG.execute();
+
+                        String createTriggerCPG = "CREATE TRIGGER update_CPG AFTER INSERT OR UPDATE ON classes_taken " +
+                                                "FOR EACH ROW EXECUTE PROCEDURE update_CPG_func();";
+                        PreparedStatement pstmtTriggerCPG = conn.prepareStatement(createTriggerCPG);
+                        pstmtTriggerCPG.execute();
 
                         conn.commit();
                         conn.setAutoCommit(true);
                     }
+
                 %>
 
                 <table>
