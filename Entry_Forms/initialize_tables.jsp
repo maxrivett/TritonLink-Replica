@@ -375,11 +375,13 @@
                         String createFunctionCPQG = "CREATE OR REPLACE FUNCTION update_CPQG_func() RETURNS trigger AS $$ " +
                                 "DECLARE " +
                                 "professor_name varchar; " +
+                                "grade_type varchar; " +
                                 "BEGIN " +
                                 "IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN " +
                                 "SELECT facultyname INTO professor_name FROM sections WHERE sectionid = NEW.sectionid; " +
+                                "SELECT GRADECLASS INTO grade_type FROM grade_conversion WHERE GRADE = NEW.GRADE; " + 
                                 "UPDATE CPQG SET count = count + 1 " +
-                                "WHERE COURSEID = NEW.COURSEID AND PROFESSOR = professor_name AND QUARTER = NEW.QUARTER AND YEAR = NEW.YEAR AND GRADE = NEW.GRADE; " +
+                                "WHERE COURSEID = NEW.COURSEID AND PROFESSOR = professor_name AND QUARTER = NEW.QUARTER AND YEAR = NEW.YEAR AND GRADE = grade_type; " +
                                 "IF NOT FOUND THEN " +
                                 "INSERT INTO CPQG (COURSEID, PROFESSOR, QUARTER, YEAR, GRADE, COUNT) " +
                                 "VALUES (NEW.COURSEID, professor_name, NEW.QUARTER, NEW.YEAR, NEW.GRADE, 1); " +
@@ -394,11 +396,13 @@
                         String createFunctionCPG = "CREATE OR REPLACE FUNCTION update_CPG_func() RETURNS trigger AS $$ " +
                                 "DECLARE " +
                                 "professor_name varchar; " +
+                                "grade_type varchar; " +
                                 "BEGIN " +
                                 "IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN " +
                                 "SELECT facultyname INTO professor_name FROM sections WHERE sectionid = NEW.sectionid; " +
+                                "SELECT GRADECLASS INTO grade_type FROM grade_conversion WHERE GRADE = NEW.GRADE; " + 
                                 "UPDATE CPG SET count = count + 1 " +
-                                "WHERE COURSEID = NEW.courseid AND PROFESSOR = professor_name AND GRADE = NEW.grade; " +
+                                "WHERE COURSEID = NEW.courseid AND PROFESSOR = professor_name AND GRADE = grade_type; " +
                                 "IF NOT FOUND THEN " +
                                 "INSERT INTO CPG (COURSEID, PROFESSOR, GRADE, COUNT) " +
                                 "VALUES (NEW.courseid, professor_name, NEW.grade, 1); " +
