@@ -98,7 +98,8 @@
                             "(((rm1.STARTHOUR * 60 + rm1.STARTMINUTE >= rm2.STARTHOUR * 60 + rm2.STARTMINUTE) AND " + 
                             "(rm1.STARTHOUR * 60 + rm1.STARTMINUTE <= rm2.ENDHOUR * 60 + rm2.ENDMINUTE)) OR " + 
                             "((rm1.ENDHOUR * 60 + rm1.ENDMINUTE >= rm2.STARTHOUR * 60 + rm2.STARTMINUTE) AND " + 
-                            "(rm1.ENDHOUR * 60 + rm1.ENDMINUTE <= rm2.ENDHOUR * 60 + rm2.ENDMINUTE))) " + 
+                            "(rm1.ENDHOUR * 60 + rm1.ENDMINUTE <= rm2.ENDHOUR * 60 + rm2.ENDMINUTE)) " + 
+                            "OR (rm1.STARTHOUR = rm2.STARTHOUR AND rm1.STARTMINUTE = rm1.STARTMINUTE AND rm1.ENDHOUR = rm2.ENDHOUR AND rm1.ENDMINUTE = rm2.ENDMINUTE)) " + 
                             "AND rm1.WEEKDAY = dc1.DAYCODE AND rm2.WEEKDAY = dc2.DAYCODE " + 
                             "AND dc1.DAY = dc2.DAY AND rm2.SECTIONID = section2.SECTIONID " + 
                             "AND (section1.COURSEID, section1.QUARTER, section1.YEAR) <> " + 
