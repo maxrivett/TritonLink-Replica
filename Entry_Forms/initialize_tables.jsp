@@ -334,7 +334,8 @@
                         "(rm.STARTHOUR * 60 + rm.STARTMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE)) OR " + 
                         "((rm.ENDHOUR * 60 + rm.ENDMINUTE >= NEW.STARTHOUR * 60 + NEW.STARTMINUTE) AND " + 
                         "(rm.ENDHOUR * 60 + rm.ENDMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE)) " + 
-                        "OR (rm.STARTHOUR = NEW.STARTHOUR AND rm.STARTMINUTE = NEW.STARTMINUTE AND rm.ENDHOUR = NEW.ENDHOUR AND rm.ENDMINUTE = NEW.ENDMINUTE)) " + 
+                        "OR (rm.STARTHOUR * 60 + rm.STARTMINUTE <= NEW.STARTHOUR * 60 + NEW.STARTMINUTE AND NEW.STARTHOUR * 60 + NEW.STARTMINUTE <= rm.ENDHOUR * 60 + rm.ENDMINUTE) " + 
+                        "OR (NEW.STARTHOUR * 60 + NEW.STARTMINUTE <= rm.STARTHOUR * 60 + rm.STARTMINUTE AND rm.STARTHOUR * 60 + rm.STARTMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE)) " + 
                         "AND rm.SECTIONID = NEW.SECTIONID)) THEN RAISE EXCEPTION " + 
                         "'The lectures, discussions and lab meetings of a section should not happen at the same time.\n'; " + 
                         "ELSIF (EXISTS (SELECT * FROM regular_meeting rm, day_conversion dc1, day_conversion dc2, " + 
@@ -344,7 +345,8 @@
                         "(rm.STARTHOUR * 60 + rm.STARTMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE)) OR " + 
                         "((rm.ENDHOUR * 60 + rm.ENDMINUTE >= NEW.STARTHOUR * 60 + NEW.STARTMINUTE) AND " + 
                         "(rm.ENDHOUR * 60 + rm.ENDMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE)) " + 
-                        "OR (rm.STARTHOUR = NEW.STARTHOUR AND rm.STARTMINUTE = NEW.STARTMINUTE AND rm.ENDHOUR = NEW.ENDHOUR AND rm.ENDMINUTE = NEW.ENDMINUTE)) " + 
+                        "OR (rm.STARTHOUR * 60 + rm.STARTMINUTE <= NEW.STARTHOUR * 60 + NEW.STARTMINUTE AND NEW.STARTHOUR * 60 + NEW.STARTMINUTE <= rm.ENDHOUR * 60 + rm.ENDMINUTE) " + 
+                        "OR (NEW.STARTHOUR * 60 + NEW.STARTMINUTE <= rm.STARTHOUR * 60 + rm.STARTMINUTE AND rm.STARTHOUR * 60 + rm.STARTMINUTE <= NEW.ENDHOUR * 60 + NEW.ENDMINUTE)) " + 
                         "AND NEW.SECTIONID = s1.SECTIONID AND rm.SECTIONID = s2.SECTIONID AND " + 
                         "s1.FACULTYNAME = s2.FACULTYNAME AND NEW.SECTIONID = cs1.SECTIONID AND rm.SECTIONID = cs2.SECTIONID " + 
                         "AND cs1.QUARTER = cs2.QUARTER AND cs1.YEAR = cs2.YEAR)) THEN RAISE EXCEPTION " + 
