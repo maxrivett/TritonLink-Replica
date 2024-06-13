@@ -204,9 +204,9 @@
                         
                         // materialized views 
                         create_strings.add("CREATE TABLE CPQG (COURSEID integer, PROFESSOR varchar(255), QUARTER varchar(255), " +
-                            "YEAR integer, GRADE varchar(2), COUNT integer, " + 
+                            "YEAR integer, GRADE varchar(10), COUNT integer, " + 
                             "PRIMARY KEY (COURSEID, PROFESSOR, QUARTER, YEAR, GRADE))");
-                        create_strings.add("CREATE TABLE CPG (COURSEID integer, PROFESSOR varchar(255), GRADE varchar(2), " +
+                        create_strings.add("CREATE TABLE CPG (COURSEID integer, PROFESSOR varchar(255), GRADE varchar(10), " +
                             "COUNT integer, PRIMARY KEY (COURSEID, PROFESSOR, GRADE))");
                         
                         // Create the prepared statement and use it to 
@@ -313,7 +313,8 @@
                         ("CREATE OR REPLACE FUNCTION check_enroll() RETURNS trigger AS $check_enroll$ " + 
                         "BEGIN IF (NEW.SECTIONID IN (SELECT SECTIONID FROM Sections WHERE " + 
                         "NUMENROLLED >= ENROLLLIMIT)) THEN RAISE EXCEPTION " + 
-                        "'The enrollment limit of this section has been reached, additional enrollment rejected\n'; END IF; " + 
+                        "'The enrollment limit of this section has been reached, additional enrollment rejected\n'; " + 
+                        "ELSE UPDATE Sections SET NUMENROLLED = NUMENROLLED + 1 WHERE SECTIONID = NEW.SECTIONID; END IF; " + 
                         "RETURN NEW; END; $check_enroll$ LANGUAGE 'plpgsql';"));
 
                         pstmt_enroll_fnc.executeUpdate();
@@ -325,6 +326,24 @@
                         "FOR EACH ROW EXECUTE PROCEDURE check_enroll()"));
 
                         pstmt_enroll_trigger.executeUpdate();
+
+                        PreparedStatement pstmt_past_enroll_fnc = conn.prepareStatement(
+                        ("CREATE OR REPLACE FUNCTION check_past_enroll() RETURNS trigger AS $check_past_enroll$ " + 
+                        "BEGIN IF (NEW.SECTIONID IN (SELECT SECTIONID FROM Sections WHERE " + 
+                        "NUMENROLLED >= ENROLLLIMIT)) THEN RAISE EXCEPTION " + 
+                        "'The past enrollment limit of this section has been reached, additional past enrollment rejected\n'; " + 
+                        "ELSE UPDATE Sections SET NUMENROLLED = NUMENROLLED + 1 WHERE SECTIONID = NEW.SECTIONID; END IF; " + 
+                        "RETURN NEW; END; $check_past_enroll$ LANGUAGE 'plpgsql';"));
+
+                        pstmt_past_enroll_fnc.executeUpdate();
+
+                        
+
+                        PreparedStatement pstmt_past_enroll_trigger = conn.prepareStatement(
+                        ("CREATE OR REPLACE TRIGGER check_past_enroll BEFORE INSERT ON classes_taken " + 
+                        "FOR EACH ROW EXECUTE PROCEDURE check_past_enroll()"));
+
+                        pstmt_past_enroll_trigger.executeUpdate();
 
                         PreparedStatement pstmt_add_meeting_fnc = conn.prepareStatement(
                         ("CREATE OR REPLACE FUNCTION check_meeting() RETURNS trigger AS $check_meeting$ " + 
@@ -376,7 +395,7 @@
                                 "WHERE COURSEID = NEW.COURSEID AND PROFESSOR = professor_name AND QUARTER = NEW.QUARTER AND YEAR = NEW.YEAR AND GRADE = grade_type; " +
                                 "IF NOT FOUND THEN " +
                                 "INSERT INTO CPQG (COURSEID, PROFESSOR, QUARTER, YEAR, GRADE, COUNT) " +
-                                "VALUES (NEW.COURSEID, professor_name, NEW.QUARTER, NEW.YEAR, NEW.GRADE, 1); " +
+                                "VALUES (NEW.COURSEID, professor_name, NEW.QUARTER, NEW.YEAR, grade_type, 1); " +
                                 "END IF; " +
                                 "END IF; " +
                                 "RETURN NEW; " +
@@ -397,7 +416,7 @@
                                 "WHERE COURSEID = NEW.courseid AND PROFESSOR = professor_name AND GRADE = grade_type; " +
                                 "IF NOT FOUND THEN " +
                                 "INSERT INTO CPG (COURSEID, PROFESSOR, GRADE, COUNT) " +
-                                "VALUES (NEW.courseid, professor_name, NEW.grade, 1); " +
+                                "VALUES (NEW.courseid, professor_name, grade_type, 1); " +
                                 "END IF; " +
                                 "END IF; " +
                                 "RETURN NEW; " +

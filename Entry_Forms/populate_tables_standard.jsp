@@ -30,14 +30,14 @@
 
                         ArrayList<String> insertion_strings = new ArrayList<String>();
 
-                        String[] first_name = {"John", "Jane", "Alice", "Bob", "Carol", "David", "Eve"};
+                        String[] first_name = {"John", "Jane", "Alice", "Bob", "Carol", "David", "Eve", "Vincent"};
                         int student_count = 0;
 
-                        String[] m_initial = {"A", "B", "C", "D", "E", "F", "G"};
+                        String[] m_initial = {"A", "B", "C", "D", "E", "F", "G", "N"};
 
-                        String[] last_name = {"Doe", "Smith", "Johnson", "Brown", "Davis", "Miller", "Wilson"};
+                        String[] last_name = {"Doe", "Smith", "Johnson", "Brown", "Davis", "Miller", "Wilson", "Terry"};
 
-                        int[] ssns = {123456789, 987654321, 567891234, 234567890, 345678901, 456789012, 567890123};
+                        int[] ssns = {123456789, 987654321, 567891234, 234567890, 345678901, 456789012, 567890123, 737690125};
 
                         String[] course_names = {"CSE132A", "CSE291", "CSE101", "CSE132B", "CSE232A", "MATH101", "PHYS101", "BIO101", 
                             "CHEM101", "STAT101", "CSE132C", "CSE291B"};
@@ -65,9 +65,9 @@
                         
                         int[] meet_start_hrs = {10, 11, 13, 14, 11, 9, 8, 10, 11, 12, 10, 13, 11};
 
-                        int[] past_section_id = {2, 3, 3, 4, 6, 7, 8, 9, 10, 11, 2, 3, 3};
-                        int[] past_student_id = {1, 1, 2, 3, 4, 5, 6, 7, 1, 1, 2, 7, 6};
-                        String[] past_grades = {"A", "B+", "B", "A-", "B+", "A", "A", "B+", "A-", "A", "A-", "A", "A"};
+                        int[] past_section_id = {2, 3, 3, 4, 6, 7, 8, 9, 10, 11, 2, 3, 3, 4, 4, 4};
+                        int[] past_student_id = {1, 1, 2, 3, 4, 5, 6, 7, 1, 1, 2, 7, 6, 4, 5, 6};
+                        String[] past_grades = {"A", "B+", "B", "A-", "B+", "A", "A", "B+", "A-", "A", "A-", "A", "A", "B-", "B-", "IN"};
 
                         int[] curr_section_id = {1, 1, 5, 1, 1, 1, 1, 1};
                         int[] curr_student_id = {1, 2, 2, 3, 4, 5, 6, 7};
@@ -240,12 +240,12 @@
                             pstmt_class.executeUpdate();
 
                             PreparedStatement pstmt_section = conn.prepareStatement(
-                            ("INSERT INTO Sections VALUES (?, ?, ?, ?)"));
+                            ("INSERT INTO Sections (SECTIONID, FACULTYNAME, NUMENROLLED, ENROLLLIMIT) VALUES (?, ?, ?, ?)"));
 
                             pstmt_section.setInt(1, i+1);
                             pstmt_section.setString(2, section_faculty[i]);
-                            pstmt_section.setInt(3, 50);
-                            pstmt_section.setInt(4, 20);
+                            pstmt_section.setInt(3, 0);
+                            pstmt_section.setInt(4, 7);
 
                             pstmt_section.executeUpdate();
 
